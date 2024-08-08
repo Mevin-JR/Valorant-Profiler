@@ -3,6 +3,11 @@
     src: url('../Fonts/Inter.ttf');
 }
 
+@font-face {
+    font-family: 'K2D';
+    src: url('../Fonts/K2D.ttf');
+}
+
 .preloader-wrapper {
     position: absolute;
     top: 45vh;
@@ -108,9 +113,12 @@
     animation-delay: .3s;
 }
   
+* {
+    font-family: 'K2D', sans-serif;
+}
+
 body {
     overflow: hidden;
-    font-family: 'Inter', sans-serif;
 }
 
 img {
@@ -179,7 +187,6 @@ input[type="password"] {
 }
 ::placeholder {
     color: white;
-    font-family: 'Inter', sans-serif;
     font-weight: 300;
     font-size: 14px;
     -webkit-user-select: none;
