@@ -1,16 +1,17 @@
-const { app, BrowserWindow } = require('electron')
-const path = require('node:path')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const path = require('path')
+
+let win;
 
 function createWindow() {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 700,
-        height: 500,
+        height: 600,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js')
         },
-        // frame: false,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#000',
@@ -21,12 +22,21 @@ function createWindow() {
         maximizable: false,
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
     });
-
-    win.loadFile('./renderer/loginWin/loginWindow.html')
+    
+    // win.webContents.openDevTools()
+    win.loadFile('./renderer/loginWin/loginWindow.html');
 }
 
 app.whenReady().then(() => {
     createWindow();
+})
+
+ipcMain.on('goto:login', () => {
+    win.loadFile('./renderer/loginWin/loginWindow.html');
+})
+
+ipcMain.on('goto:register', () => {
+    win.loadFile('./renderer/registerWin/registerWindow.html');
 })
 
 app.on('window-all-closed', () => {

@@ -107,7 +107,7 @@
     right: 15%;
     animation-delay: .3s;
 }
-  
+
 body {
     overflow: hidden;
     font-family: 'Inter', sans-serif;
@@ -158,7 +158,7 @@ img {
     font-size: 40px;
 }
 
-.login-section {
+.register-section {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -186,6 +186,7 @@ input[type="password"] {
 }
 
 .username-field,
+.email-field,
 .password-field {
     position: relative;
 }
@@ -196,13 +197,20 @@ input[type="password"] {
     left: 17px;
 }
 
+.email-field svg {
+    position: absolute;
+    top: 20px;
+    left: 17px;
+    fill: white;
+}
+
 .password-field svg {
     position: absolute;
     top: 14px;
     left: 15px;
 }
 
-.login-btn {
+.register-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -214,29 +222,29 @@ input[type="password"] {
     transition: transform 0.3s ease-in-out;
 }
 
-.login-btn p {
+.register-btn p {
     margin: auto auto;
     color: white;
     font-weight: 600;
     -webkit-user-select: none;
 }
 
-.login-btn:hover {
+.register-btn:hover {
     transform: scale(1.05);
 }
 
-.login-footer-container p {
+.register-footer-container p {
     color: white;
     font-size: 14px;
     font-weight: 400;
     -webkit-user-select: none;
 }
 
-.login-footer-container span {
+.register-footer-container span {
     color: #CA2910;
-    font-weight: 600;
+    font-weight: 700;
 }
 
-.login-footer-container a {
+.register-footer-container a {
     cursor: pointer;
 }
