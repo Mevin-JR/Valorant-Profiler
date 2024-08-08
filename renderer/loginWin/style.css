@@ -1,0 +1,111 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('../Fonts/Inter.ttf');
+}
+
+body {
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+img {
+    -webkit-user-drag: none;
+}
+
+#drag-area {
+    -webkit-app-region: drag;
+    height: 30px;
+    width: 100%;
+}
+
+.bg-container {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+}
+
+.top-bar {
+    position: absolute;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+input[type="text"],
+input[type="password"] {
+    outline: none;
+    border: none;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.65);
+    padding: 15px 15px 15px 50px;
+    border-radius: 35px;
+    width: 350px;
+}
+::placeholder {
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    -webkit-user-select: none;
+}
+
+.username-field,
+.password-field {
+    position: relative;
+}
+
+.username-field svg {
+    position: absolute;
+    top: 16px;
+    left: 17px;
+}
+
+.password-field svg {
+    position: absolute;
+    top: 14px;
+    left: 15px;
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #CE5252;
+    border-radius: 35px;
+    width: 350px;
+    height: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.login-btn p {
+    margin: auto auto;
+    color: white;
+    font-weight: 600;
+    -webkit-user-select: none;
+}
+
+.login-btn:hover {
+    transform: scale(1.05);
+}
+
+.forpass-container p {
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    -webkit-user-select: none;
+}

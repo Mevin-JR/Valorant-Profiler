@@ -1,0 +1,12 @@
+# Modules
+node_modules/
+
+# Config Files
+package.json
+package-lock.json
+forge.config.js
+
+# Output folders
+out/
+dist/
+build/
