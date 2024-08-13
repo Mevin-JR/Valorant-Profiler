@@ -16,19 +16,13 @@
 </head>
 <body>
      <!-- Preloader -->
-     <div class="black-bg"></div>
      <div class="preloader-wrapper">
-         <div class="circle"></div>
-         <div class="circle"></div>
-         <div class="circle"></div>
-         <div class="shadow"></div>
-         <div class="shadow"></div>
-         <div class="shadow"></div>
+        <img src="./imgs/preloader.gif">
      </div>
 
     <div id="drag-area"></div>
     <div class="bg-container">
-        <img class="bg-image" src="./imgs/bg_register.png" alt="">
+        <img class="bg-image" src="./imgs/bg_register_temp.png" alt="">
     </div>
 
     <div class="top-bar">
@@ -36,6 +30,9 @@
         <div class="title-container">
             <h1>REGISTER</h1>
         </div>
+        <svg id="close-btn" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M17.2357 0.87207L20.1284 3.76478L13.393 10.5002L20.1284 17.2357L17.2357 20.1284L10.5002 13.393L3.76478 20.1284L0.872072 17.2357L7.60753 10.5002L0.87207 3.76478L3.76478 0.87207L10.5002 7.60729L17.2357 0.87207ZM10.5002 7.60729L3.76478 0.87207L0.87207 3.76478L7.60753 10.5002L0.872072 17.2357L3.76478 20.1284L10.5002 13.393L17.2357 20.1284L20.1284 17.2357L13.393 10.5002L20.1284 3.76478L17.2357 0.87207L10.5002 7.60729ZM10.5002 13.393L3.76478 20.1284L0.872072 17.2357L7.60753 10.5002L0.87207 3.76478L3.76478 0.87207L10.5002 7.60729L17.2357 0.87207L20.1284 3.76478L13.393 10.5002L20.1284 17.2357L17.2357 20.1284L10.5002 13.393Z" fill="#FF4654"/>
+        </svg>            
     </div>
 
     <div class="register-section">
@@ -64,6 +61,7 @@
             </svg>                
             <input id="password-input" type="password" placeholder="Password">
         </div>
+        <div class="error-container" id="error-display"></div>
         <div class="register-btn" id="register">
             <p>Get Started</p>
         </div>

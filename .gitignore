@@ -13,3 +13,6 @@ build/
 
 # Database config
 database/firebase.js
+
+# Log files
+*.txt

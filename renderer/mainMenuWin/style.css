@@ -1,0 +1,16 @@
+#drag-area {
+    -webkit-app-region: drag;
+    height: 30px;
+    width: 100%;
+}
+
+.bg-container {
+    position: absolute;
+    top: 0;
+    z-index: -100;
+}
+
+.bg-container img {
+    width: 100%;
+    height: 100%;
+}
