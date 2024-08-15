@@ -24,21 +24,35 @@ function createLoginWindow() {
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
     });
 
-    winLogin.webContents.openDevTools();
+    // winLogin.webContents.openDevTools();
     winLogin.loadFile('./renderer/loginWin/loginWindow.html');
 }
 
 function createMainWindow() {
     winMain = new BrowserWindow({
-        fullscreen: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
+        },
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            color: '#000',
+            symbolColor: '#FFF',
+            height: 30
+        },
+        maximizable: false,
+        icon: path.join(__dirname, 'renderer/logos/logo.ico'),
         show: false
     });
+    // winMain.webContents.openDevTools();
     winMain.loadFile('./renderer/mainMenuWin/mainMenuWindow.html');
 }
 
 app.whenReady().then(() => {
     createLoginWindow();
     createMainWindow();
+    // winMain.maximize();
 
     fs.access(logFile, fs.constants.F_OK, (err) => {
         if (err) {
@@ -76,6 +90,7 @@ ipcMain.on('goto:register', () => {
 
 ipcMain.on('goto:mainMenu', () => {
     winMain.show();
+    winMain.maximize();
     winLogin.close();
     // log("Redirecting to main menu")
 })

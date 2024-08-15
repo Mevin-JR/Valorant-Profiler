@@ -1,16 +1,59 @@
-#drag-area {
-    -webkit-app-region: drag;
-    height: 30px;
-    width: 100%;
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
-.bg-container {
+body {
+    background-image: url(./imgs/bg-mm.png);
+    width: 100vw;
+    height: 100vh;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    flex-direction: row;
+}
+
+nav {
+    position: relative;
+    height: 100vh;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 2px solid #7D91AA;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+    list-style-type: none;
+}
+
+.settings-btn {
     position: absolute;
-    top: 0;
-    z-index: -100;
+    bottom: 50px;
+    left: 30px;
 }
 
-.bg-container img {
+.nav-items li,
+.settings-btn {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-items li:hover,
+.settings-btn:hover {
+    transform: scale(1.25);
+}
+
+/* Content Section */
+
+.content-section {
+    background-image: url(./imgs/bg-content.png);
     width: 100%;
     height: 100%;
+    background-position: center;
+    background-size: cover;
 }
