@@ -89,15 +89,30 @@ ipcMain.on('goto:register', () => {
 })
 
 ipcMain.on('goto:mainMenu', () => {
-    winMain.show();
-    winMain.maximize();
+    if (winMain === null) {
+        createMainWindow();
+        winMain.maximize();
+    } else {
+        winMain.show();
+        winMain.maximize();
+    }
     winLogin.close();
     // log("Redirecting to main menu")
+})
+
+ipcMain.on('action:logout', () => {
+    winMain.close();
+    if (winLogin === null) {
+        createLoginWindow();
+    } else {
+        winLogin.show();
+    }
 })
 
 ipcMain.on('action:close', () => {
     app.quit();
 })
+
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
