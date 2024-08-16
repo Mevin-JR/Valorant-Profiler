@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Antonio';
+    src: url('../Fonts/Antonio.ttf');
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +17,8 @@ body {
     background-size: cover;
     display: flex;
     flex-direction: row;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 nav {
@@ -20,6 +27,7 @@ nav {
     width: 100px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     border-right: 2px solid #7D91AA;
 }
@@ -27,17 +35,40 @@ nav {
 nav ul {
     display: flex;
     flex-direction: column;
-    gap: 70px;
+    gap: 65px;
     list-style-type: none;
+    padding: 0;
 }
 
 .nav-items li {
+    padding: 10px;
+    border-radius: 10px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
 
-.nav-items li:hover {
+.nav-items li.home-btn:hover {
+    transform: none !important;
+}
+
+.nav-items li:hover{
     transform: scale(1.1);
+}
+
+.nav-items .home-btn {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    background-color: #5d646b;
+}
+
+.indicator {
+    position: absolute;
+    top: 0;
+    right: -22px;
+    height: 50px;
+    border-right: 5px solid white;
 }
 
 .settings-container {
@@ -52,12 +83,11 @@ nav ul {
     transition: transform 1s ease-in-out;
 }
 
-#settings-btn:hover {
-    transform: scale(1.1);
-}
-
 .dropdown {
     visibility: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,6 +101,12 @@ nav ul {
     -webkit-user-select: none;
 }
 
+.dropdown.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .dropdown div {
     display: flex;
     flex-direction: row;
@@ -79,7 +115,7 @@ nav ul {
     gap: 15px;
     padding: 10px;
     border-radius: 10px;
-    color: #D1D1D1;
+    color: #aaaaaa;
     font-size: 14px;
     font-weight: 500;
     transition: transform 0.3s ease-in-out;
@@ -92,9 +128,40 @@ nav ul {
 /* Content Section */
 
 .content-section {
+    position: relative;
+    z-index: -1;
     background-image: url(./imgs/bg-content.png);
     width: 100%;
     height: 100%;
     background-position: center;
     background-size: cover;
+}
+
+.disclaimer {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.disclaimer span {
+    color: gray;
+    font-size: 12px;
+}
+
+.page-header {
+    margin: 40px;
+    width: 85vw;
+    border-bottom: 2px solid #7D91AA;
+}
+
+.page-header h1 {
+    font-family: 'Antonio';
+    color: white;
+    margin-left: 20px;
+    margin-bottom: 30px;
 }

@@ -1,10 +1,19 @@
 const settingsBtn = document.getElementById('settings-btn');
-const settingsDropdown = document.getElementById('dropdown');
-settingsBtn.addEventListener('click', () => {
-    if (settingsDropdown.style.visibility === 'hidden') {
-        settingsDropdown.style.visibility = 'visible';
-    } else {
-        settingsDropdown.style.visibility = 'hidden';
+const settingsDropdown = document.querySelector('.dropdown');
+settingsBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const currentVisibility = getComputedStyle(settingsDropdown).visibility;
+    if (currentVisibility === 'hidden') {
+        settingsDropdown.classList.add('show')
+    } else if (currentVisibility === 'visible') {
+        settingsDropdown.classList.remove('show')
+    }
+});
+
+document.addEventListener('click', (event) => {
+    if (!settingsDropdown.contains(event.target) && 
+        !settingsBtn.contains(event.target)) {
+        settingsDropdown.classList.remove('show');
     }
 });
 
@@ -16,4 +25,4 @@ logoutBtn.addEventListener('click', () => {
 const githubBtn = document.getElementById('github');
 githubBtn.addEventListener('click', () => {
     shell.openExternal('https://github.com/Mevin-JR/Valorant-Profiler');
-})
+});
