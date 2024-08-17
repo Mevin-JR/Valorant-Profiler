@@ -45,14 +45,14 @@ function createMainWindow() {
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
         show: false
     });
-    winMain.webContents.openDevTools();
+    // winMain.webContents.openDevTools();
     winMain.loadFile('./renderer/mainMenuWin/mainMenuWindow.html');
 }
 
 app.whenReady().then(() => {
-    // createLoginWindow();
+    createLoginWindow();
     createMainWindow();
-    winMain.maximize();
+    // winMain.maximize();
 
     fs.access(logFile, fs.constants.F_OK, (err) => {
         if (err) {

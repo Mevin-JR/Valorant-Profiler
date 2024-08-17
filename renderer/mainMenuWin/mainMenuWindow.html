@@ -12,6 +12,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 </head>
 <body>
     <nav>
@@ -66,19 +69,67 @@
             </svg>
         </div>
     </nav>
+    <div class="bg-blur"></div>
     <section class="content-section">
-        <div class="page-header">
-            <h1>Valorant Profiler</h1>
-        </div>
-        <div class="disclaimer">
-            <svg width="24" height="24" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 30V22M22 14H22.02M42 22C42 33.0457 33.0457 42 22 42C10.9543 42 2 33.0457 2 22C2 10.9543 10.9543 2 22 2C33.0457 2 42 10.9543 42 22Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>                
-            <span>
-                This application is not associated with, affiliated with, or endorsed by Riot Games, Inc or<br>
-                any of its subsidiaries, including but not limited to VALORANT. All trademarks, trade <br>names,
-                and logos referenced herein belong to their respective owners.
-            </span>
+        <div class="header-container"></div>
+        <div class="content-container">
+            <div class="saved-accounts-text">
+                <span>Saved Accounts</span>
+            </div>
+            <div class="account-add-btn" id="add-popup-open">
+                <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M26.5248 12.0473H17.2867V2.475C17.2867 1.1043 16.1766 -0.00585938 14.8059 -0.00585938C13.4352 -0.00585938 12.325 1.1043 12.325 2.475V12.0473H2.46953C1.11016 12.0473 0 13.1574 0 14.5281C0 15.8988 1.11016 17.009 2.48086 17.009H12.3363V26.5246C12.3363 27.8953 13.4465 29.0055 14.8172 29.0055C16.1879 29.0055 17.298 27.8953 17.298 26.5246V17.009H26.5361C27.9068 17.009 29.017 15.8988 29.017 14.5281C29 13.1574 27.8955 12.0473 26.5248 12.0473Z" fill="white"/>
+                </svg>
+            </div>
+            <div class="add-popup-container">
+                <div class="account-add-popup">
+                    <div class="popup-input-container">
+                        <h2>Account Details</h2>
+                        <span>Enter your Valorant game credentials</span>
+                        <div class="popup-interaction-fields">
+                            <div class="username-input">
+                                <svg width="24" height="24" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17.8 31.7L16.2 27.6L31.6 28.4L30.9 35L17.8 31.7ZM21.5 0L0 10.2L3.3 25.5H7.7L7 14.5L7.6 14.3L10.3 25.5H14.8L14.7 12.1L15.3 11.9L17.6 25.5H22.5L23.6 9.4L24.3 9.1L25.5 25.5H31.8L34.1 3.1L21.5 0Z" fill="red"/>
+                                </svg>                  
+                                <input id="username" type="text" placeholder="Riot Username" spellcheck="false" maxlength="24">                  
+                            </div>
+                            <div class="password-input">
+                                <svg width="20" height="24" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 10C16 8.897 15.103 8 14 8H13V5C13 2.243 10.757 0 8 0C5.243 0 3 2.243 3 5V8H2C0.897 8 0 8.897 0 10V18C0 19.103 0.897 20 2 20H14C15.103 20 16 19.103 16 18V10ZM5 5C5 3.346 6.346 2 8 2C9.654 2 11 3.346 11 5V8H5V5Z" fill="red"/>
+                                </svg>      
+                                <input id="password" type="password" placeholder="Password" maxlength="24">
+                                <svg id="password-hidden" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_572_170)">
+                                        <path d="M35.88 35.88C32.4612 38.486 28.2982 39.9297 24 40C10 40 2 24 2 24C4.48778 19.3638 7.93827 15.3132 12.12 12.12M19.8 8.48C21.1767 8.15776 22.5861 7.99668 24 8C38 8 46 24 46 24C44.786 26.2712 43.3381 28.4095 41.68 30.38M28.24 28.24C27.6907 28.8295 27.0283 29.3023 26.2923 29.6302C25.5563 29.9582 24.7618 30.1345 23.9562 30.1487C23.1506 30.1629 22.3503 30.0148 21.6032 29.713C20.8561 29.4112 20.1774 28.9621 19.6077 28.3923C19.0379 27.8226 18.5888 27.1439 18.287 26.3968C17.9852 25.6497 17.8371 24.8494 17.8513 24.0438C17.8655 23.2382 18.0418 22.4437 18.3698 21.7077C18.6977 20.9717 19.1705 20.3093 19.76 19.76M2 2L46 46" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </g>
+                                </svg>
+                                <svg id="password-shown" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 24C2 24 10 8 24 8C38 8 46 24 46 24C46 24 38 40 24 40C10 40 2 24 2 24Z" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M24 30C27.3137 30 30 27.3137 30 24C30 20.6863 27.3137 18 24 18C20.6863 18 18 20.6863 18 24C18 27.3137 20.6863 30 24 30Z" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="account-add-btn-popup">
+                            <span>Add Account</span>
+                        </div>
+                    </div>
+                    <div class="popup-close-btn" id="popup-close-btn">
+                        <svg width="18" height="18" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.61628 6.50015L12.6038 1.52056C12.7529 1.37149 12.8366 1.1693 12.8366 0.95848C12.8366 0.747658 12.7529 0.545471 12.6038 0.396397C12.4547 0.247323 12.2525 0.163574 12.0417 0.163574C11.8309 0.163574 11.6287 0.247323 11.4796 0.396397L6.50003 5.3839L1.52045 0.396397C1.37138 0.247323 1.16919 0.163574 0.958366 0.163574C0.747544 0.163574 0.545357 0.247323 0.396283 0.396397C0.247209 0.545471 0.163461 0.747658 0.163461 0.95848C0.163461 1.1693 0.247209 1.37149 0.396283 1.52056L5.38378 6.50015L0.396283 11.4797C0.322081 11.5533 0.263186 11.6409 0.222994 11.7374C0.182802 11.8338 0.162109 11.9373 0.162109 12.0418C0.162109 12.1463 0.182802 12.2498 0.222994 12.3463C0.263186 12.4427 0.322081 12.5303 0.396283 12.6039C0.469879 12.6781 0.557438 12.737 0.65391 12.7772C0.750382 12.8174 0.853857 12.8381 0.958366 12.8381C1.06288 12.8381 1.16635 12.8174 1.26282 12.7772C1.35929 12.737 1.44685 12.6781 1.52045 12.6039L6.50003 7.6164L11.4796 12.6039C11.5532 12.6781 11.6408 12.737 11.7372 12.7772C11.8337 12.8174 11.9372 12.8381 12.0417 12.8381C12.1462 12.8381 12.2497 12.8174 12.3462 12.7772C12.4426 12.737 12.5302 12.6781 12.6038 12.6039C12.678 12.5303 12.7369 12.4427 12.7771 12.3463C12.8173 12.2498 12.838 12.1463 12.838 12.0418C12.838 11.9373 12.8173 11.8338 12.7771 11.7374C12.7369 11.6409 12.678 11.5533 12.6038 11.4797L7.61628 6.50015Z" fill="white" fill-opacity="0.55"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <svg width="24" height="24" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 30V22M22 14H22.02M42 22C42 33.0457 33.0457 42 22 42C10.9543 42 2 33.0457 2 22C2 10.9543 10.9543 2 22 2C33.0457 2 42 10.9543 42 22Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>
+                    This application is not associated with, affiliated with, or endorsed by Riot Games, Inc or<br>
+                    any of its subsidiaries, including but not limited to VALORANT. All trademarks, trade <br>names,
+                    and logos referenced herein belong to their respective owners.
+                </span>
+            </div>
         </div>
     </section>
 </body>
