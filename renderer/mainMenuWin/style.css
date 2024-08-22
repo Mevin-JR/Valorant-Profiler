@@ -8,6 +8,11 @@
     src: url('../Fonts/Poppins.ttf');
 }
 
+@font-face {
+    font-family: 'Abel';
+    src: url('../Fonts/Abel.ttf');
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -193,6 +198,97 @@ nav ul {
     color: #a0a0a0;
     font-size: 18px;
     margin-bottom: 25px;
+}
+
+.card-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.card-container {
+    position: relative;
+}
+
+.account-card {
+    position: relative;
+    background-color: white;
+    width: 475px;
+    height: 200px;
+    display: flex;
+    flex-direction: row;
+}
+
+.card-left img {
+    width: 200px;
+    height: 200px;
+}
+
+.card-left .tfa-status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-family: 'Antonio';
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.card-left .tfa-status span {
+    color: lime;
+}
+
+.card-left .fav-icon {
+    position: absolute;
+    left: 160px;
+    top: 10px;
+}
+
+.card-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.card-text-container {
+    font-family: 'Abel';
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+}
+
+.card-right #account-username {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.card-right #account-tag {
+    font-size: 16px;
+    font-weight: 100;
+    color: #5F5F5F;
+}
+
+.card-right #account-status {
+    color: red;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.card-right .copy-icon,
+.card-right .options-icon {
+    margin: 10px;
+    cursor: pointer;
+}
+
+.card-right .options-icon {
+    margin: 15px;
 }
 
 .account-add-btn {

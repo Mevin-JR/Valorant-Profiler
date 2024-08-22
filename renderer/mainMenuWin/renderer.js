@@ -78,3 +78,10 @@ function showPassword() {
     passwordInput.type = 'text';
     passwordShown.style.display = 'block';
 }
+
+const addAccount = document.getElementById('add-account');
+addAccount.addEventListener('click', () => {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+});

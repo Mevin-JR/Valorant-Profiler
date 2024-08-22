@@ -48,6 +48,12 @@ async function loginUser(username, password) {
   }
 }
 
+async function addAccountInputData(username, usernameInput, passwordInput) {
+  try {
+      const dbRef = ref(db, 'accountInput/' + )
+  }
+}
+
 // Log
 let parentDir  = path.join(__dirname, "..")
 let logFile = path.join(parentDir,"vpLogs.txt");

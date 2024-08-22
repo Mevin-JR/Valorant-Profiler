@@ -50,9 +50,9 @@ function createMainWindow() {
 }
 
 app.whenReady().then(() => {
-    createLoginWindow();
+    // createLoginWindow();
     createMainWindow();
-    // winMain.maximize();
+    winMain.maximize();
 
     fs.access(logFile, fs.constants.F_OK, (err) => {
         if (err) {
