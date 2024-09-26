@@ -46,6 +46,7 @@ async function loginUser(username, password) {
     // Saving Session data
     const sessionData = {
       username: username,
+      email: data.email,
       loginTime: new Date().toLocaleString()
     }
     fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
@@ -57,17 +58,17 @@ async function loginUser(username, password) {
   }
 }
 
-// async function accountInputData(username, usernameInput, passwordInput) {
-//   try {
-//       // const dbRef = ref(db, 'accountInput/' + username);
-//       await set(ref(db, 'accountInput/' + username), {
-//         username: usernameInput,
-//         password: passwordInput
-//       });
-//   } catch (err) {
-//     console.err('Error adding account details:', err);
-//   }
-// }
+async function accountInputData(username, usernameInput, passwordInput) {
+  try {
+      // const dbRef = ref(db, 'accountInput/' + username);
+      await set(ref(db, 'accountInput/' + username), {
+        username: usernameInput,
+        password: passwordInput
+      });
+  } catch (err) {
+    console.err('Error adding account details:', err);
+  }
+}
 
 // async function getAccInputData() {
 //   try {

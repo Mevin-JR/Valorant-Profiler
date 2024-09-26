@@ -17,3 +17,6 @@ database/firebase.js
 # Log files
 *.txt
 *.log
+
+# Session files
+session.json

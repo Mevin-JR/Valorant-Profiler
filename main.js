@@ -24,7 +24,7 @@ function createLoginWindow() {
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
     });
 
-    // winLogin.webContents.openDevTools();
+    winLogin.webContents.openDevTools();
     winLogin.loadFile('./renderer/loginWin/loginWindow.html');
 }
 
@@ -50,9 +50,9 @@ function createMainWindow() {
 }
 
 app.whenReady().then(() => {
-    // createLoginWindow();
+    createLoginWindow();
     createMainWindow();
-    winMain.maximize();
+    // winMain.maximize();
 
     fs.access(logFile, fs.constants.F_OK, (err) => {
         if (err) {
