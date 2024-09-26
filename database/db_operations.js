@@ -3,7 +3,9 @@ const fs = require('fs');
 const { child, ref , set, get } = require("firebase/database");
 const { auth, db } = require("./firebase");
 const { hashPassword, verifyPassword } = require('./data_operations');
-const sessionFile = './session.json';
+
+const sessionFile = path.join(__dirname, 'session.json');
+const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
 
 // Register
 async function registerUser(username, email, password) {
@@ -21,6 +23,8 @@ async function registerUser(username, email, password) {
         email: email,
         password: hashedPassword
       });
+
+      saveSession(username, email);
 
       return 200;
     } catch (err) {
@@ -44,12 +48,7 @@ async function loginUser(username, password) {
     }
 
     // Saving Session data
-    const sessionData = {
-      username: username,
-      email: data.email,
-      loginTime: new Date().toLocaleString()
-    }
-    fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
+    saveSession(username, data.email);
 
     return 200;
 
@@ -58,23 +57,71 @@ async function loginUser(username, password) {
   }
 }
 
-async function accountInputData(username, usernameInput, passwordInput) {
+function saveSession(username, email) {
+  const sessionData = {
+    username: username,
+    email: email,
+    loginTime: new Date().toLocaleString()
+  }
+  fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
+}
+
+async function accountInputData(name, tag) {
   try {
-      // const dbRef = ref(db, 'accountInput/' + username);
-      await set(ref(db, 'accountInput/' + username), {
-        username: usernameInput,
-        password: passwordInput
-      });
+    const response = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
+      method: 'GET',
+      headers: {
+          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a'
+        }
+    });
+    const apidata = await response.json();
+
+    const dbRef = ref(db, `accountInput/${sessionData.username}`);
+    const snapshot = await get(dbRef);
+    var numOfAccounts = 0;
+    if (snapshot.exists()) {
+      const snapData = snapshot.val();
+      numOfAccounts = Object.keys(snapData).length;
+    }
+
+    await set(ref(db, `accountInput/${sessionData.username}/${numOfAccounts + 1}` ), {
+      name: name,
+      tag: tag,
+      accLvl: apidata.data.account_level,
+      puuid: apidata.data.puuid,
+      region: apidata.data.region,
+      cardImg: `https://media.valorant-api.com/playercards/${apidata.data.card.id}/largeart.png`,
+    });
+
   } catch (err) {
-    console.err('Error adding account details:', err);
+    console.error('Error adding account details:', err);
   }
 }
 
-// async function getAccInputData() {
-//   try {
-//     const dbData = ref(db, 'accountInput/' )
-//   }
-// }
+async function getUserProfiles() {
+  try {
+    const userProfiles = [];
+    const dbRef = ref(db, `accountInput/${sessionData.username}` )
+    const snapshot = await get(dbRef)
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      for (const acc in data) {
+        if (data.hasOwnProperty(acc)) {
+          userProfiles.push({
+            name: data[acc].name,
+            tag: data[acc].tag,
+            cardImg: data[acc].cardImg
+          })
+        }
+      }
+    }
+
+    return userProfiles;
+  } catch (error) {
+    console.error('Error fetching user profiles:', error);
+  }
+}
 
 // Log
 let parentDir  = path.join(__dirname, "..")
@@ -95,4 +142,4 @@ function log(logStatement) {
   }
 }
 
-module.exports = { registerUser, loginUser, log, accountInputData }
+module.exports = { registerUser, loginUser, log, accountInputData, getUserProfiles }

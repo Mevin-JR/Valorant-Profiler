@@ -223,9 +223,22 @@ nav {
 
     .card-left {
 
-        img {
+        .cardImg-container {
             width: 200px;
             height: 200px;
+            overflow: hidden;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+            z-index: 98;
+
+            img {
+                position: absolute;
+                top: 25%;
+                left: 25%;
+                transform: translate(-25%, -25%);
+                min-width: 100%;
+                min-height: 100%;
+            }
         }
 
         .tfa-status {
@@ -236,6 +249,7 @@ nav {
             font-family: 'Antonio';
             font-size: 20px;
             font-weight: 700;
+            z-index: 99;
 
             span {
                 color: lime;
@@ -378,8 +392,8 @@ nav {
 }
 
 
-.username-input,
-.password-input {
+.name-input,
+.tag-input {
     position: relative;
 }
 

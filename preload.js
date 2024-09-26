@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, log, accountInputData } = require('./database/db_operations');
+const  { registerUser, loginUser, log, accountInputData, getUserProfiles } = require('./database/db_operations');
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
     send: (channel, data) => ipcRenderer.send(channel, data),
@@ -16,8 +16,9 @@ contextBridge.exposeInMainWorld('auth', {
     loginUser: async (username, password) => await loginUser(username, password),
 })
 
-contextBridge.exposeInMainWorld('acInput', {
-    accountInputData: async (username, usernameInput, passwordInput) => await accountInputData(username, usernameInput, passwordInput)
+contextBridge.exposeInMainWorld('account', {
+    accountInputData: async (usernameInput, passwordInput) => await accountInputData(usernameInput, passwordInput),
+    getUserProfiles: async () => await getUserProfiles()
 })
 
 contextBridge.exposeInMainWorld('shell', {
