@@ -7,23 +7,18 @@
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 
     <link rel="stylesheet" href="./style.css">
     <script src="./renderer.js" defer></script>
-
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
 </head>
 <body>
     <nav>
         <ul class="nav-items">
-            <li class="home-btn">
+            <li class="home-btn selection-indicator">
                 <svg width="32" height="32" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1.5 17.9995C1.08333 17.9995 0.729167 17.8537 0.4375 17.562C0.145833 17.2703 0 16.9162 0 16.4995V6.74951C0 6.51618 0.0541666 6.29118 0.1625 6.07451C0.270833 5.85784 0.416667 5.68284 0.6 5.54951L7.1 0.674512C7.23333 0.574512 7.375 0.499512 7.525 0.449512C7.675 0.399512 7.83333 0.374512 8 0.374512C8.16667 0.374512 8.325 0.399512 8.475 0.449512C8.625 0.499512 8.76667 0.574512 8.9 0.674512L15.4 5.54951C15.5833 5.68284 15.7292 5.85784 15.8375 6.07451C15.9458 6.29118 16 6.51618 16 6.74951V16.4995C16 16.9162 15.8542 17.2703 15.5625 17.562C15.2708 17.8537 14.9167 17.9995 14.5 17.9995H10V10.9995H6V17.9995H1.5Z" fill="white"/>
                 </svg>
-                <div class="indicator"></div>      
             </li>
             <li class="profile-btn">
                 <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -73,33 +68,11 @@
     <section class="content-section">
         <div class="header-container"></div>
         <div class="content-container">
-            <div class="saved-accounts-text">
+            <div class="content-title">
                 <span>Saved Accounts</span>
             </div>
             <div class="card-section">
-                <div class="card-container" id="card-1">
-                    <div class="account-card">
-                        <div class="card-left">
-                            <span class="tfa-status">2FA: <span>Active</span></span>
-                            <svg class="fav-icon" id="fav-empty-icon" width="24" height="23" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.99992 13.2526L13.759 15.7188L12.8501 10.4952L16.7003 6.79589L11.3795 6.03378L8.99992 1.28123L6.62037 6.03378L1.29953 6.79589L5.14972 10.4952L4.24082 15.7188L8.99992 13.2526ZM4.84554 16.8526C4.21027 17.1818 3.42454 16.9411 3.09056 16.3149C2.95757 16.0655 2.91168 15.7799 2.95999 15.5023L3.7534 10.9424L0.392443 7.71316C-0.121499 7.21935 -0.132015 6.40837 0.368955 5.90177C0.568444 5.70005 0.829834 5.56877 1.11266 5.52826L5.75739 4.86299L7.83458 0.714329C8.15221 0.0799358 8.93145 -0.180531 9.57504 0.132561C9.83133 0.257236 10.0388 0.461711 10.1652 0.714329L12.2424 4.86299L16.8872 5.52826C17.5974 5.62999 18.0895 6.27999 17.9863 6.98009C17.9452 7.25887 17.812 7.51652 17.6074 7.71316L14.2464 10.9424L15.0398 15.5023C15.1612 16.1995 14.6861 16.8617 13.9787 16.9813C13.697 17.0289 13.4073 16.9837 13.1543 16.8526L8.99992 14.6997L4.84554 16.8526Z" fill="white"/>
-                            </svg>
-                            <img src="./imgs/card-display-imgs/jett.png" alt="Jett">
-                        </div>
-                        <div class="card-right">
-                            <div class="card-text-container">
-                                <span id="account-username">supposedlysam<span id="account-tag">#HSC</span></span>
-                                <span id="account-status">Offline</span>
-                            </div>
-                            <svg class="options-icon" id="options-btn" width="5" height="21" viewBox="0 0 3 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.5 8.01205C0.671562 8.01205 0 8.67822 0 9.5C0 10.3218 0.671562 10.988 1.5 10.988C2.32842 10.988 3 10.3218 3 9.5C3 8.67822 2.32842 8.01205 1.5 8.01205ZM1.5 16.0241C0.671562 16.0241 0 16.6903 0 17.512C0 18.3339 0.671562 19 1.5 19C2.32842 19 3 18.3339 3 17.512C3 16.6903 2.32842 16.0241 1.5 16.0241ZM1.5 0C0.671562 0 0 0.666167 0 1.48795C0 2.30971 0.671562 2.9759 1.5 2.9759C2.32842 2.9759 3 2.30974 3 1.48795C3 0.666167 2.32842 0 1.5 0Z" fill="black"/>
-                            </svg>                                
-                            <svg class="copy-icon" id="copy-btn" width="20" height="22" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.3158 0H1.47368C0.659474 0 0 0.650909 0 1.45455V11.6364H1.47368V1.45455H10.3158V0ZM12.5263 2.90909H4.42105C3.60684 2.90909 2.94737 3.56 2.94737 4.36364V14.5455C2.94737 15.3491 3.60684 16 4.42105 16H12.5263C13.3405 16 14 15.3491 14 14.5455V4.36364C14 3.56 13.3405 2.90909 12.5263 2.90909ZM12.5263 14.5455H4.42105V4.36364H12.5263V14.5455Z" fill="#777777"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+                <!-- Data retrieved from firebase -->
                 <div class="account-add-btn" id="add-popup-open">
                     <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M26.5248 12.0473H17.2867V2.475C17.2867 1.1043 16.1766 -0.00585938 14.8059 -0.00585938C13.4352 -0.00585938 12.325 1.1043 12.325 2.475V12.0473H2.46953C1.11016 12.0473 0 13.1574 0 14.5281C0 15.8988 1.11016 17.009 2.48086 17.009H12.3363V26.5246C12.3363 27.8953 13.4465 29.0055 14.8172 29.0055C16.1879 29.0055 17.298 27.8953 17.298 26.5246V17.009H26.5361C27.9068 17.009 29.017 15.8988 29.017 14.5281C29 13.1574 27.8955 12.0473 26.5248 12.0473Z" fill="white"/>
@@ -134,7 +107,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="account-add-btn-popup" id="add-acoount">
+                        <div class="account-add-btn-popup" id="add-account">
                             <span>Add Account</span>
                         </div>
                     </div>

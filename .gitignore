@@ -16,3 +16,4 @@ database/firebase.js
 
 # Log files
 *.txt
+*.log

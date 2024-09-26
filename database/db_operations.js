@@ -3,6 +3,7 @@ const fs = require('fs');
 const { child, ref , set, get } = require("firebase/database");
 const { auth, db } = require("./firebase");
 const { hashPassword, verifyPassword } = require('./data_operations');
+const sessionFile = './session.json';
 
 // Register
 async function registerUser(username, email, password) {
@@ -42,17 +43,37 @@ async function loginUser(username, password) {
       return 401;
     }
 
+    // Saving Session data
+    const sessionData = {
+      username: username,
+      loginTime: new Date().toLocaleString()
+    }
+    fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
+
     return 200;
+
   } catch (err) {
     console.log('Error logging in user:', err);
   }
 }
 
-async function addAccountInputData(username, usernameInput, passwordInput) {
-  try {
-      const dbRef = ref(db, 'accountInput/' + )
-  }
-}
+// async function accountInputData(username, usernameInput, passwordInput) {
+//   try {
+//       // const dbRef = ref(db, 'accountInput/' + username);
+//       await set(ref(db, 'accountInput/' + username), {
+//         username: usernameInput,
+//         password: passwordInput
+//       });
+//   } catch (err) {
+//     console.err('Error adding account details:', err);
+//   }
+// }
+
+// async function getAccInputData() {
+//   try {
+//     const dbData = ref(db, 'accountInput/' )
+//   }
+// }
 
 // Log
 let parentDir  = path.join(__dirname, "..")
@@ -73,4 +94,4 @@ function log(logStatement) {
   }
 }
 
-module.exports = { registerUser, loginUser, log }
+module.exports = { registerUser, loginUser, log, accountInputData }
