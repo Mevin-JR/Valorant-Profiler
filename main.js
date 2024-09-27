@@ -1,11 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 // const { log } = require('./database/db_operations');
 
 let winLogin;
 let winMain;
 
+let folder = path.join(os.homedir(), "Valorant_Profiler")
+let sessionFile = path.join(folder, 'session.json')
 let logFile = path.join(__dirname, 'vpLogs.txt');
 
 function createLoginWindow() {
@@ -15,7 +18,7 @@ function createLoginWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
         },
         frame: false,
         resizable: false,
@@ -24,7 +27,7 @@ function createLoginWindow() {
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
     });
 
-    winLogin.webContents.openDevTools();
+    // winLogin.webContents.openDevTools();
     winLogin.loadFile('./renderer/loginWin/loginWindow.html');
 }
 
@@ -45,14 +48,23 @@ function createMainWindow() {
         icon: path.join(__dirname, 'renderer/logos/logo.ico'),
         show: false
     });
-    // winMain.webContents.openDevTools();
+    winMain.webContents.openDevTools();
     winMain.loadFile('./renderer/mainMenuWin/mainMenuWindow.html');
 }
 
 app.whenReady().then(() => {
-    createLoginWindow();
+    // createLoginWindow();
     createMainWindow();
-    // winMain.maximize();
+    winMain.maximize();
+
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+    }
+
+    if (!fs.existsSync(sessionFile)) {
+        const emptyJSON = {};
+        fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
+    }
 
     fs.access(logFile, fs.constants.F_OK, (err) => {
         if (err) {
@@ -89,14 +101,10 @@ ipcMain.on('goto:register', () => {
 })
 
 ipcMain.on('goto:mainMenu', () => {
-    if (winMain === null) {
-        createMainWindow();
-        winMain.maximize();
-    } else {
-        winMain.show();
-        winMain.maximize();
-    }
+    createMainWindow();
+    winMain.maximize();
     winLogin.close();
+
     // log("Redirecting to main menu")
 })
 
@@ -113,6 +121,9 @@ ipcMain.on('action:close', () => {
     app.quit();
 })
 
+ipcMain.on('userProfile-update', (event, data) => {
+    winMain.webContents.send('userProfile-update-forward', data);
+})
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

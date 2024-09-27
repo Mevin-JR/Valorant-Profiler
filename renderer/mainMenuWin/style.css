@@ -13,6 +13,12 @@
     src: url('../Fonts/Abel.ttf');
 }
 
+/* Toastify style */
+.unknown-error {
+    background: rgba(44, 35, 41, 0.85);
+    border-radius: 25px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -149,7 +155,7 @@ nav {
     .disclaimer {
         position: absolute;
         bottom: 35px;
-        left: 0;
+        left: 45px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -178,8 +184,8 @@ nav {
     .content-container {
         position: relative;
         margin: 40px 0 0 45px;
-        width: 85vw;
-        height: 85vh;
+        width: auto;
+        height: fit-content;
 
         .content-title {
             color: #a0a0a0;
@@ -191,7 +197,7 @@ nav {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-            gap: 25px;
+            gap: 20px;
 
             .account-add-btn {
                 background-color: rgba(0, 0, 0, 0.5);
@@ -216,7 +222,7 @@ nav {
 .account-card {
     position: relative;
     background-color: white;
-    width: 475px;
+    width: 450px;
     height: 200px;
     display: flex;
     flex-direction: row;
@@ -241,7 +247,7 @@ nav {
             }
         }
 
-        .tfa-status {
+        .account-level {
             position: absolute;
             bottom: 10px;
             left: 10px;
@@ -279,20 +285,21 @@ nav {
             bottom: 25px;
             left: 0;
     
-            #account-username {
+            .account-username {
                 font-size: 30px;
                 font-weight: 500;
             }
     
-            #account-tag {
+            .account-tag {
                 font-size: 16px;
                 font-weight: 100;
                 color: #5F5F5F;
             }
     
-            #account-status {
-                color: red;
-                font-weight: 800;
+            .account-rank {
+                width: fit-content;
+                padding: 0 5px;
+                font-weight: 600;
                 font-size: 18px;
                 letter-spacing: 1px;
             }

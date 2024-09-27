@@ -1,10 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const { child, ref , set, get } = require("firebase/database");
+const os = require('os');
+const { child, ref , set, get, onValue, onChildAdded, query, orderByChild, startAt } = require("firebase/database");
 const { auth, db } = require("./firebase");
 const { hashPassword, verifyPassword } = require('./data_operations');
+const { ipcMain, ipcRenderer } = require('electron');
 
-const sessionFile = path.join(__dirname, 'session.json');
+const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
 const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
 
 // Register
@@ -57,6 +59,7 @@ async function loginUser(username, password) {
   }
 }
 
+// Session details
 function saveSession(username, email) {
   const sessionData = {
     username: username,
@@ -64,19 +67,30 @@ function saveSession(username, email) {
     loginTime: new Date().toLocaleString()
   }
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
+
+  // Listening for live db changes
+  // liveChanges()
 }
 
 async function accountInputData(name, tag) {
   try {
-    const response = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
+    const accountResponse = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a'
+          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a' // TODO: Secure this
         }
     });
-    const apidata = await response.json();
+    const accountApiData = await accountResponse.json();
 
-    const dbRef = ref(db, `accountInput/${sessionData.username}`);
+    const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${accountApiData.data.region}/pc/${name}/${tag}`, {
+      method: 'GET',
+      headers: {
+          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a' // TODO: Secure this
+        }
+    });
+    const mmrApiData = await mmrResponse.json();
+    
+    const dbRef = ref(db, `userProfiles/${sessionData.username}`);
     const snapshot = await get(dbRef);
     var numOfAccounts = 0;
     if (snapshot.exists()) {
@@ -84,13 +98,20 @@ async function accountInputData(name, tag) {
       numOfAccounts = Object.keys(snapData).length;
     }
 
-    await set(ref(db, `accountInput/${sessionData.username}/${numOfAccounts + 1}` ), {
+    await set(ref(db, `userProfiles/${sessionData.username}/${numOfAccounts + 1}` ), {
       name: name,
       tag: tag,
-      accLvl: apidata.data.account_level,
-      puuid: apidata.data.puuid,
-      region: apidata.data.region,
-      cardImg: `https://media.valorant-api.com/playercards/${apidata.data.card.id}/largeart.png`,
+
+      accLvl: accountApiData.data.account_level,
+      puuid: accountApiData.data.puuid,
+      region: accountApiData.data.region,
+      cardImg: accountApiData.data.card.large,
+
+      currentRank: mmrApiData.data.current.tier.name,
+      peakRank: mmrApiData.data.peak.tier.name,
+      currentElo: mmrApiData.data.current.elo,
+
+      timestamp: Date.now(),
     });
 
   } catch (err) {
@@ -101,7 +122,7 @@ async function accountInputData(name, tag) {
 async function getUserProfiles() {
   try {
     const userProfiles = [];
-    const dbRef = ref(db, `accountInput/${sessionData.username}` )
+    const dbRef = ref(db, `userProfiles/${sessionData.username}` )
     const snapshot = await get(dbRef)
 
     if (snapshot.exists()) {
@@ -111,16 +132,37 @@ async function getUserProfiles() {
           userProfiles.push({
             name: data[acc].name,
             tag: data[acc].tag,
-            cardImg: data[acc].cardImg
+            accLvl: data[acc].accLvl,
+            cardImg: data[acc].cardImg,
+            rank: data[acc].currentRank
           })
         }
       }
     }
-
     return userProfiles;
   } catch (error) {
     console.error('Error fetching user profiles:', error);
   }
+}
+
+// Realtime changes
+function liveChanges() {
+  const dbRef = ref(db, `userProfiles/${sessionData.username}`);
+  const queryRef = query(dbRef, orderByChild('timestamp'), startAt(Date.now()));
+
+  onChildAdded(queryRef, (snapshot) => {
+    const data = snapshot.val();
+
+    const userProfiles = [];
+    userProfiles.push({
+      name: data.name,
+      tag: data.tag,
+      accLvl: data.accLvl,
+      cardImg: data.cardImg
+    })
+    
+    ipcRenderer.send('userProfile-update', userProfiles);
+  });
 }
 
 // Log
@@ -142,4 +184,4 @@ function log(logStatement) {
   }
 }
 
-module.exports = { registerUser, loginUser, log, accountInputData, getUserProfiles }
+module.exports = { registerUser, loginUser, log, accountInputData, getUserProfiles, liveChanges }
