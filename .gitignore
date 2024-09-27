@@ -1,18 +1,10 @@
 # Modules
 node_modules/
 
-# Config Files
-package.json
-package-lock.json
-forge.config.js
-
 # Output folders
 out/
 dist/
 build/
-
-# Database config
-database/firebase.js
 
 # Log files
 *.txt
@@ -20,3 +12,6 @@ database/firebase.js
 
 # Session files
 session.json
+
+# Sensitive files
+.env

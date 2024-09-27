@@ -1,10 +1,12 @@
+require('dotenv').config();
+
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { child, ref , set, get, onValue, onChildAdded, query, orderByChild, startAt } = require("firebase/database");
-const { auth, db } = require("./firebase");
+const { ref , set, get, onChildAdded, query, orderByChild, startAt } = require("firebase/database");
+const { db } = require("./firebase");
 const { hashPassword, verifyPassword } = require('./data_operations');
-const { ipcMain, ipcRenderer } = require('electron');
+const { ipcRenderer } = require('electron');
 
 const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
 const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
@@ -77,7 +79,7 @@ async function accountInputData(name, tag) {
     const accountResponse = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a' // TODO: Secure this
+          Authorization: process.env.HENRIKDEV_API_KEY
         }
     });
     const accountApiData = await accountResponse.json();
@@ -85,7 +87,7 @@ async function accountInputData(name, tag) {
     const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${accountApiData.data.region}/pc/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: 'HDEV-b123a86d-f239-49c4-93e5-39dc0479c05a' // TODO: Secure this
+          Authorization: process.env.HENRIKDEV_API_KEY
         }
     });
     const mmrApiData = await mmrResponse.json();
