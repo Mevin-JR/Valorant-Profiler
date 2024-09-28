@@ -1,4 +1,4 @@
-require('dotenv').config();
+const { envHenrikDevConfig } = require('../config');
 
 const path = require('path');
 const fs = require('fs');
@@ -79,7 +79,7 @@ async function accountInputData(name, tag) {
     const accountResponse = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: process.env.HENRIKDEV_API_KEY
+          Authorization: envHenrikDevConfig.apiKey
         }
     });
     const accountApiData = await accountResponse.json();
@@ -87,7 +87,7 @@ async function accountInputData(name, tag) {
     const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${accountApiData.data.region}/pc/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: process.env.HENRIKDEV_API_KEY
+          Authorization: envHenrikDevConfig.apiKey
         }
     });
     const mmrApiData = await mmrResponse.json();

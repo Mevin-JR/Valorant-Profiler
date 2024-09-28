@@ -2,42 +2,46 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-// const { log } = require('./database/db_operations');
 
+// Development mode check
+const isDev = true;
+
+// Windows (Login & Main window)
 let winLogin;
 let winMain;
 
-let folder = path.join(os.homedir(), "Valorant_Profiler")
-let sessionFile = path.join(folder, 'session.json')
-let logFile = path.join(__dirname, 'vpLogs.txt');
+// File paths
+let iconFile = path.join(__dirname, 'renderer/logos/logo.ico');
+let preloadFile = path.join(__dirname, 'preload.js');
+let folder = path.join(os.homedir(), "Valorant_Profiler"); // Root folder (C://Users//user1//Valorant_Profiler)
+let sessionFile = path.join(folder, 'session.json'); // Session file (stores user data temporarily)
 
+// Login window
 function createLoginWindow() {
     winLogin = new BrowserWindow({
         width: 700,
         height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js'),
-        },
         frame: false,
         resizable: false,
         maximizable: false,
         center: true,
-        icon: path.join(__dirname, 'renderer/logos/logo.ico'),
-    });
-
-    // winLogin.webContents.openDevTools();
-    winLogin.loadFile('./renderer/loginWin/loginWindow.html');
-}
-
-function createMainWindow() {
-    winMain = new BrowserWindow({
+        icon: iconFile,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
-        },
+            preload: preloadFile,
+        }
+    });
+
+    if (isDev) {
+        winLogin.webContents.openDevTools();
+    }
+    winLogin.loadFile(path.join(__dirname, 'renderer/loginWin/loginWindow.html'));
+}
+
+// Main window
+function createMainWindow() {
+    winMain = new BrowserWindow({
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#000',
@@ -45,38 +49,36 @@ function createMainWindow() {
             height: 30
         },
         maximizable: false,
-        icon: path.join(__dirname, 'renderer/logos/logo.ico'),
-        show: false
+        icon: iconFile,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: preloadFile
+        }
     });
-    winMain.webContents.openDevTools();
-    winMain.loadFile('./renderer/mainMenuWin/mainMenuWindow.html');
+
+    if (isDev) {
+        winLogin.webContents.openDevTools();
+    }
+    winMain.loadFile(path.join(__dirname, 'renderer/mainMenuWin/mainMenuWindow.html'));
 }
 
 app.whenReady().then(() => {
-    // createLoginWindow();
-    createMainWindow();
-    winMain.maximize();
+    createLoginWindow();
+    // createMainWindow();
+    // winMain.maximize();
 
+    // Check for root folder
     if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder);
+        fs.mkdirSync(folder); // Create new if it dosn't exist
     }
 
+    // Check for session file
     if (!fs.existsSync(sessionFile)) {
         const emptyJSON = {};
         fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
     }
-
-    fs.access(logFile, fs.constants.F_OK, (err) => {
-        if (err) {
-            fs.writeFile(logFile, '', (err) => {
-                if (err) {
-                    console.error("Error creating log file:", err)
-                } else {
-                    console.log("Log file created successfully")
-                }
-            });
-        }
-    });
 
     winLogin.on('closed', () => (winLogin = null));
     winMain.on('closed', () => (winMain = null));
@@ -92,20 +94,16 @@ app.whenReady().then(() => {
 // IPC
 ipcMain.on('goto:login', () => {
     winLogin.loadFile('./renderer/loginWin/loginWindow.html');
-    // log("Redirecting to login")
 })
 
 ipcMain.on('goto:register', () => {
     winLogin.loadFile('./renderer/registerWin/registerWindow.html');
-    // log("Redirecting to register")
 })
 
 ipcMain.on('goto:mainMenu', () => {
     createMainWindow();
     winMain.maximize();
     winLogin.close();
-
-    // log("Redirecting to main menu")
 })
 
 ipcMain.on('action:logout', () => {

@@ -4,7 +4,7 @@
   "version": "0.4.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "NODE_ENV=development npx electromon .",
     "dist": "electron-builder"
   },
   "keywords": [],
@@ -20,7 +20,15 @@
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
       "artifactName": "${productName}-${version} setup.${ext}"
-    }
+    },
+    "files": [
+      ".env",
+      "main.js",
+      "preload.js",
+      "config.js",
+      "database/**/*",
+      "renderer/**/*"
+    ]
   },
   "devDependencies": {
     "electron": "^31.3.1",
@@ -29,6 +37,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "electromon": "^1.0.10",
     "firebase": "^10.12.5"
   }
