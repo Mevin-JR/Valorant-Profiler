@@ -28,11 +28,6 @@
       "database/**/*",
       "renderer/**/*"
     ],
-    "publish": [
-      {
-        "provider": "github"
-      }
-    ],
     "publish": "always"
   },
   "devDependencies": {
