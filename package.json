@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "NODE_ENV=development npx electromon .",
-    "dist": "electron-builder"
+    "dist": "electron-builder --publish always"
   },
   "keywords": [],
   "author": "supposedly_sam",
@@ -20,15 +20,19 @@
       "oneClick": false,
       "artifactName": "${productName}-${version} setup.${ext}"
     },
+    "icon": "./renderer/logos/logo.ico",
     "files": [
-      ".env",
       "main.js",
       "preload.js",
       "config.js",
       "database/**/*",
       "renderer/**/*"
     ],
-    "publish": "always"
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ]
   },
   "devDependencies": {
     "electron": "^31.3.1",
