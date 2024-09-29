@@ -32,7 +32,8 @@
       {
         "provider": "github"
       }
-    ]
+    ],
+    "publish": "always"
   },
   "devDependencies": {
     "electron": "^31.3.1",

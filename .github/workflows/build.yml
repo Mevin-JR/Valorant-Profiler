@@ -1,4 +1,4 @@
-name: Valorant Profiler
+name: Build & publish Valorant Profiler
 
 on:
   push:
