@@ -14,7 +14,6 @@
   "build": {
     "appId": "com.supposedly_sam.vp",
     "productName": "Valorant Profiler",
-    "icon": "./renderer/logos/logo.ico",
     "target": "NSIS",
     "nsis": {
       "allowToChangeInstallationDirectory": true,
