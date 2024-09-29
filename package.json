@@ -20,7 +20,6 @@
       "oneClick": false,
       "artifactName": "${productName}-${version} setup.${ext}"
     },
-    "icon": "./renderer/logos/logo.ico",
     "files": [
       "main.js",
       "preload.js",
