@@ -4,7 +4,7 @@ const path = require('path');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-console.log(process.env)
+console.log(process.env.FIREBASE_API_KEY)
 
 const firebaseConfig = {
     apiKey: `${process.env.FIREBASE_API_KEY}`,
