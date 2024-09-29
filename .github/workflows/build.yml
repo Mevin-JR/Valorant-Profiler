@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic
+
       - name: Install dependencies
         run: npm install
 
