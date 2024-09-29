@@ -27,6 +27,11 @@
       "config.js",
       "database/**/*",
       "renderer/**/*"
+    ],
+    "publish": [
+      {
+        "provider": "github"
+      }
     ]
   },
   "devDependencies": {
