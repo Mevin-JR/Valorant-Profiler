@@ -21,10 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Electron app
+      - name: Build & Package Electron app
         run: npm run dist
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-
-      - name: Package Electron App
-        run: npm run dist
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
