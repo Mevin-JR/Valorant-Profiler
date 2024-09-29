@@ -2,7 +2,7 @@ const { initializeApp } = require("firebase/app");
 const { getDatabase } = require("firebase/database");
 const path = require('path');
 
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config();
 
 console.log(process.env.FIREBASE_API_KEY)
 

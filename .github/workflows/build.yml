@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Enviornmental variables
+        run: |
+          echo FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} > .env
+
       - name: Build & Package app
         run: npm run dist-publish
         env:
