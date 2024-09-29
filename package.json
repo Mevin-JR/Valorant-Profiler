@@ -4,8 +4,9 @@
   "version": "0.4.0",
   "main": "main.js",
   "scripts": {
-    "start": "NODE_ENV=development npx electromon .",
-    "dist": "electron-builder --publish always"
+    "start": "npx electromon .",
+    "dist": "electron-builder",
+    "dist-publish": "electron-builder --win --publish always"
   },
   "keywords": [],
   "author": "supposedly_sam",

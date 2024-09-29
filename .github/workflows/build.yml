@@ -18,14 +18,11 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install Snapcraft
-        run: sudo snap install snapcraft --classic
-
       - name: Install dependencies
         run: npm install
 
-      - name: Build & Package Electron app
-        run: npm run dist
+      - name: Build & Package app
+        run: npm run dist-publish
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
