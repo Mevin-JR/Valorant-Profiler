@@ -1,7 +1,7 @@
 // Module imports (used in render files)
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, log, accountInputData, getUserProfiles, liveChanges } = require('./database/db_operations');
+const  { registerUser, loginUser, log, accountInputData, getUserProfiles, liveChanges } = require('./backend/db_operations');
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld('ipcRenderer', {

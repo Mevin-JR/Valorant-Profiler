@@ -9,10 +9,10 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/data', (req, res) => {
-    const data = req.body;
+    const data = process.env.FIREBASE_API_KEY;
     res.json({ message: 'Data received', data });
 });
 
 app.listen(port, () => {
-console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });

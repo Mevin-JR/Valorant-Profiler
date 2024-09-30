@@ -4,7 +4,21 @@ const path = require('path');
 
 require('dotenv').config();
 
-console.log(process.env.FIREBASE_API_KEY)
+async function sendDataToBackend(data) {
+    const response = await fetch('https://valorant-profiler.onrender.com/api/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    const result = await response.json();
+    console.log(result);
+  }
+  
+  const sampleData = { key: 'value' };
+  sendDataToBackend(sampleData);
 
 const firebaseConfig = {
     apiKey: `${process.env.FIREBASE_API_KEY}`,
