@@ -4,7 +4,8 @@
   "version": "0.4.0",
   "main": "main.js",
   "scripts": {
-    "start": "npx electromon .",
+    "start": "electron .",
+    "start-server": "node backend/server.js",
     "dist": "electron-builder",
     "dist-publish": "electron-builder --win --publish always"
   },
@@ -37,9 +38,12 @@
   "devDependencies": {
     "app-builder-bin": "^4.2.0",
     "electron": "^31.3.1",
-    "electron-builder": "^25.0.5"
+    "electron-builder": "^25.0.5",
+    "express": "^4.21.0"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.658.1",
+    "@aws-sdk/client-secrets-manager": "^3.658.1",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
