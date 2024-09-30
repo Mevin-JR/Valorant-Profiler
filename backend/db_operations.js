@@ -1,12 +1,15 @@
-const { envHenrikDevConfig } = require('../config');
-
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { ref , set, get, onChildAdded, query, orderByChild, startAt } = require("firebase/database");
-const { db } = require("./firebase");
 const { hashPassword, verifyPassword } = require('./data_operations');
 const { ipcRenderer } = require('electron');
+
+const { initializeFirebase } = require("./firebase");
+let db = null;
+(async () => {
+  db = await initializeFirebase();
+})();
 
 const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
 const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
@@ -69,17 +72,28 @@ function saveSession(username, email) {
     loginTime: new Date().toLocaleString()
   }
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
+}
 
-  // Listening for live db changes
-  // liveChanges()
+async function fetchHenrikDevConfig() {
+  const response = await fetch('https://valorant-profiler.onrender.com/henrikDevConfig', {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+  });
+
+  const result = await response.json();
+  console.log(result); // TODO: Remove this after testing
+  return result;
 }
 
 async function accountInputData(name, tag) {
   try {
+    const henrikDevConfig = await fetchHenrikDevConfig();
     const accountResponse = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: envHenrikDevConfig.apiKey
+          Authorization: henrikDevConfig.apiKey // FIXME: Pull from backend server
         }
     });
     const accountApiData = await accountResponse.json();
@@ -87,7 +101,7 @@ async function accountInputData(name, tag) {
     const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${accountApiData.data.region}/pc/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: envHenrikDevConfig.apiKey
+          Authorization: henrikDevConfig.apiKey // FIXME: Pull from backend server
         }
     });
     const mmrApiData = await mmrResponse.json();
@@ -160,7 +174,8 @@ function liveChanges() {
       name: data.name,
       tag: data.tag,
       accLvl: data.accLvl,
-      cardImg: data.cardImg
+      cardImg: data.cardImg,
+      rank: data.currentRank
     })
     
     ipcRenderer.send('userProfile-update', userProfiles);

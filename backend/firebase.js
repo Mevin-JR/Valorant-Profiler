@@ -1,6 +1,8 @@
 const { initializeApp } = require("firebase/app");
 const { getDatabase } = require("firebase/database");
 
+let db = null;
+
 async function fetchFirebaseConfigData() {
     const response = await fetch('https://valorant-profiler.onrender.com/firebaseConfig', {
         method: 'GET',
@@ -14,9 +16,14 @@ async function fetchFirebaseConfigData() {
     return result;
 }
 
-const firebaseConfig = await fetchFirebaseConfigData();
+async function initializeFirebase() {
+    if (!db) {
+        const firebaseConfig = await fetchFirebaseConfigData();
+        const app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+    }
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+    return db;
+}
 
-module.exports = { db };
+module.exports = { initializeFirebase };
