@@ -69,6 +69,36 @@
         </div>
     </nav>
     <div class="bg-blur"></div>
+    <div class="add-popup-container">
+        <div class="account-add-popup">
+            <div class="popup-input-container">
+                <h2>Account Details</h2>
+                <span>Enter your Valorant account credentials</span>
+                <div class="popup-interaction-fields">
+                    <div class="name-input">
+                        <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                                                   
+                        <input id="name" type="text" placeholder="Valorant Username" spellcheck="false" maxlength="28">                  
+                    </div>
+                    <div class="tag-input">
+                        <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 14H34M2 26H34M14 2L10 38M26 2L22 38" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                                    
+                        <input id="tag" type="text" placeholder="Tagline" maxlength="5">
+                    </div>
+                </div>
+                <div class="account-add-btn-popup" id="add-account">
+                    <span>Add Account</span>
+                </div>
+            </div>
+            <div class="popup-close-btn" id="popup-close-btn">
+                <svg width="18" height="18" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.61628 6.50015L12.6038 1.52056C12.7529 1.37149 12.8366 1.1693 12.8366 0.95848C12.8366 0.747658 12.7529 0.545471 12.6038 0.396397C12.4547 0.247323 12.2525 0.163574 12.0417 0.163574C11.8309 0.163574 11.6287 0.247323 11.4796 0.396397L6.50003 5.3839L1.52045 0.396397C1.37138 0.247323 1.16919 0.163574 0.958366 0.163574C0.747544 0.163574 0.545357 0.247323 0.396283 0.396397C0.247209 0.545471 0.163461 0.747658 0.163461 0.95848C0.163461 1.1693 0.247209 1.37149 0.396283 1.52056L5.38378 6.50015L0.396283 11.4797C0.322081 11.5533 0.263186 11.6409 0.222994 11.7374C0.182802 11.8338 0.162109 11.9373 0.162109 12.0418C0.162109 12.1463 0.182802 12.2498 0.222994 12.3463C0.263186 12.4427 0.322081 12.5303 0.396283 12.6039C0.469879 12.6781 0.557438 12.737 0.65391 12.7772C0.750382 12.8174 0.853857 12.8381 0.958366 12.8381C1.06288 12.8381 1.16635 12.8174 1.26282 12.7772C1.35929 12.737 1.44685 12.6781 1.52045 12.6039L6.50003 7.6164L11.4796 12.6039C11.5532 12.6781 11.6408 12.737 11.7372 12.7772C11.8337 12.8174 11.9372 12.8381 12.0417 12.8381C12.1462 12.8381 12.2497 12.8174 12.3462 12.7772C12.4426 12.737 12.5302 12.6781 12.6038 12.6039C12.678 12.5303 12.7369 12.4427 12.7771 12.3463C12.8173 12.2498 12.838 12.1463 12.838 12.0418C12.838 11.9373 12.8173 11.8338 12.7771 11.7374C12.7369 11.6409 12.678 11.5533 12.6038 11.4797L7.61628 6.50015Z" fill="white" fill-opacity="0.55"/>
+                </svg>
+            </div>
+        </div>
+    </div>
     <section class="content-section">
         <div class="header-container"></div>
         <div class="content-container">
@@ -81,36 +111,6 @@
                     <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M26.5248 12.0473H17.2867V2.475C17.2867 1.1043 16.1766 -0.00585938 14.8059 -0.00585938C13.4352 -0.00585938 12.325 1.1043 12.325 2.475V12.0473H2.46953C1.11016 12.0473 0 13.1574 0 14.5281C0 15.8988 1.11016 17.009 2.48086 17.009H12.3363V26.5246C12.3363 27.8953 13.4465 29.0055 14.8172 29.0055C16.1879 29.0055 17.298 27.8953 17.298 26.5246V17.009H26.5361C27.9068 17.009 29.017 15.8988 29.017 14.5281C29 13.1574 27.8955 12.0473 26.5248 12.0473Z" fill="white"/>
                     </svg>
-                </div>
-            </div>
-            <div class="add-popup-container">
-                <div class="account-add-popup">
-                    <div class="popup-input-container">
-                        <h2>Account Details</h2>
-                        <span>Enter your Valorant account credentials</span>
-                        <div class="popup-interaction-fields">
-                            <div class="name-input">
-                                <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>                                                   
-                                <input id="name" type="text" placeholder="Valorant Username" spellcheck="false" maxlength="28">                  
-                            </div>
-                            <div class="tag-input">
-                                <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 14H34M2 26H34M14 2L10 38M26 2L22 38" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>                                    
-                                <input id="tag" type="text" placeholder="Tagline" maxlength="5">
-                            </div>
-                        </div>
-                        <div class="account-add-btn-popup" id="add-account">
-                            <span>Add Account</span>
-                        </div>
-                    </div>
-                    <div class="popup-close-btn" id="popup-close-btn">
-                        <svg width="18" height="18" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.61628 6.50015L12.6038 1.52056C12.7529 1.37149 12.8366 1.1693 12.8366 0.95848C12.8366 0.747658 12.7529 0.545471 12.6038 0.396397C12.4547 0.247323 12.2525 0.163574 12.0417 0.163574C11.8309 0.163574 11.6287 0.247323 11.4796 0.396397L6.50003 5.3839L1.52045 0.396397C1.37138 0.247323 1.16919 0.163574 0.958366 0.163574C0.747544 0.163574 0.545357 0.247323 0.396283 0.396397C0.247209 0.545471 0.163461 0.747658 0.163461 0.95848C0.163461 1.1693 0.247209 1.37149 0.396283 1.52056L5.38378 6.50015L0.396283 11.4797C0.322081 11.5533 0.263186 11.6409 0.222994 11.7374C0.182802 11.8338 0.162109 11.9373 0.162109 12.0418C0.162109 12.1463 0.182802 12.2498 0.222994 12.3463C0.263186 12.4427 0.322081 12.5303 0.396283 12.6039C0.469879 12.6781 0.557438 12.737 0.65391 12.7772C0.750382 12.8174 0.853857 12.8381 0.958366 12.8381C1.06288 12.8381 1.16635 12.8174 1.26282 12.7772C1.35929 12.737 1.44685 12.6781 1.52045 12.6039L6.50003 7.6164L11.4796 12.6039C11.5532 12.6781 11.6408 12.737 11.7372 12.7772C11.8337 12.8174 11.9372 12.8381 12.0417 12.8381C12.1462 12.8381 12.2497 12.8174 12.3462 12.7772C12.4426 12.737 12.5302 12.6781 12.6038 12.6039C12.678 12.5303 12.7369 12.4427 12.7771 12.3463C12.8173 12.2498 12.838 12.1463 12.838 12.0418C12.838 11.9373 12.8173 11.8338 12.7771 11.7374C12.7369 11.6409 12.678 11.5533 12.6038 11.4797L7.61628 6.50015Z" fill="white" fill-opacity="0.55"/>
-                        </svg>
-                    </div>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 
 // Development mode check
-const isDev = true;
+const isDev = false;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -59,7 +59,7 @@ function createMainWindow() {
     });
 
     if (isDev) {
-        winLogin.webContents.openDevTools();
+        winMain.webContents.openDevTools();
     }
     winMain.loadFile(path.join(__dirname, 'renderer/mainMenuWin/mainMenuWindow.html'));
 }

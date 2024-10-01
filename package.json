@@ -16,6 +16,7 @@
   "build": {
     "appId": "com.supposedly_sam.vp",
     "productName": "Valorant Profiler",
+    "icon": "./renderer/logos/logo.ico",
     "target": "NSIS",
     "nsis": {
       "allowToChangeInstallationDirectory": true,
@@ -25,7 +26,6 @@
     "files": [
       "main.js",
       "preload.js",
-      "config.js",
       "backend/**/*",
       "renderer/**/*"
     ],
@@ -42,11 +42,7 @@
     "express": "^4.21.0"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.658.1",
-    "@aws-sdk/client-secrets-manager": "^3.658.1",
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5",
-    "dotenv-expand": "^11.0.6",
     "electromon": "^1.0.10",
     "firebase": "^10.12.5"
   }

@@ -35,5 +35,5 @@ contextBridge.exposeInMainWorld('account', {
 
 // Database functions
 contextBridge.exposeInMainWorld('db', {
-    liveChanges: () => liveChanges()
+    liveChanges: async () => await liveChanges()
 })

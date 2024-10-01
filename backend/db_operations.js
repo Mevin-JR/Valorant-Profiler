@@ -1,15 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { ref , set, get, onChildAdded, query, orderByChild, startAt } = require("firebase/database");
-const { hashPassword, verifyPassword } = require('./data_operations');
 const { ipcRenderer } = require('electron');
 
+const { ref , set, get, onChildAdded, query, orderByChild, startAt, update } = require("firebase/database");
+const { hashPassword, verifyPassword } = require('./data_operations');
 const { initializeFirebase } = require("./firebase");
-let db = null;
-(async () => {
-  db = await initializeFirebase();
-})();
 
 const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
 const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
@@ -17,6 +13,7 @@ const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
 // Register
 async function registerUser(username, email, password) {
     try {
+      const db = await initializeFirebase();
       const userRef = ref(db, 'users/' + username);
       const snapshot = await get(userRef);
 
@@ -42,6 +39,7 @@ async function registerUser(username, email, password) {
 // Login
 async function loginUser(username, password) {
   try {
+    const db = await initializeFirebase();
     const dbData = ref(db, 'users/' + username);
     const snapshot = await get(dbData);
     if (!snapshot.exists()) {
@@ -83,50 +81,69 @@ async function fetchHenrikDevConfig() {
   });
 
   const result = await response.json();
-  console.log(result); // TODO: Remove this after testing
   return result;
 }
 
-async function accountInputData(name, tag) {
+async function accountApiRequest(name, tag) {
   try {
     const henrikDevConfig = await fetchHenrikDevConfig();
     const accountResponse = await fetch(`https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: henrikDevConfig.apiKey // FIXME: Pull from backend server
+          Authorization: henrikDevConfig.apiKey
         }
     });
     const accountApiData = await accountResponse.json();
+    return accountApiData;
+  } catch (error) {
+    console.error('Error fetching account data from API:', error);
+  }
+}
 
-    const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${accountApiData.data.region}/pc/${name}/${tag}`, {
+async function mmrApiRequest(name, tag, region) {
+  try {
+    const henrikDevConfig = await fetchHenrikDevConfig();
+    const mmrResponse = await fetch(`https://api.henrikdev.xyz/valorant/v3/mmr/${region}/pc/${name}/${tag}`, {
       method: 'GET',
       headers: {
-          Authorization: henrikDevConfig.apiKey // FIXME: Pull from backend server
+          Authorization: henrikDevConfig.apiKey
         }
     });
     const mmrApiData = await mmrResponse.json();
-    
-    const dbRef = ref(db, `userProfiles/${sessionData.username}`);
-    const snapshot = await get(dbRef);
-    var numOfAccounts = 0;
-    if (snapshot.exists()) {
-      const snapData = snapshot.val();
-      numOfAccounts = Object.keys(snapData).length;
-    }
+    return mmrApiData;
+  } catch (error) {
+    console.error('Error fetching account data from API:', error);
+  }
+}
 
-    await set(ref(db, `userProfiles/${sessionData.username}/${numOfAccounts + 1}` ), {
+async function valApiData(name, tag) {
+  try {
+    // TODO: Optimize api requests
+    // Current rate limit 30req/min
+    const accountApiData = await accountApiRequest(name, tag); 
+    const mmrApiData = await mmrApiRequest(name, tag, accountApiData.data.region);
+    const mergedApiData = { accountApiData, mmrApiData };
+    return mergedApiData;
+  } catch (error) {
+    console.error('Error accessing henrikedev api:', error);
+  }
+}
+
+async function accountInputData(name, tag) {
+  try {
+    const db = await initializeFirebase();
+    const mergedApiData = await valApiData(name, tag);
+    console.log(mergedApiData);
+    await set(ref(db, `userProfiles/${sessionData.username}/${name}` ), {
       name: name,
       tag: tag,
-
-      accLvl: accountApiData.data.account_level,
-      puuid: accountApiData.data.puuid,
-      region: accountApiData.data.region,
-      cardImg: accountApiData.data.card.large,
-
-      currentRank: mmrApiData.data.current.tier.name,
-      peakRank: mmrApiData.data.peak.tier.name,
-      currentElo: mmrApiData.data.current.elo,
-
+      accLvl: mergedApiData.accountApiData.data.account_level,
+      puuid: mergedApiData.accountApiData.data.puuid,
+      region: mergedApiData.accountApiData.data.region,
+      cardImg: mergedApiData.accountApiData.data.card.large,
+      currentRank: mergedApiData.mmrApiData.data.current.tier.name,
+      peakRank: mergedApiData.mmrApiData.data.peak.tier.name,
+      currentElo: mergedApiData.mmrApiData.data.current.elo,
       timestamp: Date.now(),
     });
 
@@ -137,9 +154,11 @@ async function accountInputData(name, tag) {
 
 async function getUserProfiles() {
   try {
-    const userProfiles = [];
+    const db = await initializeFirebase();
     const dbRef = ref(db, `userProfiles/${sessionData.username}` )
     const snapshot = await get(dbRef)
+
+    const userProfiles = [];
 
     if (snapshot.exists()) {
       const data = snapshot.val();
@@ -155,6 +174,7 @@ async function getUserProfiles() {
         }
       }
     }
+
     return userProfiles;
   } catch (error) {
     console.error('Error fetching user profiles:', error);
@@ -162,9 +182,10 @@ async function getUserProfiles() {
 }
 
 // Realtime changes
-function liveChanges() {
+async function liveChanges() {
+  const db = await initializeFirebase();
   const dbRef = ref(db, `userProfiles/${sessionData.username}`);
-  const queryRef = query(dbRef, orderByChild('timestamp'), startAt(Date.now()));
+  const queryRef = query(dbRef, orderByChild('timestamp'));
 
   onChildAdded(queryRef, (snapshot) => {
     const data = snapshot.val();
@@ -181,6 +202,69 @@ function liveChanges() {
     ipcRenderer.send('userProfile-update', userProfiles);
   });
 }
+
+async function accountApiUpdate() { // TODO: Display update time of profile data
+  try {
+    const userProfiles = await getUserProfiles();
+    const db = await initializeFirebase();
+
+    for (const profile of userProfiles) {
+      const { name, tag } = profile;
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
+      const snapshot = await get(userProfileRef);
+
+      if (snapshot.exists()) {
+        const accountApiData = await accountApiRequest(name, tag);
+        const updatedProfile = {
+          accLvl: accountApiData.data.account_level,
+          puuid: accountApiData.data.puuid,
+          region: accountApiData.data.region,
+          cardImg: accountApiData.data.card.large,
+          timestamp: Date.now(),
+        };
+
+        await update(userProfileRef, updatedProfile);
+        console.log('Account data refreshed...')
+      }
+    }
+  } catch (error) {
+    console.error('Error during API update:', error);
+  }
+}
+
+async function mmrApiUpdate() {
+  try {
+    const userProfiles = await getUserProfiles();
+    const db = await initializeFirebase();
+
+    for (const profile of userProfiles) {
+      const { name, tag } = profile;
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
+      const snapshot = await get(userProfileRef);
+      const data = snapshot.val();
+
+      if (snapshot.exists()) {
+        const mmrApiData = await mmrApiRequest(name, tag, data.region);
+        const updatedProfile = {
+          name: name,
+          tag: tag,
+          currentRank: mmrApiData.data.current.tier.name,
+          peakRank: mmrApiData.data.peak.tier.name,
+          currentElo: mmrApiData.data.current.elo,
+          timestamp: Date.now(),
+        };
+
+        await update(userProfileRef, updatedProfile);
+        console.log('Rank & MMR data refreshed...')
+      }
+    }
+  } catch (error) {
+    console.error('Error during API update:', error);
+  }
+}
+
+setInterval(accountApiUpdate, 20 * 60 * 1000); // 20 min
+setInterval(mmrApiUpdate, 30 * 60 * 1000); // 30 min
 
 // Log
 let parentDir  = path.join(__dirname, "..")
