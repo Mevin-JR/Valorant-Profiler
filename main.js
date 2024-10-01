@@ -66,7 +66,7 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
     createLoginWindow();
-    // createMainWindow();
+    createMainWindow();
     // winMain.maximize();
 
     // Check for root folder
@@ -101,9 +101,11 @@ ipcMain.on('goto:register', () => {
 })
 
 ipcMain.on('goto:mainMenu', () => {
-    createMainWindow();
-    winMain.maximize();
     winLogin.close();
+    if (winMain === null) {
+        createMainWindow();
+    }
+    winMain.maximize();
 })
 
 ipcMain.on('action:logout', () => {

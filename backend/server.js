@@ -4,10 +4,6 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Backend test')
-});
-
 app.get('/firebaseConfig', (req, res) => {
     const data = {
         apiKey: process.env.FIREBASE_API_KEY,
