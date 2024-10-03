@@ -159,7 +159,6 @@ addAccount.addEventListener('click', () => {
     closepopup();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+ipcRenderer.on('load-home', () => {
     loadHome();
-    
 });

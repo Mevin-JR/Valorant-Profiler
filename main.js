@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 
 // Development mode check
-const isDev = false;
+const isDev = true;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -101,32 +101,44 @@ ipcMain.on('goto:register', () => {
 })
 
 ipcMain.on('goto:mainMenu', () => {
-    winLogin.close();
-    if (winMain === null) {
-        createMainWindow();
+    if (winLogin && !winLogin.isDestroyed()) {
+        winLogin.close();
+        winLogin = null;
     }
+
+    if (!winMain) {
+        createMainWindow();
+        winMain.webContents.once('did-finish-load', () => {
+            winMain.webContents.send('load-home');
+        });
+    } else {
+        winMain.webContents.send('load-home');
+    }
+
     winMain.maximize();
 })
 
 ipcMain.on('action:logout', () => {
-    winMain.close();
-    if (winLogin === null) {
-        createLoginWindow();
-    } else {
-        winLogin.show();
+    if (winMain && !winMain.isDestroyed()) {
+        winMain.close();
+        winMain = null;
+    }
+
+    if (!winLogin) {
+        createLoginWindow()
     }
 })
 
 ipcMain.on('action:close', () => {
     app.quit();
-})
+});
 
 ipcMain.on('userProfile-update', (event, data) => {
     winMain.webContents.send('userProfile-update-forward', data);
-})
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
-})
+});

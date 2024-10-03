@@ -183,6 +183,10 @@ async function getUserProfiles() {
 
 // Realtime changes
 async function liveChanges() {
+  // API refresh
+  accountApiUpdate();
+  mmrApiRequest();
+
   const db = await initializeFirebase();
   const dbRef = ref(db, `userProfiles/${sessionData.username}`);
   const queryRef = query(dbRef, orderByChild('timestamp'));
