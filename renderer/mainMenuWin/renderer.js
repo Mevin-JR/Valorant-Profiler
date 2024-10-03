@@ -71,7 +71,7 @@ function setCards(userProfiles) {
     cardContainer.appendChild(accounAddBtnContainer);
 }
 
-function loadHome() {
+async function loadHome() {
     header = '<h1>Valorant Profiler</h1>';
     headerContainer.innerHTML = header;
 
@@ -86,7 +86,6 @@ function loadHome() {
     //     },
     //     className: "unknown-error"
     // }).showToast();
-    return;
 }
 
 ipcRenderer.on('userProfile-update-forward', (userProfiles) => {

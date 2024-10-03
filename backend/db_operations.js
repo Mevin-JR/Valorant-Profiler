@@ -8,7 +8,18 @@ const { hashPassword, verifyPassword } = require('./data_operations');
 const { initializeFirebase } = require("./firebase");
 
 const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
-const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
+
+// Session file operations
+function getSessionData() {
+  try {
+    const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
+    return sessionData;
+  } catch (error) {
+    console.error('Error reading session file:', error);
+  }
+}
+
+let sessionData = getSessionData();
 
 // Register
 async function registerUser(username, email, password) {
@@ -28,7 +39,7 @@ async function registerUser(username, email, password) {
         password: hashedPassword
       });
 
-      saveSession(username, email);
+      await saveSession(username, email);
 
       return 200;
     } catch (err) {
@@ -53,7 +64,7 @@ async function loginUser(username, password) {
     }
 
     // Saving Session data
-    saveSession(username, data.email);
+    await saveSession(username, data.email);
 
     return 200;
 
@@ -63,8 +74,8 @@ async function loginUser(username, password) {
 }
 
 // Session details
-function saveSession(username, email) {
-  const sessionData = {
+async function saveSession(username, email) {
+  sessionData = {
     username: username,
     email: email,
     loginTime: new Date().toLocaleString()
@@ -133,7 +144,7 @@ async function accountInputData(name, tag) {
   try {
     const db = await initializeFirebase();
     const mergedApiData = await valApiData(name, tag);
-    console.log(mergedApiData);
+    sessionData = getSessionData();
     await set(ref(db, `userProfiles/${sessionData.username}/${name}` ), {
       name: name,
       tag: tag,
@@ -155,6 +166,7 @@ async function accountInputData(name, tag) {
 async function getUserProfiles() {
   try {
     const db = await initializeFirebase();
+    sessionData = getSessionData();
     const dbRef = ref(db, `userProfiles/${sessionData.username}` )
     const snapshot = await get(dbRef)
 
@@ -188,6 +200,7 @@ async function liveChanges() {
   mmrApiRequest();
 
   const db = await initializeFirebase();
+  sessionData = getSessionData();
   const dbRef = ref(db, `userProfiles/${sessionData.username}`);
   const queryRef = query(dbRef, orderByChild('timestamp'));
 
@@ -214,6 +227,7 @@ async function accountApiUpdate() { // TODO: Display update time of profile data
 
     for (const profile of userProfiles) {
       const { name, tag } = profile;
+      sessionData = getSessionData();
       const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
       const snapshot = await get(userProfileRef);
 
@@ -243,6 +257,7 @@ async function mmrApiUpdate() {
 
     for (const profile of userProfiles) {
       const { name, tag } = profile;
+      sessionData = getSessionData();
       const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
       const snapshot = await get(userProfileRef);
       const data = snapshot.val();
