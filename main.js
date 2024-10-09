@@ -11,7 +11,7 @@ let winLogin;
 let winMain;
 
 // File paths
-let iconFile = path.join(__dirname, 'renderer/logos/logo.ico');
+let iconFile = path.join(__dirname, 'renderer/logo/logo.ico');
 let preloadFile = path.join(__dirname, 'preload.js');
 let folder = path.join(os.homedir(), "Valorant_Profiler"); // Root folder (C://Users//user1//Valorant_Profiler)
 let sessionFile = path.join(folder, 'session.json'); // Session file (stores user data temporarily)
