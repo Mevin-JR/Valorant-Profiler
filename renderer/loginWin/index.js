@@ -15,6 +15,9 @@ function hideLoading() {
 }
 
 // Switching between login/register
+const logoOrange = document.querySelector('.logo-orange');
+const logoBlue = document.querySelector('.logo-blue');
+const modeContainer = document.querySelector('.mode-container')
 const backgroundSlider = document.querySelector('.background-slider');
 const loginContainer = document.querySelector('.login-container');
 const registerContainer = document.querySelector('.register-container');
@@ -24,9 +27,12 @@ const omenImg = document.querySelector('.omen-img');
 const razeImg = document.querySelector('.raze-img');
 
 function switchToLogin() {
+    modeContainer.style.border = '1px solid #F4552B';
     backgroundSlider.style.transform = 'translateX(0)';
     backgroundSlider.style.backgroundColor = '#F4552B'
+    backgroundSlider.style.borderRadius = '10px 0 0 10px'
 
+    logoBlue.style.display = 'none';
     blueGradient.style.display = 'none';
     registerContainer.style.display = 'none';
     omenImg.style.display = 'none';
@@ -35,15 +41,19 @@ function switchToLogin() {
         inputField.value = '';
     });
 
+    logoOrange.style.display = 'block';
     orangeGradient.style.display = 'block'
     loginContainer.style.display = 'block';
     razeImg.style.display = 'block';
 }
 
 function switchToRegister() {
+    modeContainer.style.border = '1px solid #452FD2';
     backgroundSlider.style.transform = 'translateX(100%)';
     backgroundSlider.style.backgroundColor = '#4232B6'
+    backgroundSlider.style.borderRadius = '0 10px 10px 0'
 
+    logoOrange.style.display = 'none';
     orangeGradient.style.display = 'none'
     loginContainer.style.display = 'none';
     razeImg.style.display = 'none';
@@ -52,6 +62,7 @@ function switchToRegister() {
         inputField.value = '';
     });
 
+    logoBlue.style.display = 'block';
     blueGradient.style.display = 'block';
     registerContainer.style.display = 'block';
     omenImg.style.display = 'block';
