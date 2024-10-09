@@ -39,7 +39,7 @@ async function registerUser(username, email, password) {
         password: hashedPassword
       });
 
-      await saveSession(username, email);
+      saveSession(username, email);
 
       return 200;
     } catch (err) {
@@ -64,7 +64,7 @@ async function loginUser(username, password) {
     }
 
     // Saving Session data
-    await saveSession(username, data.email);
+    saveSession(username, data.email);
 
     return 200;
 

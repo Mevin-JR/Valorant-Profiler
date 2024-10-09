@@ -3,64 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" 
+    content="
+        default-src 'self'; 
+        script-src 'self' https://cdn.jsdelivr.net; 
+        object-src 'none'; 
+        style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; 
+        connect-src 'self' https://valorant-profiler.onrender.com; 
+        font-src https://fonts.gstatic.com; 
+    ">
     <title>Valorant Profiler</title>
 
-    <link rel="stylesheet" href="./style.css">
+    <link href="./style.css" rel="stylesheet">
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- K2D font -->
+    <link href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
-    <script src="./renderer.js" defer></script>
+    <!-- Toastify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
-    <!-- Preloader -->
-    <div class="preloader-wrapper">
-        <img src="./imgs/preloader.gif">
-     </div>
-
-    <div id="drag-area"></div>
-    <div class="bg-container">
-        <img class="bg-image" src="./imgs/bg_login.png" alt="">
-    </div>
-
-    <div class="top-bar">
-        <img src="../logos/logo_64x64.png" alt="logo">
-        <div class="title-container">
-            <h1>LOGIN</h1>
-        </div>
-        <svg id="close-btn" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M17.2357 0.87207L20.1284 3.76478L13.393 10.5002L20.1284 17.2357L17.2357 20.1284L10.5002 13.393L3.76478 20.1284L0.872072 17.2357L7.60753 10.5002L0.87207 3.76478L3.76478 0.87207L10.5002 7.60729L17.2357 0.87207ZM10.5002 7.60729L3.76478 0.87207L0.87207 3.76478L7.60753 10.5002L0.872072 17.2357L3.76478 20.1284L10.5002 13.393L17.2357 20.1284L20.1284 17.2357L13.393 10.5002L20.1284 3.76478L17.2357 0.87207L10.5002 7.60729ZM10.5002 13.393L3.76478 20.1284L0.872072 17.2357L7.60753 10.5002L0.87207 3.76478L3.76478 0.87207L10.5002 7.60729L17.2357 0.87207L20.1284 3.76478L13.393 10.5002L20.1284 17.2357L17.2357 20.1284L10.5002 13.393Z" fill="#FF4654"/>
+    <div class="drag-region"></div>
+    <div class="close-container">
+        <svg id="close-btn" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.7612 9.99893L19.6305 2.14129C19.8657 1.90606 19.9979 1.58701 19.9979 1.25434C19.9979 0.921668 19.8657 0.602622 19.6305 0.367388C19.3953 0.132153 19.0763 0 18.7437 0C18.411 0 18.092 0.132153 17.8568 0.367388L10 8.23752L2.14319 0.367388C1.90799 0.132153 1.58897 2.95361e-07 1.25634 2.97839e-07C0.923701 3.00318e-07 0.604689 0.132153 0.36948 0.367388C0.134271 0.602622 0.00213201 0.921668 0.002132 1.25434C0.002132 1.58701 0.134271 1.90606 0.36948 2.14129L8.23878 9.99893L0.36948 17.8566C0.252404 17.9727 0.159479 18.1109 0.0960643 18.2631C0.0326494 18.4153 0 18.5786 0 18.7435C0 18.9084 0.0326494 19.0717 0.0960643 19.224C0.159479 19.3762 0.252404 19.5143 0.36948 19.6305C0.4856 19.7476 0.623751 19.8405 0.775965 19.9039C0.928178 19.9673 1.09144 20 1.25634 20C1.42123 20 1.5845 19.9673 1.73671 19.9039C1.88892 19.8405 2.02708 19.7476 2.14319 19.6305L10 11.7603L17.8568 19.6305C17.9729 19.7476 18.1111 19.8405 18.2633 19.9039C18.4155 19.9673 18.5788 20 18.7437 20C18.9086 20 19.0718 19.9673 19.224 19.9039C19.3763 19.8405 19.5144 19.7476 19.6305 19.6305C19.7476 19.5143 19.8405 19.3762 19.9039 19.224C19.9674 19.0717 20 18.9084 20 18.7435C20 18.5786 19.9674 18.4153 19.9039 18.2631C19.8405 18.1109 19.7476 17.9727 19.6305 17.8566L11.7612 9.99893Z" fill="white"/>
         </svg>
     </div>
-
-    <div class="login-section">
-        <div class="username-field">
-            <svg width="18" height="20" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_418_484)">
-                <path d="M19.8519 19.6721C19.8519 20.7534 19.5419 21.6809 18.9219 22.4547C18.302 23.2284 17.5555 23.6153 16.6825 23.6153H3.97508C3.10213 23.6153 2.35565 23.2284 1.73566 22.4547C1.11566 21.6809 0.805664 20.7534 0.805664 19.6721C0.805664 18.8289 0.847824 18.0329 0.932143 17.2839C1.01646 16.5349 1.1727 15.781 1.40086 15.0222C1.62902 14.2633 1.91918 13.6135 2.27133 13.0729C2.62349 12.5322 3.08973 12.0908 3.67005 11.7486C4.25036 11.4063 4.91748 11.2352 5.67139 11.2352C6.9709 12.505 8.52337 13.1398 10.3288 13.1398C12.1342 13.1398 13.6867 12.505 14.9862 11.2352C15.7401 11.2352 16.4072 11.4063 16.9876 11.7486C17.5679 12.0908 18.0341 12.5322 18.3863 13.0729C18.7384 13.6135 19.0286 14.2633 19.2567 15.0222C19.4849 15.781 19.6411 16.5349 19.7255 17.2839C19.8098 18.0329 19.8519 18.8289 19.8519 19.6721ZM16.0427 6.47365C16.0427 8.05092 15.4847 9.39755 14.3687 10.5135C13.2527 11.6295 11.9061 12.1875 10.3288 12.1875C8.75153 12.1875 7.4049 11.6295 6.28891 10.5135C5.17292 9.39755 4.61492 8.05092 4.61492 6.47365C4.61492 4.89638 5.17292 3.54975 6.28891 2.43375C7.4049 1.31776 8.75153 0.759766 10.3288 0.759766C11.9061 0.759766 13.2527 1.31776 14.3687 2.43375C15.4847 3.54975 16.0427 4.89638 16.0427 6.47365Z" fill="white"/>
-                </g>
-                <defs>
-                <clipPath id="clip0_418_484">
-                <rect width="19.0463" height="22.8555" fill="white" transform="translate(0.805664 0.759766)"/>
-                </clipPath>
-                </defs>
-            </svg>   
-            <input id="username-input" type="text" placeholder="User Name" spellcheck="false">
-        </div>
-        <div class="password-field">
-            <svg width="24" height="26" viewBox="0 0 27 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.8843 9.64032V8.52928C18.8843 5.46617 16.3923 2.97412 13.3292 2.97412C10.2661 2.97412 7.77402 5.46617 7.77402 8.52928V11.8624H6.66298C5.43751 11.8624 4.44092 12.859 4.44092 14.0844V22.9727C4.44092 24.1982 5.43751 25.1948 6.66298 25.1948H19.9954C21.2208 25.1948 22.2174 24.1982 22.2174 22.9727V14.0844C22.2174 12.859 21.2208 11.8624 19.9954 11.8624H9.99608V8.52928C9.99608 6.69164 11.4915 5.19619 13.3292 5.19619C15.1668 5.19619 16.6623 6.69164 16.6623 8.52928V9.64032H18.8843Z" fill="white"/>
-            </svg>                
-            <input id="password-input" type="password" placeholder="Password">
-        </div>
-        <div class="error-container" id="error-display"></div>
-        <div class="login-btn" id="login">
-            <p>Login</p>
-        </div>
-        <div class="login-footer-container">
-            <p><a>Forgot Password?</a> • <span><a id="goto-register">Sign up</a></span></p>
-        </div>
+    <div class="loader-container">
+        <div class="loader"></div>
     </div>
+    <main>
+        <section>
+            <div class="blue-gradient"></div>
+            <div class="orange-gradient"></div>
+            <div class="bg-image">
+                <img src="./imgs/bg-image.png" alt="">
+            </div>
+            <div class="layout-left">
+                <div class="mode-container fade-in-left">
+                    <div class="background-slider" id="backgroundSlider"></div>
+                    <div class="login-switch" id="loginSwitch">
+                        <span>Login</span>
+                    </div>
+                    <div class="register-switch" id="registerSwitch">
+                        <span>Register</span>
+                    </div>
+                </div>
+                <div class="login-container">
+                    <div class="input-section fade-in-left">
+                        <div class="username-container">
+                            <span>Username</span>
+                            <input id="username-input-login" type="text" placeholder="Enter username" spellcheck="false" maxlength="30">
+                        </div>
+                        <div class="password-container">
+                            <span>Password</span>
+                            <div class="password-field">
+                                <input id="password-input-login" type="password" placeholder="Enter password" spellcheck="false" maxlength="30">
+                                <svg class="eye-off-login" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.455 13.455C12.1729 14.4323 10.6118 14.9736 9 15C3.75 15 0.75 9 0.75 9C1.68292 7.26142 2.97685 5.74246 4.545 4.545M7.425 3.18C7.94125 3.05916 8.4698 2.99875 9 3C14.25 3 17.25 9 17.25 9C16.7947 9.85171 16.2518 10.6536 15.63 11.3925M10.59 10.59C10.384 10.8111 10.1356 10.9884 9.85961 11.1113C9.58362 11.2343 9.28568 11.3004 8.98357 11.3058C8.68146 11.3111 8.38137 11.2555 8.10121 11.1424C7.82104 11.0292 7.56654 10.8608 7.35288 10.6471C7.13923 10.4335 6.97079 10.179 6.85763 9.89879C6.74447 9.61863 6.68889 9.31854 6.69423 9.01643C6.69956 8.71432 6.76568 8.41638 6.88866 8.14039C7.01163 7.86439 7.18894 7.61599 7.41 7.41M0.75 0.75L17.25 17.25" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <svg class="eye-on-login" width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.75 7C0.75 7 3.75 1 9 1C14.25 1 17.25 7 17.25 7C17.25 7 14.25 13 9 13C3.75 13 0.75 7 0.75 7Z" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9 9.25C10.2426 9.25 11.25 8.24264 11.25 7C11.25 5.75736 10.2426 4.75 9 4.75C7.75736 4.75 6.75 5.75736 6.75 7C6.75 8.24264 7.75736 9.25 9 9.25Z" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <button class="login-btn" id="login-btn">Login</button>
+                        <div class="register-suggestion">
+                            <span>New user? <a class="goto-register">Register</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="register-container">
+                    <div class="input-section fade-in-left">
+                        <div class="email-container">
+                            <span>Email</span>
+                            <input id="email-input-register" type="text" placeholder="Enter email" spellcheck="false" maxlength="50">
+                        </div>
+                        <div class="username-container">
+                            <span>Username</span>
+                            <input id="username-input-register" type="text" placeholder="Enter username" spellcheck="false" maxlength="30">
+                        </div>
+                        <div class="password-container">
+                            <span>Password</span>
+                            <div class="password-field">
+                                <input id="password-input-register" type="password" placeholder="Enter password" spellcheck="false" maxlength="30">
+                                <svg class="eye-off-register" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.455 13.455C12.1729 14.4323 10.6118 14.9736 9 15C3.75 15 0.75 9 0.75 9C1.68292 7.26142 2.97685 5.74246 4.545 4.545M7.425 3.18C7.94125 3.05916 8.4698 2.99875 9 3C14.25 3 17.25 9 17.25 9C16.7947 9.85171 16.2518 10.6536 15.63 11.3925M10.59 10.59C10.384 10.8111 10.1356 10.9884 9.85961 11.1113C9.58362 11.2343 9.28568 11.3004 8.98357 11.3058C8.68146 11.3111 8.38137 11.2555 8.10121 11.1424C7.82104 11.0292 7.56654 10.8608 7.35288 10.6471C7.13923 10.4335 6.97079 10.179 6.85763 9.89879C6.74447 9.61863 6.68889 9.31854 6.69423 9.01643C6.69956 8.71432 6.76568 8.41638 6.88866 8.14039C7.01163 7.86439 7.18894 7.61599 7.41 7.41M0.75 0.75L17.25 17.25" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <svg class="eye-on-register" width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.75 7C0.75 7 3.75 1 9 1C14.25 1 17.25 7 17.25 7C17.25 7 14.25 13 9 13C3.75 13 0.75 7 0.75 7Z" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9 9.25C10.2426 9.25 11.25 8.24264 11.25 7C11.25 5.75736 10.2426 4.75 9 4.75C7.75736 4.75 6.75 5.75736 6.75 7C6.75 8.24264 7.75736 9.25 9 9.25Z" stroke="#505051" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <button class="register-btn" id="register-btn">Get Started</button>
+                        <div class="login-suggestion">
+                            <span>Have an account? <a class="goto-login">Login</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout-right">
+                <div class="omen-img fade-in-right">
+                    <img src="./imgs/omen.png" alt="">
+                </div>
+                <div class="raze-img fade-in-right">
+                    <img src="./imgs/raze.png" alt="">
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="./index.js" defer></script>
 </body>
 </html>

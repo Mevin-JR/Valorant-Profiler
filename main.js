@@ -19,7 +19,7 @@ let sessionFile = path.join(folder, 'session.json'); // Session file (stores use
 // Login window
 function createLoginWindow() {
     winLogin = new BrowserWindow({
-        width: 700,
+        width: 900,
         height: 600,
         frame: false,
         resizable: false,
@@ -66,7 +66,7 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
     createLoginWindow();
-    createMainWindow();
+    // createMainWindow();
     // winMain.maximize();
 
     // Check for root folder
@@ -93,11 +93,7 @@ app.whenReady().then(() => {
 
 // IPC
 ipcMain.on('goto:login', () => {
-    winLogin.loadFile('./renderer/loginWin/loginWindow.html');
-})
-
-ipcMain.on('goto:register', () => {
-    winLogin.loadFile('./renderer/registerWin/registerWindow.html');
+    winLogin.loadFile('renderer/loginWin/loginWindow.html');
 })
 
 ipcMain.on('goto:mainMenu', () => {

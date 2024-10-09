@@ -15,3 +15,6 @@ session.json
 
 # Sensitive files
 .env
+
+# Temp folder
+temp/
