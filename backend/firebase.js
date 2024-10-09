@@ -25,4 +25,6 @@ async function initializeFirebase() {
     return db;
 }
 
+initializeFirebase();
+
 module.exports = { initializeFirebase };

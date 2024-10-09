@@ -132,7 +132,6 @@ function displayError(errorText, inputField) {
     }
 }
 
-// TODO: Fix long loading time
 function login() {
     const usernameInput = document.getElementById('username-input-login');
     const passwordInput = document.getElementById('password-input-login');
@@ -173,7 +172,6 @@ const loginButton = document.getElementById('login-btn');
 loginButton.addEventListener('click', login);
 
 // Verifying user input (Register)
-// TODO: Fix long loading time
 function register() {
     const emailInput = document.getElementById('email-input-register');
     const usernameInput = document.getElementById('username-input-register');
