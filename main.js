@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -91,7 +91,7 @@ app.whenReady().then(() => {
             createMainWindow();
         }
     });
-})
+});
 
 // IPC
 ipcMain.on('goto:login', () => {
@@ -108,12 +108,28 @@ ipcMain.on('goto:mainMenu', () => {
         createMainWindow();
         winMain.webContents.once('did-finish-load', () => {
             winMain.webContents.send('load-home');
+            
+            // Check for updates
+            autoUpdater.checkForUpdatesAndNotify();
         });
     } else {
         winMain.webContents.send('load-home');
     }
 
     winMain.maximize();
+});
+
+// Auto update notifs
+autoUpdater.on('update-available', () => {
+    winMain.webContents.send('update-available')
+});
+
+autoUpdater.on('update-downloaded', () => {
+    winMain.webContents.send('update-downloaded')
+});
+
+ipcMain.on('restart-app', () => {
+    autoUpdater.quitAndInstall();
 })
 
 ipcMain.on('action:logout', () => {

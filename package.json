@@ -7,7 +7,7 @@
     "start": "electron .",
     "start-server": "node backend/server.js",
     "dist": "electron-builder",
-    "dist-publish": "electron-builder --win --publish always"
+    "dist-publish": "electron-builder --win --publish=always"
   },
   "keywords": [],
   "author": "supposedly_sam",
@@ -31,7 +31,9 @@
     ],
     "publish": [
       {
-        "provider": "github"
+        "provider": "github",
+        "owner": "Mevin-JR",
+        "repo": "Valorant-Profiler"
       }
     ]
   },
@@ -39,6 +41,7 @@
     "app-builder-bin": "^4.2.0",
     "electron": "^31.3.1",
     "electron-builder": "^25.0.5",
+    "electron-updater": "^6.3.9",
     "express": "^4.21.0"
   },
   "dependencies": {
