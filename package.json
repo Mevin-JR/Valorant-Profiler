@@ -1,5 +1,5 @@
 {
-  "name": "valorant_profiler",
+  "name": "valorant-profiler",
   "productName": "Valorant Profiler",
   "version": "0.4.0",
   "main": "main.js",
@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "supposedly_sam",
   "license": "ISC",
-  "description": "Your Ultimate Companion for Saving Profiles and Tracking Stats for Valorant",
+  "description": "Valorant Profiler",
   "build": {
     "appId": "com.supposedly_sam.vp",
     "productName": "Valorant Profiler",

@@ -2,9 +2,10 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { initializeFirebase } = require('./backend/db_operations');
 
 // Development mode check
-const isDev = false;
+const isDev = true;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -66,6 +67,7 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
     createLoginWindow();
+    initializeFirebase();
     // createMainWindow();
     // winMain.maximize();
 
