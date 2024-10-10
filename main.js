@@ -109,6 +109,19 @@ ipcMain.on('goto:mainMenu', () => {
             
             // Check for updates
             autoUpdater.checkForUpdates();
+
+            // Auto update notifs
+            autoUpdater.on('update-available', () => {
+                winMain.webContents.send('update-available')
+            });
+
+            autoUpdater.on('update-downloaded', () => {
+                winMain.webContents.send('update-downloaded')
+            });
+
+            ipcMain.on('restart-app', () => {
+                autoUpdater.quitAndInstall();
+            })
         });
     } else {
         winMain.webContents.send('load-home');
@@ -116,19 +129,6 @@ ipcMain.on('goto:mainMenu', () => {
 
     winMain.maximize();
 });
-
-// Auto update notifs
-autoUpdater.on('update-available', () => {
-    winMain.webContents.send('update-available')
-});
-
-autoUpdater.on('update-downloaded', () => {
-    winMain.webContents.send('update-downloaded')
-});
-
-ipcMain.on('restart-app', () => {
-    autoUpdater.quitAndInstall();
-})
 
 // Notify firebase initialization
 ipcMain.on('firebase-initialized', () => [
