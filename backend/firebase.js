@@ -26,8 +26,4 @@ async function initializeFirebase() {
     return db;
 }
 
-initializeFirebase().then(() => {
-    ipcRenderer.send('firebase-initialized');
-});
-
 module.exports = { initializeFirebase };
