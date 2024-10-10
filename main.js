@@ -67,7 +67,9 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
     createLoginWindow();
-    initializeFirebase();
+    initializeFirebase().then(() => {
+        winLogin.webContents.send('firebase-initialized');
+    });
     // createMainWindow();
     // winMain.maximize();
 
@@ -110,7 +112,7 @@ ipcMain.on('goto:mainMenu', () => {
             winMain.webContents.send('load-home');
             
             // Check for updates
-            autoUpdater.checkForUpdatesAndNotify();
+            autoUpdater.checkForUpdates();
         });
     } else {
         winMain.webContents.send('load-home');

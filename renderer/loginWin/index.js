@@ -253,3 +253,7 @@ function register() {
 
 const registerButton = document.getElementById('register-btn');
 registerButton.addEventListener('click', register);
+
+ipcRenderer.on('firebase-initialized', () => {
+    console.log('Firebase initialized')
+})
