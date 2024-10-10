@@ -6,12 +6,16 @@ closeButton.addEventListener('click', () => {
 
 // Loader hide/unhide
 const loaderContainer = document.querySelector('.loader-container');
-function showLoading() {
+const loaderDescription = document.querySelector('.loader-description');
+function showLoading(msg = '') {
     loaderContainer.style.display = 'flex';
+    loaderDescription.textContent = msg;
+    loaderDescription.style.display = 'block';
 }
 
 function hideLoading() {
     loaderContainer.style.display = 'none';
+    loaderDescription.style.display = 'none';
 }
 
 // Switching between login/register
@@ -158,7 +162,7 @@ function login() {
         return;
     }
 
-    showLoading();
+    showLoading('Verifying user details');
     auth.loginUser(usernameInput.value, passwordInput.value)
     .then(status => {
         switch (status) {
@@ -233,7 +237,7 @@ function register() {
         return;
     }
 
-    showLoading();
+    showLoading('Verifying user details');
     auth.registerUser(usernameInput.value, emailInput.value, passwordInput.value)
     .then(status => {
         switch (status) {
@@ -254,6 +258,10 @@ function register() {
 const registerButton = document.getElementById('register-btn');
 registerButton.addEventListener('click', register);
 
-ipcRenderer.on('firebase-initialized', () => {
-    console.log('Firebase initialized')
+// Post login window creation
+document.addEventListener('DOMContentLoaded', () => {
+    showLoading('Loading some useful stuff.. (May take some time)');
+    ipcRenderer.on('firebase-initialized', () => {
+        hideLoading();
+    });
 })

@@ -2,10 +2,9 @@ const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { initializeFirebase } = require('./backend/db_operations');
 
 // Development mode check
-const isDev = true;
+const isDev = false;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -67,9 +66,6 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
     createLoginWindow();
-    initializeFirebase().then(() => {
-        winLogin.webContents.send('firebase-initialized');
-    });
     // createMainWindow();
     // winMain.maximize();
 
@@ -133,6 +129,11 @@ autoUpdater.on('update-downloaded', () => {
 ipcMain.on('restart-app', () => {
     autoUpdater.quitAndInstall();
 })
+
+// Notify firebase initialization
+ipcMain.on('firebase-initialized', () => [
+    winLogin.webContents.send('firebase-initialized')
+])
 
 ipcMain.on('action:logout', () => {
     if (winMain && !winMain.isDestroyed()) {

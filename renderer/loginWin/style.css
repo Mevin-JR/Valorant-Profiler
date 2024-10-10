@@ -20,6 +20,8 @@ body {
     .loader-container {
         position: absolute;
         display: none;
+        flex-direction: column;
+        gap: 20px;
         justify-content: center;
         align-items: center;
         width: 100vw;

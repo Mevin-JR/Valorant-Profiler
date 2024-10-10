@@ -1,3 +1,4 @@
+const { ipcRenderer } = require("electron");
 const { initializeApp } = require("firebase/app");
 const { getDatabase } = require("firebase/database");
 
@@ -24,5 +25,9 @@ async function initializeFirebase() {
 
     return db;
 }
+
+initializeFirebase().then(() => {
+    ipcRenderer.send('firebase-initialized');
+});
 
 module.exports = { initializeFirebase };
