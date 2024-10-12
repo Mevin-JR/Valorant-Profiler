@@ -1,6 +1,6 @@
 const express = require('express');
 const { initializeApp } = require("firebase/app");
-const { getDatabase, ref, set } = require("firebase/database");
+const { getDatabase, ref, set, update } = require("firebase/database");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -42,10 +42,9 @@ function initializeFirebase() {
 
 async function pingFirebase() {
     try {
-        db = initializeFirebase();
-        const dbRef = ref(db, 'ping/');
-        await set(dbRef, {
-            last_pinged: new Date()
+        const dbRef = ref(db, '/ping');
+        await update(dbRef, {
+            last_pinged: new Date().toISOString()
         });
         console.log('Ping successful, Firebase connection is warm')
     } catch(error) {
