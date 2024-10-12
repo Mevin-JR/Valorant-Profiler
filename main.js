@@ -101,12 +101,13 @@ app.whenReady().then(() => {
 });
 
 // Auto update notifs
+// FIXME: Fix this abomination bruh
 autoUpdater.on('update-available', () => {
-    winMain.webContents.send('update-available')
+    winLogin.webContents.send('update-available')
 });
 
 autoUpdater.on('update-downloaded', () => {
-    winMain.webContents.send('update-downloaded')
+    winLogin.webContents.send('update-downloaded')
 });
 
 ipcMain.on('restart-app', () => {

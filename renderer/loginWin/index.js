@@ -265,3 +265,14 @@ registerButton.addEventListener('click', register);
 //         hideLoading();
 //     });
 // })
+
+ipcRenderer.on('update-available', () => {
+    alert('Update available, downloading...')
+});
+
+ipcRenderer.on('update-downloaded', () => {
+    const choice = confirm('Update downloaded. Would you like to restart the app?');
+    if (choice) {
+        ipcRenderer.send('restart-app');
+    }
+});

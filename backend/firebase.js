@@ -2,8 +2,6 @@ const { ipcRenderer } = require("electron");
 const { initializeApp } = require("firebase/app");
 const { getDatabase } = require("firebase/database");
 
-let db = null;
-
 async function fetchFirebaseConfigData() {
     const response = await fetch('https://valorant-profiler.onrender.com/firebaseConfig', {
         method: 'GET',
@@ -16,6 +14,7 @@ async function fetchFirebaseConfigData() {
     return result;
 }
 
+let db = null;
 async function initializeFirebase() {
     if (!db) {
         const firebaseConfig = await fetchFirebaseConfigData();
