@@ -30,6 +30,7 @@ app.get('/henrikDevConfig', (req, res) => {
 });
 
 app.get('/keepAlive', (req, res) => {
+    console.log('Keep alive request...')
     res.send('Server is alive');
 });
 
