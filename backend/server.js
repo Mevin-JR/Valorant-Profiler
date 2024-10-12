@@ -42,9 +42,12 @@ function initializeFirebase() {
 
 async function pingFirebase() {
     try {
+        const date = new Date();
+        const indiaTimestamp = date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
         const dbRef = ref(db, '/ping');
         await update(dbRef, {
-            last_pinged: new Date().toISOString()
+            last_pinged: indiaTimestamp
         });
         console.log('Ping successful, Firebase connection is warm')
     } catch(error) {
@@ -52,7 +55,7 @@ async function pingFirebase() {
     }
 }
 
-setInterval(pingFirebase, 1 * 60 * 1000);
+setInterval(pingFirebase, 10 * 60 * 1000);
 
 app.listen(port, () => {
     initializeFirebase();
