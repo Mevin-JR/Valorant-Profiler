@@ -71,9 +71,9 @@ app.whenReady().then(() => {
     // createMainWindow();
     // winMain.maximize();
 
-    initializeFirebase().then(() => {
-        winLogin.webContents.send('firebase-initialized'); // Notify firebase initialization
-    });
+    // initializeFirebase().then(() => {
+    //     winLogin.webContents.send('firebase-initialized'); // Notify firebase initialization
+    // });
 
     // Check for root folder
     if (!fs.existsSync(folder)) {

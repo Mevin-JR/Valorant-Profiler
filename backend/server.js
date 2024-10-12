@@ -55,7 +55,7 @@ async function pingFirebase() {
     }
 }
 
-setInterval(pingFirebase, 10 * 60 * 1000);
+setInterval(pingFirebase, 5 * 60 * 1000);
 
 app.listen(port, () => {
     initializeFirebase();
