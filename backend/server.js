@@ -1,6 +1,6 @@
 const express = require('express');
 const { initializeApp } = require("firebase/app");
-const { getDatabase } = require("firebase/database");
+const { getDatabase, ref, set } = require("firebase/database");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,7 +30,7 @@ app.get('/henrikDevConfig', (req, res) => {
 });
 
 let db;
-async function initializeFirebase() {
+function initializeFirebase() {
     if (!db) {
         const app = initializeApp(firebaseConfig);
         db = getDatabase(app);
