@@ -29,6 +29,10 @@ app.get('/henrikDevConfig', (req, res) => {
     res.json(data);
 });
 
+app.get('/keepAlive', (req, res) => {
+    res.send('Server is alive');
+});
+
 let db;
 function initializeFirebase() {
     if (!db) {
