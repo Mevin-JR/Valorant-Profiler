@@ -1,7 +1,7 @@
 {
   "name": "valorant-profiler",
   "productName": "Valorant Profiler",
-  "version": "0.4.1",
+  "version": "0.4.0",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -33,7 +33,8 @@
       {
         "provider": "github",
         "owner": "Mevin-JR",
-        "repo": "Valorant-Profiler"
+        "repo": "Valorant-Profiler",
+        "releaseType": "release"
       }
     ]
   },
