@@ -1,4 +1,3 @@
-const { ipcRenderer } = require("electron");
 const { initializeApp } = require("firebase/app");
 const { getDatabase } = require("firebase/database");
 
@@ -14,7 +13,7 @@ async function fetchFirebaseConfigData() {
     return result;
 }
 
-let db = null;
+let db;
 async function initializeFirebase() {
     if (!db) {
         const firebaseConfig = await fetchFirebaseConfigData();

@@ -3,8 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-const { initializeFirebase } = require('./backend/db_operations');
-
 // Development mode check
 const isDev = false;
 
@@ -71,10 +69,6 @@ app.whenReady().then(() => {
     // createMainWindow();
     // winMain.maximize();
 
-    // initializeFirebase().then(() => {
-    //     winLogin.webContents.send('firebase-initialized'); // Notify firebase initialization
-    // });
-
     // Check for root folder
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist
@@ -98,21 +92,23 @@ app.whenReady().then(() => {
 
     // Check for updates
     autoUpdater.checkForUpdates();
+
+    // Auto update notifs
+    // FIXME: Fix this abomination bruh
+    autoUpdater.on('update-available', () => {
+        winLogin.webContents.send('update-available')
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        winLogin.webContents.send('update-downloaded')
+    });
+
+    ipcMain.on('restart-app', () => {
+        autoUpdater.quitAndInstall();
+    })
 });
 
-// Auto update notifs
-// FIXME: Fix this abomination bruh
-autoUpdater.on('update-available', () => {
-    winLogin.webContents.send('update-available')
-});
 
-autoUpdater.on('update-downloaded', () => {
-    winLogin.webContents.send('update-downloaded')
-});
-
-ipcMain.on('restart-app', () => {
-    autoUpdater.quitAndInstall();
-})
 
 // IPC
 ipcMain.on('goto:login', () => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const { initializeApp } = require("firebase/app");
-const { getDatabase, ref, set, update } = require("firebase/database");
+const { getDatabase, ref, update } = require("firebase/database");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,21 +16,22 @@ const firebaseConfig = {
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID,
     measurementId: process.env.FIREBASE_MEASUREMENT_ID
-};
+}
+
+const henrikdevConfig = {
+    apiKey: process.env.HENRIKDEV_API_KEY
+}
 
 app.get('/firebaseConfig', (req, res) => {
     res.json(firebaseConfig);
 });
 
 app.get('/henrikDevConfig', (req, res) => {
-    const data = {
-        apiKey: process.env.HENRIKDEV_API_KEY
-    };
-    res.json(data);
+    res.json(henrikdevConfig);
 });
 
 app.get('/keepAlive', (req, res) => {
-    console.log('Keep alive request...')
+    console.log('Keep alive ping received')
     res.send('Server is alive');
 });
 

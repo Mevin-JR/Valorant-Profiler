@@ -3,7 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const { ipcRenderer } = require('electron');
 
-const { ref , set, get, onChildAdded, query, orderByChild, startAt, update } = require("firebase/database");
+const { ref , set, get, onChildAdded, query, orderByChild, update } = require("firebase/database");
 const { hashPassword, verifyPassword } = require('./data_operations');
 const { initializeFirebase } = require("./firebase");
 

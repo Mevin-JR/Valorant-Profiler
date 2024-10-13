@@ -258,14 +258,6 @@ function register() {
 const registerButton = document.getElementById('register-btn');
 registerButton.addEventListener('click', register);
 
-// Post login window creation
-// document.addEventListener('DOMContentLoaded', () => {
-//     showLoading('Loading some useful stuff.. (May take some time)');
-//     ipcRenderer.on('firebase-initialized', () => {
-//         hideLoading();
-//     });
-// })
-
 ipcRenderer.on('update-available', () => {
     alert('Update available, downloading...')
 });
