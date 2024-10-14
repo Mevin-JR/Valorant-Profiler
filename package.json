@@ -6,22 +6,33 @@
   "scripts": {
     "start": "electron .",
     "start-server": "node backend/server.js",
-    "dist": "electron-builder",
-    "dist-publish": "electron-builder --win --publish=always"
+    "dist": "electron-builder --win",
+    "dist-publish": "electron-builder --win --publish always"
   },
   "keywords": [],
   "author": "supposedly_sam",
   "license": "ISC",
   "description": "Valorant Profiler",
   "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Mevin-JR",
+        "repo": "Valorant-Profiler",
+        "releaseType": "release"
+      }
+    ],
     "appId": "com.supposedly_sam.vp",
     "productName": "Valorant Profiler",
-    "icon": "./renderer/logo/logo.ico",
-    "target": "NSIS",
+    "win": {
+      "icon": "./renderer/logo/logo.ico",
+      "target": "nsis"
+    },
     "nsis": {
+      "artifactName": "${productName}-${version} setup.${ext}",
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
-      "artifactName": "${productName}-${version} setup.${ext}"
+      "deleteAppDataOnUninstall": true
     },
     "files": [
       "main.js",
@@ -33,13 +44,13 @@
   "devDependencies": {
     "app-builder-bin": "^4.2.0",
     "electron": "^31.3.1",
-    "electron-builder": "^25.0.5",
+    "electron-builder": "^25.1.8",
     "electron-updater": "^6.3.9",
     "express": "^4.21.0"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "electromon": "^1.0.10",
-    "firebase": "^10.12.5"
+    "firebase": "^10.14.1"
   }
 }

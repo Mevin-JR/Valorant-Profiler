@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -69,6 +69,13 @@ app.whenReady().then(() => {
     // createMainWindow();
     // winMain.maximize();
 
+
+    // FIXME: Fix auto update
+    const server = 'https://github.com';
+    const url = `${server}/Mevin-JR/Valorant-Profiler/releases/download/${app.getVersion()}`;
+    autoUpdater.setFeedURL({ url });
+    autoUpdater.checkForUpdates();
+
     // Check for root folder
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist
@@ -90,6 +97,36 @@ app.whenReady().then(() => {
         }
     });
 
+});
+
+// AutoUpdater event listeners
+autoUpdater.on('checking-for-update', () => {
+    console.log('Checking for updates...');
+    winLogin.webContents.send('checking-for-update');
+});
+
+autoUpdater.on('update-available', (info) => {
+    console.log('Update available:', info);
+    winLogin.webContents.send('update-available', info);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+    console.log('No updates available:', info);
+    winLogin.webContents.send('update-not-available', info);
+});
+
+autoUpdater.on('error', (err) => {
+    console.log('Error during update check:', err);
+    winLogin.webContents.send('error', err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    console.log(`Download progress: ${progressObj.percent}%`);
+});
+
+autoUpdater.on('update-downloaded', () => {
+    console.log('Update downloaded, restarting app...');
+    autoUpdater.quitAndInstall();
 });
 
 // IPC
