@@ -28,14 +28,6 @@
       "preload.js",
       "backend/**/*",
       "renderer/**/*"
-    ],
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "Mevin-JR",
-        "repo": "Valorant-Profiler",
-        "releaseType": "release"
-      }
     ]
   },
   "devDependencies": {

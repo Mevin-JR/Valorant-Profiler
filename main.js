@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -69,9 +69,6 @@ app.whenReady().then(() => {
     // createMainWindow();
     // winMain.maximize();
 
-    // Check for updates
-    autoUpdater.checkForUpdates();
-
     // Check for root folder
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist
@@ -92,37 +89,8 @@ app.whenReady().then(() => {
             createMainWindow();
         }
     });
+
 });
-
-autoUpdater.on('checking-for-update', (info) => {
-    winLogin.webContents.send('checking-for-update');
-    console.log('Checking:', info)
-});
-
-autoUpdater.on('error', (err) => {
-    console.log(err)
-    winLogin.webContents.send('error', err);
-})
-
-autoUpdater.on('update-not-available', () => {
-    console.log('update not available')
-})
-
-// Auto update notifs
-// FIXME: Fix this abomination bruh
-autoUpdater.on('update-available', (info) => {
-    winLogin.webContents.send('update-available')
-    console.log('Update available')
-});
-
-autoUpdater.on('update-downloaded', (info) => {
-    winLogin.webContents.send('update-downloaded')
-    console.log('Update downloaded')
-});
-
-ipcMain.on('restart-app', () => {
-    autoUpdater.quitAndInstall();
-})
 
 // IPC
 ipcMain.on('goto:login', () => {
