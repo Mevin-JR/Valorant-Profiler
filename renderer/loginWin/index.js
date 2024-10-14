@@ -257,3 +257,15 @@ function register() {
 
 const registerButton = document.getElementById('register-btn');
 registerButton.addEventListener('click', register);
+
+ipcRenderer.on('checking-for-update', () => {
+    console.log('Checking for updates...');
+});
+
+ipcRenderer.on('error', (event, err) => {
+    console.log('Error:', err);
+});
+
+ipcRenderer.on('update-not-available', (info) => {
+    console.log('No updates available:', info);
+});
