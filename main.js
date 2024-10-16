@@ -1,4 +1,10 @@
 const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
+
+// Update Rocks (For auto update)
+const APP_VERSION = require('./package.json').version
+const AUTO_UPDATE_URL =
+  'https://api.update.rocks/update/github.com/Mevin-JR/Valorant-Profiler/stable/' + process.platform + '/' + APP_VERSION
+
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -110,14 +116,9 @@ app.whenReady().then(() => {
     // createMainWindow();
     // winMain.maximize();
 
-
     // FIXME: Fix auto update
-    // const server = 'https://github.com';
-    // const url = `${server}/Mevin-JR/Valorant-Profiler/releases/download/${app.getVersion()}`;
-    // autoUpdater.setFeedURL({ url });
-    // console.log('Checking for updates...');
-    autoUpdater.checkForUpdatesAndNotify();
-
+    autoUpdater.setFeedURL(AUTO_UPDATE_URL);
+    autoUpdater.checkForUpdates();
     // Check for root folder
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist

@@ -173,7 +173,7 @@ function login() {
                 displayError('Username does not exist', usernameInput)
                 break;
             case 401:
-                displayError('Password is incorect', passwordInput)
+                displayError('Password is incorrect', passwordInput)
                 break;
             default:
                 displayError('Something went wrong')
