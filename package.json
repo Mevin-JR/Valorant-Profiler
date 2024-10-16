@@ -19,7 +19,8 @@
       {
         "provider": "github",
         "owner": "Mevin-JR",
-        "repo": "Valorant-Profiler"
+        "repo": "Valorant-Profiler",
+        "releaseType": "release"
       }
     ],
     "appId": "com.supposedly_sam.vp",
