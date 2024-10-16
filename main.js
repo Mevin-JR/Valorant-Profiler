@@ -115,7 +115,7 @@ app.whenReady().then(() => {
     // const server = 'https://github.com';
     // const url = `${server}/Mevin-JR/Valorant-Profiler/releases/download/${app.getVersion()}`;
     // autoUpdater.setFeedURL({ url });
-    console.log('Checking for updates...');
+    // console.log('Checking for updates...');
     autoUpdater.checkForUpdatesAndNotify();
 
     // Check for root folder
