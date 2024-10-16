@@ -13,18 +13,21 @@
   "author": "supposedly_sam",
   "license": "ISC",
   "description": "Valorant Profiler",
+  "repository": "https://github.com/Mevin-JR/Valorant-Profiler",
   "build": {
     "publish": [
       {
         "provider": "github",
         "owner": "Mevin-JR",
-        "repo": "Valorant-Profiler",
-        "releaseType": "release"
+        "repo": "Valorant-Profiler"
       }
     ],
     "appId": "com.supposedly_sam.vp",
     "productName": "Valorant Profiler",
     "win": {
+      "publish": [
+        "github"
+      ],
       "icon": "./renderer/logo/logo.ico",
       "target": "nsis"
     },
@@ -42,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@electron-forge/publisher-github": "^7.5.0",
     "app-builder-bin": "^4.2.0",
     "electron": "^31.3.1",
     "electron-builder": "^25.1.8",
@@ -51,6 +55,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "electromon": "^1.0.10",
+    "electron-log": "^5.2.0",
     "firebase": "^10.14.1"
   }
 }
