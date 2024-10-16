@@ -263,7 +263,8 @@ ipcRenderer.on('checking-for-update', () => {
 });
 
 ipcRenderer.on('error', (event, err) => {
-    console.log('Error:', err);
+    console.log("damn")
+    console.error('Bruh:', err.stack);
 });
 
 ipcRenderer.on('update-not-available', (info) => {

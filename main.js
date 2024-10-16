@@ -3,6 +3,12 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+const log = require('electron-log');
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+
 // Development mode check
 const isDev = true;
 
@@ -64,6 +70,41 @@ function createMainWindow() {
     winMain.loadFile(path.join(__dirname, 'renderer/mainMenuWin/mainMenuWindow.html'));
 }
 
+// AutoUpdater event listeners
+autoUpdater.on('checking-for-update', () => {
+    log.info('Checking for updates');
+    console.log('Checking for updates...');
+    winLogin.webContents.send('checking-for-update');
+});
+
+autoUpdater.on('update-available', (info) => {
+    log.info(`Update available, ${info}`)
+    console.log('Update available:', info);
+    winLogin.webContents.send('update-available', info);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+    log.info('No updates')
+    console.log('No updates available:', info);
+    winLogin.webContents.send('update-not-available', info);
+});
+
+autoUpdater.on('error', (err) => {
+    log.info(`Error ${err.message}`)
+    console.log('Error during update check:', err);
+    winLogin.webContents.send('error', { message: err.message, stack: err.stack });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    console.log(`Download progress: ${progressObj.percent}%`);
+});
+
+autoUpdater.on('update-downloaded', () => {
+    log.info('Update downloaded')
+    console.log('Update downloaded, restarting app...');
+    autoUpdater.quitAndInstall();
+});
+
 app.whenReady().then(() => {
     createLoginWindow();
     // createMainWindow();
@@ -71,10 +112,11 @@ app.whenReady().then(() => {
 
 
     // FIXME: Fix auto update
-    const server = 'https://github.com';
-    const url = `${server}/Mevin-JR/Valorant-Profiler/releases/download/${app.getVersion()}`;
-    autoUpdater.setFeedURL({ url });
-    autoUpdater.checkForUpdates();
+    // const server = 'https://github.com';
+    // const url = `${server}/Mevin-JR/Valorant-Profiler/releases/download/${app.getVersion()}`;
+    // autoUpdater.setFeedURL({ url });
+    console.log('Checking for updates...');
+    autoUpdater.checkForUpdatesAndNotify();
 
     // Check for root folder
     if (!fs.existsSync(folder)) {
@@ -97,36 +139,6 @@ app.whenReady().then(() => {
         }
     });
 
-});
-
-// AutoUpdater event listeners
-autoUpdater.on('checking-for-update', () => {
-    console.log('Checking for updates...');
-    winLogin.webContents.send('checking-for-update');
-});
-
-autoUpdater.on('update-available', (info) => {
-    console.log('Update available:', info);
-    winLogin.webContents.send('update-available', info);
-});
-
-autoUpdater.on('update-not-available', (info) => {
-    console.log('No updates available:', info);
-    winLogin.webContents.send('update-not-available', info);
-});
-
-autoUpdater.on('error', (err) => {
-    console.log('Error during update check:', err);
-    winLogin.webContents.send('error', err);
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-    console.log(`Download progress: ${progressObj.percent}%`);
-});
-
-autoUpdater.on('update-downloaded', () => {
-    console.log('Update downloaded, restarting app...');
-    autoUpdater.quitAndInstall();
 });
 
 // IPC
