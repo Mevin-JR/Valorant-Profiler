@@ -1,18 +1,9 @@
-const { app, BrowserWindow, ipcMain, autoUpdater } = require('electron');
-
-// Update Rocks (For auto update)
-const APP_VERSION = require('./package.json').version
-const AUTO_UPDATE_URL =
-  'https://api.update.rocks/update/github.com/Mevin-JR/Valorant-Profiler/stable/' + process.platform + '/' + APP_VERSION
-
+const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
 const log = require('electron-log');
-
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
 // Development mode check
@@ -23,10 +14,10 @@ let winLogin;
 let winMain;
 
 // File paths
-let iconFile = path.join(__dirname, 'renderer/logo/logo.ico');
-let preloadFile = path.join(__dirname, 'preload.js');
-let folder = path.join(os.homedir(), "Valorant_Profiler"); // Root folder (C://Users//user1//Valorant_Profiler)
-let sessionFile = path.join(folder, 'session.json'); // Session file (stores user data temporarily)
+const iconFile = path.join(__dirname, 'renderer/logo/logo.ico');
+const preloadFile = path.join(__dirname, 'preload.js');
+let folder;
+let sessionFile;
 
 // Login window
 function createLoginWindow() {
@@ -76,54 +67,18 @@ function createMainWindow() {
     winMain.loadFile(path.join(__dirname, 'renderer/mainMenuWin/mainMenuWindow.html'));
 }
 
-// AutoUpdater event listeners
-autoUpdater.on('checking-for-update', () => {
-    log.info('Checking for updates');
-    console.log('Checking for updates...');
-    winLogin.webContents.send('checking-for-update');
-});
 
-autoUpdater.on('update-available', (info) => {
-    log.info(`Update available, ${info}`)
-    console.log('Update available:', info);
-    winLogin.webContents.send('update-available', info);
-});
-
-autoUpdater.on('update-not-available', (info) => {
-    log.info('No updates')
-    console.log('No updates available:', info);
-    winLogin.webContents.send('update-not-available', info);
-});
-
-autoUpdater.on('error', (err) => {
-    log.info(`Error ${err.message}`)
-    console.log('Error during update check:', err);
-    winLogin.webContents.send('error', { message: err.message, stack: err.stack });
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-    console.log(`Download progress: ${progressObj.percent}%`);
-});
-
-autoUpdater.on('update-downloaded', () => {
-    log.info('Update downloaded')
-    console.log('Update downloaded, restarting app...');
-    autoUpdater.quitAndInstall();
-});
-
+// TODO: Setup auto updater with Github Release
 app.whenReady().then(() => {
     createLoginWindow();
-    // createMainWindow();
-    // winMain.maximize();
+    
+    folder = path.join(app.getPath('appData'), "Valorant Profiler"); // Root folder
+    sessionFile = path.join(folder, 'session.json'); // Session file
 
-    // FIXME: Fix auto update
-    autoUpdater.setFeedURL(AUTO_UPDATE_URL);
-    autoUpdater.checkForUpdates();
     // Check for root folder
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist
     }
-
     // Check for session file
     if (!fs.existsSync(sessionFile)) {
         const emptyJSON = {};
@@ -142,7 +97,27 @@ app.whenReady().then(() => {
 
 });
 
+// Check active session
+function checkActiveSession() {
+    try {
+        const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
+
+        if (Object.keys(sessionData).length === 0) {
+            winLogin.webContents.send('no-active-session');
+        } else {
+            winLogin.webContents.send('active-session-found', sessionData);
+        }
+
+    } catch (error) {
+        console.error('Error reading session file:', error);
+    }
+}
+
 // IPC
+ipcMain.on('check-active-session', () => {
+    checkActiveSession();
+})
+
 ipcMain.on('goto:login', () => {
     winLogin.loadFile('renderer/loginWin/loginWindow.html');
 })
@@ -170,6 +145,9 @@ ipcMain.on('action:logout', () => {
         winMain.close();
         winMain = null;
     }
+
+    const emptyJSON = {};
+    fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
 
     if (!winLogin) {
         createLoginWindow()

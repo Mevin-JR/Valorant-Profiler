@@ -167,24 +167,41 @@ function login() {
     .then(status => {
         switch (status) {
             case 200:
-                ipcRenderer.send('goto:mainMenu')
+                ipcRenderer.send('goto:mainMenu');
                 break;
             case 404:
-                displayError('Username does not exist', usernameInput)
+                displayError('Username does not exist', usernameInput);
                 break;
             case 401:
-                displayError('Password is incorrect', passwordInput)
+                displayError('Password is incorrect', passwordInput);
                 break;
             default:
-                displayError('Something went wrong')
+                displayError('Something went wrong');
                 break;
         }
+        hideLoading();
+    }).catch(() => {
+        displayError('Something went wrong');
         hideLoading();
     });
 }
 
 const loginButton = document.getElementById('login-btn');
 loginButton.addEventListener('click', login);
+
+function loginSession(username, password) {
+    auth.loginUser(username, password)
+    .then(status => {
+        if (status === 200) {
+            ipcRenderer.send('goto:mainMenu');
+        } else {
+            displayError('Auto-Login failed! Try again');
+            hideLoading();
+        }
+    }).catch(() => {
+        displayError('Something went wrong');
+    });
+}
 
 // Verifying user input (Register)
 function register() {
@@ -252,21 +269,21 @@ function register() {
                 break;
         }
         hideLoading();
+    }).catch(() => {
+        displayError('Something went wrong');
+        hideLoading();
     });
 }
 
 const registerButton = document.getElementById('register-btn');
 registerButton.addEventListener('click', register);
 
-ipcRenderer.on('checking-for-update', () => {
-    console.log('Checking for updates...');
+document.addEventListener('DOMContentLoaded', () => {
+    ipcRenderer.send('check-active-session');
 });
 
-ipcRenderer.on('error', (event, err) => {
-    console.log("damn")
-    console.error('Bruh:', err.stack);
-});
-
-ipcRenderer.on('update-not-available', (info) => {
-    console.log('No updates available:', info);
+ipcRenderer.on('no-active-session', hideLoading);
+ipcRenderer.on('active-session-found', (sessionData) => {
+    showLoading('Logging into session')
+    loginSession(sessionData.username, '');
 });
