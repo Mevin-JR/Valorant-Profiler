@@ -14,9 +14,11 @@
 }
 
 /* Toastify style */
-.unknown-error {
-    background: rgba(44, 35, 41, 0.85);
-    border-radius: 25px;
+.popup-error {
+    background: rgba(80, 80, 81, 0.4) !important;
+    border-radius: 10px !important;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+    cursor: default !important;
 }
 
 * {
