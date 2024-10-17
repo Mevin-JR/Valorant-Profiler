@@ -74,18 +74,7 @@ function setCards(userProfiles) {
 async function loadHome() {
     header = '<h1>Valorant Profiler</h1>';
     headerContainer.innerHTML = header;
-
     db.liveChanges();
-    // Toastify({
-    //     text: "Something went wrong",
-    //     duration: 5000,
-    //     gravity: "bottom",
-    //     position: "center",
-    //     offset: {
-    //         y: 50,
-    //     },
-    //     className: "unknown-error"
-    // }).showToast();
 }
 
 ipcRenderer.on('userProfile-update-forward', (userProfiles) => {

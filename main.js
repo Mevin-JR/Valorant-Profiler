@@ -7,7 +7,7 @@ const log = require('electron-log');
 log.info('App starting...');
 
 // Development mode check
-const isDev = true;
+const isDev = false;
 
 // Windows (Login & Main window)
 let winLogin;
