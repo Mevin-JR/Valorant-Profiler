@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
-
 async function hashPassword(rawPassword) {
     try {
         const hashedPassword = await bcrypt.hash(rawPassword, saltRounds);

@@ -1,13 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 const { ipcRenderer } = require('electron');
 
 const { ref , set, get, onChildAdded, query, orderByChild, update } = require('firebase/database');
-const { hashPassword, verifyPassword } = require('./data_operations');
+const { hashPassword, verifyPassword } = require('./utils');
 const { initializeFirebase } = require("./firebase");
 
-const sessionFile = path.join(os.homedir(), "Valorant_Profiler", 'session.json');
+const sessionFile = path.join(process.env.APPDATA, 'Valorant Profiler', 'session.json');
 
 // Session file operations
 function getSessionData() {
@@ -48,7 +47,7 @@ async function registerUser(username, email, password) {
 }
 
 // Login
-async function loginUser(username, password) {
+async function loginUser(username, password = '') {
   try {
     const db = await initializeFirebase();
     const dbData = ref(db, 'users/' + username);
@@ -58,9 +57,11 @@ async function loginUser(username, password) {
     }
 
     const data = snapshot.val();
-    const passwordMatch = await verifyPassword(password, data.password);
-    if (!passwordMatch) {
-      return 401;
+    if (password !== '') {
+      const passwordMatch = await verifyPassword(password, data.password);
+      if (!passwordMatch) {
+        return 401;
+      }
     }
 
     // Saving Session data
@@ -78,7 +79,7 @@ async function saveSession(username, email) {
   sessionData = {
     username: username,
     email: email,
-    loginTime: new Date().toLocaleString()
+    loginTime: Date.now()
   }
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
 }
@@ -199,8 +200,8 @@ async function liveChanges() {
   accountApiUpdate();
   mmrApiRequest();
 
-  const db = await initializeFirebase();
   sessionData = getSessionData();
+  const db = await initializeFirebase();
   const dbRef = ref(db, `userProfiles/${sessionData.username}`);
   const queryRef = query(dbRef, orderByChild('timestamp'));
 
