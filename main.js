@@ -1,7 +1,6 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 
 const log = require('electron-log');
 log.info('App starting...');
@@ -131,6 +130,11 @@ ipcMain.on('goto:mainMenu', () => {
     if (!winMain) {
         createMainWindow();
         winMain.webContents.once('did-finish-load', () => {
+            // Auto adjust zoom (based on screen size)
+            const primaryDisplay = screen.getPrimaryDisplay();
+            const scaleFactor = primaryDisplay.size.width / 1920;
+            winMain.webContents.setZoomFactor(scaleFactor);
+            
             winMain.webContents.send('load-home');
         });
     } else {
