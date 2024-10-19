@@ -243,7 +243,7 @@ async function accountApiUpdate() { // TODO: Display update time of profile data
       }
     }
 
-    const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}/last_updated`);
+    const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}`);
     const lastUpdateSnapshot = await get(lastUpdateRef);
     const currentTimestamp = Date.now();
 
