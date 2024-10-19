@@ -97,6 +97,11 @@ app.whenReady().then(() => {
 });
 
 // Check active session
+function clearSessionFile() {
+    const emptyJSON = {};
+    fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
+}
+
 function checkActiveSession() {
     try {
         const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
@@ -115,6 +120,10 @@ function checkActiveSession() {
 // IPC
 ipcMain.on('check-active-session', () => {
     checkActiveSession();
+});
+
+ipcMain.on('clear-session-file', () => {
+    clearSessionFile();
 })
 
 ipcMain.on('goto:login', () => {
@@ -150,8 +159,7 @@ ipcMain.on('action:logout', () => {
         winMain = null;
     }
 
-    const emptyJSON = {};
-    fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
+    clearSessionFile();
 
     if (!winLogin) {
         createLoginWindow()

@@ -21,7 +21,7 @@ function getSessionData() {
 let sessionData = getSessionData();
 
 // Register
-async function registerUser(username, email, password) {
+async function registerUser(username, password) {
     try {
       const db = await initializeFirebase();
       const userRef = ref(db, 'users/' + username);
@@ -34,11 +34,10 @@ async function registerUser(username, email, password) {
       const hashedPassword = await hashPassword(password);
       await set(ref(db, 'users/' + username), {
         username: username,
-        email: email,
         password: hashedPassword
       });
 
-      saveSession(username, email);
+      saveSession(username);
 
       return 200;
     } catch (err) {
@@ -52,6 +51,7 @@ async function loginUser(username, password = '') {
     const db = await initializeFirebase();
     const dbData = ref(db, 'users/' + username);
     const snapshot = await get(dbData);
+
     if (!snapshot.exists()) {
       return 404;
     }
@@ -65,7 +65,7 @@ async function loginUser(username, password = '') {
     }
 
     // Saving Session data
-    saveSession(username, data.email);
+    saveSession(username);
 
     return 200;
 
@@ -75,10 +75,9 @@ async function loginUser(username, password = '') {
 }
 
 // Session details
-async function saveSession(username, email) {
+async function saveSession(username) {
   sessionData = {
     username: username,
-    email: email,
     loginTime: Date.now()
   }
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
@@ -146,7 +145,7 @@ async function accountInputData(name, tag) {
     const db = await initializeFirebase();
     const mergedApiData = await valApiData(name, tag);
     sessionData = getSessionData();
-    await set(ref(db, `userProfiles/${sessionData.username}/${name}` ), {
+    await set(ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}` ), {
       name: name,
       tag: tag,
       accLvl: mergedApiData.accountApiData.data.account_level,
@@ -168,7 +167,7 @@ async function getUserProfiles() {
   try {
     const db = await initializeFirebase();
     sessionData = getSessionData();
-    const dbRef = ref(db, `userProfiles/${sessionData.username}` )
+    const dbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles` )
     const snapshot = await get(dbRef)
 
     const userProfiles = [];
@@ -194,20 +193,18 @@ async function getUserProfiles() {
   }
 }
 
+// TODO: Serialize api refresh
 // Realtime changes
 async function liveChanges() {
-  // API refresh
   accountApiUpdate();
-  mmrApiRequest();
-
+  mmrApiUpdate();
   sessionData = getSessionData();
   const db = await initializeFirebase();
-  const dbRef = ref(db, `userProfiles/${sessionData.username}`);
+  const dbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles`);
   const queryRef = query(dbRef, orderByChild('timestamp'));
 
   onChildAdded(queryRef, (snapshot) => {
     const data = snapshot.val();
-
     const userProfiles = [];
     userProfiles.push({
       name: data.name,
@@ -215,8 +212,7 @@ async function liveChanges() {
       accLvl: data.accLvl,
       cardImg: data.cardImg,
       rank: data.currentRank
-    })
-    
+    });
     ipcRenderer.send('userProfile-update', userProfiles);
   });
 }
@@ -229,23 +225,34 @@ async function accountApiUpdate() { // TODO: Display update time of profile data
     for (const profile of userProfiles) {
       const { name, tag } = profile;
       sessionData = getSessionData();
-      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
       const snapshot = await get(userProfileRef);
+      const accountApiData = await accountApiRequest(name, tag);
+      const updatedProfile = {
+        accLvl: accountApiData.data.account_level,
+        puuid: accountApiData.data.puuid,
+        region: accountApiData.data.region,
+        cardImg: accountApiData.data.card.large,
+        timestamp: Date.now(),
+      };
 
       if (snapshot.exists()) {
-        const accountApiData = await accountApiRequest(name, tag);
-        const updatedProfile = {
-          accLvl: accountApiData.data.account_level,
-          puuid: accountApiData.data.puuid,
-          region: accountApiData.data.region,
-          cardImg: accountApiData.data.card.large,
-          timestamp: Date.now(),
-        };
-
         await update(userProfileRef, updatedProfile);
-        console.log('Account data refreshed...')
+      } else {
+        await set(userProfileRef, updatedProfile);
       }
     }
+
+    const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}/last_updated`);
+    const lastUpdateSnapshot = await get(lastUpdateRef);
+    const currentTimestamp = Date.now();
+
+    if (lastUpdateSnapshot.exists()) {
+      await update(lastUpdateRef, { last_updated: currentTimestamp });
+    } else {
+      await set(lastUpdateRef, { last_updated: currentTimestamp });
+    }
+
   } catch (error) {
     console.error('Error during API update:', error);
   }
@@ -259,23 +266,23 @@ async function mmrApiUpdate() {
     for (const profile of userProfiles) {
       const { name, tag } = profile;
       sessionData = getSessionData();
-      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/${name}`);
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
       const snapshot = await get(userProfileRef);
       const data = snapshot.val();
+      const mmrApiData = await mmrApiRequest(name, tag, data.region);
+      const updatedProfile = {
+        name: name,
+        tag: tag,
+        currentRank: mmrApiData.data.current.tier.name,
+        peakRank: mmrApiData.data.peak.tier.name,
+        currentElo: mmrApiData.data.current.elo,
+        timestamp: Date.now(),
+      };
 
       if (snapshot.exists()) {
-        const mmrApiData = await mmrApiRequest(name, tag, data.region);
-        const updatedProfile = {
-          name: name,
-          tag: tag,
-          currentRank: mmrApiData.data.current.tier.name,
-          peakRank: mmrApiData.data.peak.tier.name,
-          currentElo: mmrApiData.data.current.elo,
-          timestamp: Date.now(),
-        };
-
         await update(userProfileRef, updatedProfile);
-        console.log('Rank & MMR data refreshed...')
+      } else {
+        await set(userProfileRef, updatedProfile);
       }
     }
   } catch (error) {
@@ -286,23 +293,4 @@ async function mmrApiUpdate() {
 setInterval(accountApiUpdate, 20 * 60 * 1000); // 20 min
 setInterval(mmrApiUpdate, 30 * 60 * 1000); // 30 min
 
-// Log
-let parentDir  = path.join(__dirname, "..")
-let logFile = path.join(parentDir,"vpLogs.txt");
-let debug = false;
-
-function log(logStatement) {
-  var date = new Date().toLocaleDateString();
-  var time = new Date().toLocaleTimeString();
-  const formattedLogStatement = `\n[${date} | ${time}] ${logStatement}`
-  if (debug) {
-    fs.appendFile(logFile, formattedLogStatement, (err) => {
-      if (err) {
-          console.log(err);
-          return;
-      }
-    });
-  }
-}
-
-module.exports = { registerUser, loginUser, log, accountInputData, getUserProfiles, liveChanges }
+module.exports = { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges }

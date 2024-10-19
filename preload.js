@@ -1,7 +1,7 @@
 // Module imports (used in render files)
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, log, accountInputData, getUserProfiles, liveChanges } = require('./backend/db_operations');
+const  { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges } = require('./backend/db_operations');
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -14,15 +14,9 @@ contextBridge.exposeInMainWorld('shell', {
     openExternal: async (url) => await shell.openExternal(url) // Opening external links (in client browser)
 });
 
-// TODO: Unfinished log feature (entire app)
-// Log operation (saved on local file)
-contextBridge.exposeInMainWorld('debug', {
-    log: (logMessage) => log(logMessage)
-});
-
 // User authentication functions
 contextBridge.exposeInMainWorld('auth', {
-    registerUser: async (username, email, password) => await registerUser(username, email, password),
+    registerUser: async (username, password) => await registerUser(username, password),
     loginUser: async (username, password) => await loginUser(username, password),
 });
 

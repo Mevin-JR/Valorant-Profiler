@@ -163,13 +163,12 @@ section {
         }
 
         .register-switch,
-        .login-switch{
+        .login-switch {
             z-index: 1;
             width: 50%;
             text-align: center;
             padding: 10px;
         }
-
 
         div {
             cursor: pointer;
@@ -182,7 +181,7 @@ section {
         align-items: center;
         gap: 20px;
         width: fit-content;
-        margin-top: 5vh;
+        margin-top: 8vh;
     
         input[type="text"],
         input[type="password"] {
@@ -198,7 +197,6 @@ section {
             font-weight: 200;
         }
     
-        .email-container,
         .username-container,
         .password-container {
             display: flex;
@@ -288,13 +286,6 @@ section {
             a {
                 color: #F4552B;
             }
-        }
-    }
-
-    .register-container {
-        .input-section {
-            gap: 15px;
-            margin-top: 3vh;
         }
     }
 }
