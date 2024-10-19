@@ -1,6 +1,19 @@
+// Loader hide/unhide
+const loaderContainer = document.querySelector('.loader-container');
+const loaderDescription = document.querySelector('.loader-description');
+function showLoading(msg = '') {
+    loaderContainer.style.display = 'flex';
+    loaderDescription.textContent = msg;
+    loaderDescription.style.display = 'block';
+}
+
+function hideLoading() {
+    loaderContainer.style.display = 'none';
+    loaderDescription.style.display = 'none';
+}
+
 const headerContainer = document.querySelector('.header-container');
 const contentContainer = document.querySelector('.content-container');
-let header = ''
 
 function setCards(userProfiles) {
     const cardContainer = document.querySelector('.card-section');
@@ -72,9 +85,16 @@ function setCards(userProfiles) {
 }
 
 async function loadHome() {
-    header = '<h1>Valorant Profiler</h1>';
+    showLoading('Setting up the good stuff...')
+    let header = '<h1>Home</h1>';
     headerContainer.innerHTML = header;
-    db.liveChanges();
+    db.liveChanges()
+    .then(() => {
+        hideLoading();
+    }).catch((err) => {
+        console.error(`Error enabling live changes:${err}`);
+        hideLoading();
+    });
 }
 
 ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
@@ -143,10 +163,16 @@ const addAccount = document.getElementById('add-account');
 addAccount.addEventListener('click', () => {
     const name = document.getElementById('name').value;
     const tag = document.getElementById('tag').value; // TODO: Constraints
-    account.accountInputData(name, tag);
+    showLoading('Retrieving account data...');
+    account.accountInputData(name, tag).then(() => {
+        hideLoading();
+    });
     closepopup();
 });
 
 ipcRenderer.on('load-home', () => {
     loadHome();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
 });

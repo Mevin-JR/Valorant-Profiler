@@ -195,6 +195,7 @@ function loginSession(username, password) {
         if (status === 200) {
             ipcRenderer.send('goto:mainMenu');
         } else {
+            ipcRenderer.send('clear-session-file');
             displayError('Auto-Login failed! Try again');
             hideLoading();
         }
@@ -205,17 +206,10 @@ function loginSession(username, password) {
 
 // Verifying user input (Register)
 function register() {
-    const emailInput = document.getElementById('email-input-register');
     const usernameInput = document.getElementById('username-input-register');
     const passwordInput = document.getElementById('password-input-register');
 
-    if (emailInput.value === '') {
-        emailInput.style.borderBottom = '1px solid red';
-        return;
-    } 
-
     if (usernameInput.value === '') {
-        emailInput.style.borderBottom = 'none';
         usernameInput.style.borderBottom = '1px solid red';
         return;
     } 
@@ -223,13 +217,6 @@ function register() {
     if (passwordInput.value === '') {
         usernameInput.style.borderBottom = 'none';
         passwordInput.style.borderBottom = '1px solid red';
-        return;
-    }
-
-    // Email verification
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(emailInput.value)) {
-        displayError('Invalid email address', emailInput);
         return;
     }
 
@@ -255,7 +242,7 @@ function register() {
     }
 
     showLoading('Verifying user details');
-    auth.registerUser(usernameInput.value, emailInput.value, passwordInput.value)
+    auth.registerUser(usernameInput.value, passwordInput.value)
     .then(status => {
         switch (status) {
             case 200:

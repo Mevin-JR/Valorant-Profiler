@@ -1,17 +1,4 @@
-@font-face { /* TODO: Preload fonts */
-    font-family: 'Antonio';
-    src: url('../Fonts/Antonio.ttf');
-}
-
-@font-face {
-    font-family: 'Poppins';
-    src: url('../Fonts/Poppins.ttf');
-}
-
-@font-face {
-    font-family: 'Abel';
-    src: url('../Fonts/Abel.ttf');
-}
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 /* Toastify style */
 .popup-error {
@@ -28,6 +15,7 @@
 }
 
 body {
+    font-family: "Quantico", sans-serif;
     background-image: url(./imgs/bg-mm.png);
     width: 100vw;
     height: 100vh;
@@ -38,12 +26,13 @@ body {
     overflow: hidden;
     -webkit-user-select: none;
     -webkit-user-drag: none;
+    z-index: 2;
 }
 
 nav {
     position: relative;
     height: 100vh;
-    width: 100px;
+    width: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,7 +47,7 @@ nav {
         padding: 0;
 
         li {
-            padding: 12px;
+            padding: 12px 15px;
             border-radius: 10px;
 
             svg {
@@ -154,6 +143,34 @@ nav {
     width: 100%;
     height: 100%;
 
+    .loader-container {
+        position: absolute;
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        backdrop-filter: blur(10px);
+        z-index: 5;
+
+        .loader {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            box-sizing: border-box;
+            border-top: 8px solid cyan;
+            border-left: 8px solid cyan;
+            border-right: 8px solid #ff00;
+            animation: loader .7s infinite linear;
+        }
+
+        p {
+            color: rgb(0, 110, 110);
+        }
+    }
+
     .disclaimer {
         position: absolute;
         bottom: 35px;
@@ -176,8 +193,8 @@ nav {
         border-bottom: 2px solid #7D91AA;
     
         h1 {
-            font-family: 'Antonio';
             color: white;
+            font-size: 28px;
             margin-left: 20px;
             margin-bottom: 30px;
         }
@@ -237,7 +254,7 @@ nav {
             overflow: hidden;
             position: relative;
             clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
-            z-index: 98;
+            z-index: 3;
 
             img {
                 position: absolute;
@@ -254,10 +271,9 @@ nav {
             bottom: 10px;
             left: 10px;
             color: white;
-            font-family: 'Antonio';
             font-size: 20px;
             font-weight: 700;
-            z-index: 99;
+            z-index: 4;
 
             span {
                 color: lime;
@@ -280,7 +296,6 @@ nav {
         width: 100%;
     
         .card-text-container {
-            font-family: 'Abel';
             display: flex;
             flex-direction: column;
             position: absolute;
@@ -357,7 +372,6 @@ nav {
     right: 150px;
     top: 50px;
     width: 350px;
-    font-family: 'Poppins';
     color: white;
 }
 
@@ -460,5 +474,11 @@ input[type="password"] {
     100% {
         opacity: 0;
         transform: scale(0.5);
+    }
+}
+
+@keyframes loader {
+    to {
+        transform: rotate(360deg);
     }
 }
