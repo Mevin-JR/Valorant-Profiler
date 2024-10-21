@@ -6,7 +6,7 @@ const log = require('electron-log');
 log.info('App starting...');
 
 // Development mode check
-const isDev = false;
+const isDev = true;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -172,6 +172,10 @@ ipcMain.on('action:close', () => {
 
 ipcMain.on('userProfile-update', (event, data) => {
     winMain.webContents.send('userProfile-update-forward', data);
+});
+
+ipcMain.on('userProfile-refresh', (event, data) => {
+    winMain.webContents.send('userProfile-refresh-forward', data);
 });
 
 app.on('window-all-closed', () => {

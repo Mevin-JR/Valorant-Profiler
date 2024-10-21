@@ -163,6 +163,26 @@ async function accountInputData(name, tag) {
   }
 }
 
+async function getLastRefreshed() {
+  try {
+    const db = await initializeFirebase();
+    sessionData = getSessionData();
+    const dbRef = ref(db, `userProfiles/${sessionData.username}`);
+    const snapshot = await get(dbRef);
+
+    let timestamp;
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      timestamp = data.last_updated;
+    } else {
+      timestamp = Date.now();
+    }
+    return timestamp;
+  } catch(err) {
+    console.log(`Error fetching refresh timestamp: ${err}`)
+  }
+}
+
 async function getUserProfiles() {
   try {
     const db = await initializeFirebase();
@@ -196,8 +216,6 @@ async function getUserProfiles() {
 // TODO: Serialize api refresh
 // Realtime changes
 async function liveChanges() {
-  accountApiUpdate();
-  mmrApiUpdate();
   sessionData = getSessionData();
   const db = await initializeFirebase();
   const dbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles`);
@@ -215,6 +233,18 @@ async function liveChanges() {
     });
     ipcRenderer.send('userProfile-update', userProfiles);
   });
+}
+
+async function refreshData() {
+  try {
+    await accountApiUpdate();
+    await mmrApiUpdate();
+    
+    const updatedUserProfiles = await getUserProfiles();
+    ipcRenderer.send('userProfile-refresh', updatedUserProfiles);
+  } catch(err) {
+    console.error(`Error refreshing data: ${err}`);
+  }
 }
 
 async function accountApiUpdate() { // TODO: Display update time of profile data
@@ -293,4 +323,4 @@ async function mmrApiUpdate() {
 setInterval(accountApiUpdate, 20 * 60 * 1000); // 20 min
 setInterval(mmrApiUpdate, 30 * 60 * 1000); // 30 min
 
-module.exports = { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges }
+module.exports = { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges, getLastRefreshed, refreshData }
