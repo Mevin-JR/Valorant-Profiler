@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Monda:wght@400..700&display=swap');
+
 
 /* Toastify style */
 .popup-error {
-    background: rgba(80, 80, 81, 0.4) !important;
+    background: rgba(80, 80, 81, 0.8) !important;
     border-radius: 10px !important;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
     cursor: default !important;
@@ -127,7 +129,7 @@ nav {
 }
 
 /* Content Section */
-
+/* TODO: Reorganize and reapply zindexs' */
 .bg-blur {
     display: none;
     position: fixed;
@@ -307,150 +309,153 @@ nav {
             grid-template-columns: 1fr 1fr 1fr;
             gap: 25px;
             width: fit-content;
-
-            /* TODO: Make the button more visible */
-            .account-add-btn {
-                background-color: rgba(0, 0, 0, 0.5);
-                border-radius: 50%;
-                width: 100px;
-                height: 100px;
+            
+            .account-card {
+                position: relative;
+                background-color: white;
+                width: 450px;
+                height: 200px;
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                margin: 40px;
-                cursor: pointer;
-                transition: transform 0.3s ease-in-out;
+                flex-direction: row;
+                transition: all 0.2s ease-in-out;
+                z-index: 2;
+            
+                .card-left {
+            
+                    .cardImg-container {
+                        width: 200px;
+                        height: 200px;
+                        overflow: hidden;
+                        position: relative;
+                        clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+                        z-index: 3;
+            
+                        img {
+                            position: absolute;
+                            top: 25%;
+                            left: 25%;
+                            transform: translate(-25%, -25%);
+                            min-width: 100%;
+                            min-height: 100%;
+                        }
+                    }
+            
+                    .account-level {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 10px;
+                        color: white;
+                        font-size: 20px;
+                        font-weight: 700;
+                        z-index: 4;
+            
+                        span {
+                            color: lime;
+                        }
+                    }
+            
+                    .fav-icon {
+                        position: absolute;
+                        left: 160px;
+                        top: 10px;
+                    }
+                }
+            
+                .card-right {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: end;
+                    justify-content: space-between;
+                    width: 100%;
+                
+                    .card-text-container {
+                        display: flex;
+                        flex-direction: column;
+                        position: absolute;
+                        bottom: 25px;
+                        left: 0;
+                
+                        .account-username {
+                            font-size: 30px;
+                            font-weight: 500;
+                        }
+                
+                        .account-tag {
+                            font-size: 16px;
+                            font-weight: 100;
+                            color: #5F5F5F;
+                        }
+                
+                        .account-rank {
+                            width: fit-content;
+                            padding: 0 5px;
+                            font-weight: 600;
+                            font-size: 18px;
+                            letter-spacing: 1px;
+                        }
+                    }
+                
+                    .options-icon {
+                        margin: 15px;
+                        cursor: pointer;
+                    }
+            
+                    .copy-container {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: center;
+            
+                        .copy-text {
+                            font-size: 16px;
+                            opacity: 0;
+                            transform: translateX(100%);
+                            transition: all 0.3s ease-in-out;
+                            z-index: 2;
+                        }
+            
+                        svg {
+                            margin: 10px;
+                            cursor: pointer;
+                            z-index: 3;
+                        }
+            
+                    }
+            
+                    .copy-container:hover .copy-text {
+                        opacity: 1;
+                        transform: translateX(0%);
+                    }
+                }
+
+                .card-underlay {
+                    position: absolute;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    text-align: right;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 2;
+                    overflow: hidden;
+                    
+                    p {
+                        font-family: "Alfa Slab One", serif;
+                        text-wrap: nowrap;
+                        font-size: 40px;
+                        letter-spacing: 2px;
+                        opacity: 0.05;
+                    }
+                }
             }
             
-            .account-add-btn:hover {
-                transform: scale(1.1);
+            .account-card:hover {
+                transform: translateY(-2%) translateX(-2%);
+                box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
             }
         }
     }
-}
-
-.account-card {
-    position: relative;
-    background-color: white;
-    width: 450px;
-    height: 200px;
-    display: flex;
-    flex-direction: row;
-    transition: all 0.2s ease-in-out;
-
-    .card-left {
-
-        .cardImg-container {
-            width: 200px;
-            height: 200px;
-            overflow: hidden;
-            position: relative;
-            clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
-            z-index: 3;
-
-            img {
-                position: absolute;
-                top: 25%;
-                left: 25%;
-                transform: translate(-25%, -25%);
-                min-width: 100%;
-                min-height: 100%;
-            }
-        }
-
-        .account-level {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-            z-index: 4;
-
-            span {
-                color: lime;
-            }
-        }
-
-        .fav-icon {
-            position: absolute;
-            left: 160px;
-            top: 10px;
-        }
-    }
-
-    .card-right {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: end;
-        justify-content: space-between;
-        width: 100%;
-    
-        .card-text-container {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            bottom: 25px;
-            left: 0;
-    
-            .account-username {
-                font-size: 30px;
-                font-weight: 500;
-            }
-    
-            .account-tag {
-                font-size: 16px;
-                font-weight: 100;
-                color: #5F5F5F;
-            }
-    
-            .account-rank {
-                width: fit-content;
-                padding: 0 5px;
-                font-weight: 600;
-                font-size: 18px;
-                letter-spacing: 1px;
-            }
-        }
-    
-        .options-icon {
-            margin: 15px;
-            cursor: pointer;
-        }
-
-        .copy-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-
-            .copy-text {
-                font-size: 16px;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease-in-out;
-                z-index: 2;
-            }
-
-            svg {
-                margin: 10px;
-                cursor: pointer;
-                z-index: 3;
-            }
-
-        }
-
-        .copy-container:hover .copy-text {
-            opacity: 1;
-            transform: translateX(0%);
-        }
-    }
-}
-
-.account-card:hover {
-    transform: translateY(-2%) translateX(-2%);
-    box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
 }
 
 .add-popup-container {
