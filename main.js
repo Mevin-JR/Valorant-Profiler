@@ -178,6 +178,10 @@ ipcMain.on('userProfile-refresh', (event, data) => {
     winMain.webContents.send('userProfile-refresh-forward', data);
 });
 
+ipcMain.on('error-code', (event, data) => {
+    winMain.webContents.send('error-cdoe-forward', data);
+})
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();

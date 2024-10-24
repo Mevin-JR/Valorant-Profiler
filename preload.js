@@ -24,11 +24,11 @@ contextBridge.exposeInMainWorld('auth', {
 // User profile functions
 contextBridge.exposeInMainWorld('account', {
     accountInputData: async (nameInput, tagInput) => await accountInputData(nameInput, tagInput), // Player name & tag retrival
-    getUserProfiles: async () => await getUserProfiles() // Retrieving all saved user profiles from firebase
 });
 
 // Database functions
 contextBridge.exposeInMainWorld('db', {
+    getUserProfiles: async () => await getUserProfiles(), // Retrieving all saved user profiles from firebase
     liveChanges: async () => await liveChanges(),
     getLastRefreshed: async () => await getLastRefreshed(),
     refreshData: async() => await refreshData()
