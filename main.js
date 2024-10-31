@@ -67,7 +67,7 @@ function createMainWindow() {
 }
 
 
-// TODO: Setup auto updater with Github Release
+// TODO: Setup auto updater with Github Release, Fuck this with a passion
 app.whenReady().then(() => {
     createLoginWindow();
     
@@ -179,7 +179,7 @@ ipcMain.on('userProfile-refresh', (event, data) => {
 });
 
 ipcMain.on('error-code', (event, data) => {
-    winMain.webContents.send('error-cdoe-forward', data);
+    winMain.webContents.send('error-code-forward', data);
 })
 
 app.on('window-all-closed', () => {

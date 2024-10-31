@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('auth', {
     loginUser: async (username, password) => await loginUser(username, password),
 });
 
-// TODO: Better naming and structure
+// TODO: Shits ugly, do better naming
 // User profile functions
 contextBridge.exposeInMainWorld('account', {
     accountInputData: async (nameInput, tagInput) => await accountInputData(nameInput, tagInput), // Player name & tag retrival

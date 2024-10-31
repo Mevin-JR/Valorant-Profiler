@@ -25,7 +25,7 @@
 
 </head>
 <body>
-    <!-- TODO: Add loading animations to all elements -->
+    <!-- TODO: Add loading animations to all elements, shits bland -->
     <nav>
         <ul class="nav-items">
             <li class="home-btn selection-indicator">
@@ -78,26 +78,24 @@
         </div>
     </nav>
     <div class="bg-blur"></div>
-    <div class="add-popup-container">
-        <div class="account-add-popup">
-            <div class="popup-input-container">
+    <div class="popup-container">
+        <div class="popup-bg">
+            <div class="popup-content">
                 <h2>Account Details</h2>
                 <span>Enter your Valorant account credentials</span>
-                <div class="popup-interaction-fields">
-                    <div class="name-input">
-                        <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>                                                   
-                        <input id="name" type="text" placeholder="Valorant Username" spellcheck="false" maxlength="28">                  
-                    </div>
-                    <div class="tag-input">
-                        <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M2 14H34M2 26H34M14 2L10 38M26 2L22 38" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>                                    
-                        <input id="tag" type="text" placeholder="Tagline" maxlength="5">
-                    </div>
+                <div class="name-input">
+                    <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>                                                   
+                    <input id="name" type="text" placeholder="Valorant Username" spellcheck="false" maxlength="28">                  
                 </div>
-                <div class="account-add-btn-popup" id="add-account">
+                <div class="tag-input">
+                    <svg width="24" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 14H34M2 26H34M14 2L10 38M26 2L22 38" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>                                    
+                    <input id="tag" type="text" placeholder="Tagline" spellcheck="false" maxlength="5">
+                </div>
+                <div class="account-add-btn" id="account-add-btn">
                     <span>Add Account</span>
                 </div>
             </div>
