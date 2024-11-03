@@ -50,6 +50,10 @@ async function setCards(userProfiles) {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("account-card");
         cardDiv.innerHTML = `
+            <div class="action-required-container">
+                <span>Action Required</span>
+                <p>Account name or tag has been changed, if so please update it manually</p>
+            </div>
             <div class="card-left">
                 <span class="account-level">${profile.accLvl}</span>
                 <div class="cardImg-container">
@@ -96,11 +100,11 @@ async function setCards(userProfiles) {
             </div>
         `;
         
+        cardDiv.id = `${profile.name}#${profile.tag}`
         cardContainer.appendChild(cardDiv);
 
         const accountRankContainer = cardDiv.querySelector('.account-rank');
         setRankColor(accountRankContainer, profile.rank);
-
     });
 }
 
@@ -171,6 +175,21 @@ async function insertHomeSubtitle() {
     });
 }
 
+function setupCardOptionsListener() {
+    const optionsBtns = document.querySelectorAll('.options-icon');
+    optionsBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const optionsParentContainer = btn.closest('.options-container');
+            const optionsDropdown = optionsParentContainer.querySelector('.dropdown-container');
+            if (optionsDropdown.style.display === 'flex') {
+                optionsDropdown.style.display = 'none';
+            } else {
+                optionsDropdown.style.display = 'flex';
+            }
+        });
+    });
+}
+
 async function updateRefreshTimer() {
     const timer = document.querySelector('.timer');
     const lastRefreshTImestamp = await db.getLastRefreshed();
@@ -191,19 +210,8 @@ async function loadHome() {
     .then((userProfiles) => {
         setCards(userProfiles);
         hideLoading();
-        
-        const optionsBtns = document.querySelectorAll('.options-icon');
-        optionsBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const optionsParentContainer = btn.closest('.options-container');
-                const optionsDropdown = optionsParentContainer.querySelector('.dropdown-container');
-                if (optionsDropdown.style.display === 'flex') {
-                    optionsDropdown.style.display = 'none';
-                } else {
-                    optionsDropdown.style.display = 'flex';
-                }
-            });
-        });
+
+        setupCardOptionsListener();
     })
     .catch((err) => {
         console.error('Error setting profile cards:', err);
@@ -227,6 +235,7 @@ ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
 ipcRenderer.on('userProfile-refresh-forward', (userProfiles) => {
     cardContainer.innerHTML = '';
     setCards(userProfiles);
+    setupCardOptionsListener();
 });
 
 const settingsBtn = document.getElementById('settings-btn');
@@ -294,6 +303,18 @@ ipcRenderer.on('load-home', () => {
     loadHome().then(() => {
         const refreshButton = document.querySelector('.refresh-btn');
         refreshButton.addEventListener('click', () => {
+
+            const cooldownSeconds = 60;
+            if (refreshButton.classList.contains('cooldown')) {
+                displayError(`Refresh is in cooldown for ${cooldownSeconds} seconds`);
+                return;
+            }
+
+            refreshButton.classList.add('cooldown');
+            setTimeout(() => {
+                refreshButton.classList.remove('cooldown');
+            }, cooldownSeconds * 1000);
+
             showLoading('Refreshing data... (May take some time)');
             db.refreshData().then(() => {
                 updateRefreshTimer();
@@ -319,5 +340,16 @@ function displayError(errorText) {
 }
 
 ipcRenderer.on('error-code-forward', (err) => {
-    displayError(err.data);
+    displayError(err);
+});
+
+ipcRenderer.on('action-required-accounts-forward', (err) => {
+    const actionRequiredAccounts = err;
+
+    actionRequiredAccounts.forEach((accountID) => {
+        const card = document.getElementById(accountID);
+        const actionRequiredContainer = card.querySelector('.action-required-container');
+
+        actionRequiredContainer.style.display = 'flex';
+    });
 });

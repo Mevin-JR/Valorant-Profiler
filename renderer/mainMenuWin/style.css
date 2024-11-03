@@ -469,6 +469,36 @@ nav {
                         flex-direction: row;
                         transition: all 0.2s ease-in-out;
                     
+                        .action-required-container {
+                            z-index: 210;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: inherit;
+                            height: inherit;
+                            background-color: rgba(0, 0, 0, 0.75);
+                            display: none;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+                            gap: 10px;
+
+                            span {
+                                color: red;
+                                border: 1px solid red;
+                                border-radius: 10px;
+                                padding: 10px 20px;
+                            }
+
+                            p {
+                                color: gray;
+                                font-size: 12px;
+                                font-weight: 600;
+                                width: 60%;
+                                text-align: center;
+                            }
+                        }
+
                         .card-left {
                     
                             .cardImg-container {

@@ -6,7 +6,7 @@ const log = require('electron-log');
 log.info('App starting...');
 
 // Development mode check
-const isDev = false;
+const isDev = true;
 
 // Windows (Login & Main window)
 let winLogin;
@@ -181,6 +181,10 @@ ipcMain.on('userProfile-refresh', (event, data) => {
 ipcMain.on('error-code', (event, data) => {
     winMain.webContents.send('error-code-forward', data);
 })
+
+ipcMain.on('action-required-accounts', (event, data) => {
+    winMain.webContents.send('action-required-accounts-forward', data);
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

@@ -98,7 +98,7 @@ async function fetchHenrikDevConfig() {
 
 
 // API Request & Response handling
-async function getResponseStatus(apiResponse) {
+async function getResponseStatus(apiResponse, name, tag) {
   const status = apiResponse.status;
   let statusReturn, accountApiData;
 
@@ -122,16 +122,16 @@ async function getResponseStatus(apiResponse) {
         const code = accountApiData.errors?.[0]?.code;
         switch (code) {
           case 22:
-            statusReturn = {status: 404, data: "Account not found"};
+            statusReturn = {status: 404, data: `Account not found [${name}#${tag}]`, name: name, tag: tag};
             break;
           case 24:
-            statusReturn = {status: 404, data: "Could not retrieve player data"};
+            statusReturn = {status: 404, data: `Could not retrieve player data [${name}#${tag}]`, name: name, tag: tag};
             break;
           case 25:
-            statusReturn = {status: 404, data: "No MMR data found for player"};
+            statusReturn = {status: 404, data: `No MMR data found for player [${name}#${tag}]`, name: name, tag: tag};
             break;
           default:
-            statusReturn = {status: 404, data: "Could not fetch player data"};
+            statusReturn = {status: 404, data: `Could not fetch player data [${name}#${tag}]`, name: name, tag: tag};
             break;
         }
         break;
@@ -159,7 +159,7 @@ async function accountApiRequest(name, tag) {
         }
     });
 
-    return getResponseStatus(accountResponse);    
+    return getResponseStatus(accountResponse, name, tag);    
 
   } catch (err) {
     console.error('Error fetching account data from API:', err);
@@ -176,7 +176,7 @@ async function mmrApiRequest(name, tag, region) {
         }
     });
     
-    return getResponseStatus(mmrResponse);
+    return getResponseStatus(mmrResponse, name, tag);
 
   } catch (err) {
     console.error('Error fetching mmr data from API:', err);
@@ -189,12 +189,12 @@ async function mergedApiData(name, tag) {
     // Current rate limit 75req/min
     const accountApiData = await accountApiRequest(name, tag);
     if (accountApiData.status > 299) {
-      ipcRenderer.send('error-code', accountApiData);
+      ipcRenderer.send('error-code', accountApiData.data);
       return {};
     }
     const mmrApiData = await mmrApiRequest(name, tag, accountApiData.data.region);
     if (mmrApiData.status > 299) {
-      ipcRenderer.send('error-code', mmrApiData);
+      ipcRenderer.send('error-code', mmrApiData.data);
       return {};
     }
     const mergedApiData = { accountApiData, mmrApiData };
@@ -237,14 +237,20 @@ async function accountApiUpdate() {
     const userProfiles = await getUserProfiles();
     const db = await initializeFirebase();
 
+    let actionRequiredProfiles = [];
+    
     for (const profile of userProfiles) {
       const { name, tag } = profile;
+      
+      const accountApiData = await accountApiRequest(name, tag);
+      if (accountApiData.status > 299) {
+        actionRequiredProfiles.push(`${accountApiData.name}#${accountApiData.tag}`);
+        continue;
+      }
 
       sessionData = getSessionData();
       const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
-
       const snapshot = await get(userProfileRef);
-      const accountApiData = await accountApiRequest(name, tag); // FIXME: Implement status code check in this bitch
       const updatedProfile = {
         accLvl: accountApiData.data.account_level,
         region: accountApiData.data.region,
@@ -269,6 +275,51 @@ async function accountApiUpdate() {
       await set(lastUpdateRef, { last_updated: currentTimestamp });
     }
 
+    return actionRequiredProfiles;
+
+  } catch (error) {
+    console.error('Error during API update:', error);
+  }
+}
+
+async function mmrApiUpdate() {
+  try {
+    const userProfiles = await getUserProfiles();
+    const db = await initializeFirebase();
+
+    let actionRequiredProfiles = [];
+
+    for (const profile of userProfiles) {
+      const { name, tag } = profile;
+
+      sessionData = getSessionData();
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
+      const snapshot = await get(userProfileRef);
+      const data = snapshot.val();
+      
+      const mmrApiData = await mmrApiRequest(name, tag, data.region);
+      if (mmrApiData.status > 299) {
+        actionRequiredProfiles.push(`${mmrApiData.name}#${mmrApiData.tag}`);
+        continue;
+      }
+
+      const updatedProfile = {
+        name: name,
+        tag: tag,
+        currentRank: mmrApiData.data.current.tier.name,
+        peakRank: mmrApiData.data.peak.tier.name,
+        currentElo: mmrApiData.data.current.elo,
+        timestamp: Date.now(),
+      };
+
+      if (snapshot.exists()) {
+        await update(userProfileRef, updatedProfile);
+      } else {
+        await set(userProfileRef, updatedProfile);
+      }
+
+      return actionRequiredProfiles;
+    }
   } catch (error) {
     console.error('Error during API update:', error);
   }
@@ -356,51 +407,19 @@ async function liveChanges() {
 
 async function refreshData() {
   try {
-    await accountApiUpdate();
-    await mmrApiUpdate();
+    const accountActionRequiredProfiles = await accountApiUpdate();
+    const mmrActionRequiredProfiles = await mmrApiUpdate();
     
     const updatedUserProfiles = await getUserProfiles();
     ipcRenderer.send('userProfile-refresh', updatedUserProfiles);
+    
+    let actionRequiredAccounts = new Set([...accountActionRequiredProfiles, ...mmrActionRequiredProfiles]);
+    if (actionRequiredAccounts.length !== 0) {
+      ipcRenderer.send('action-required-accounts', actionRequiredAccounts);
+    }
   } catch(err) {
     console.error(`Error refreshing data: ${err}`);
   }
 }
-
-
-
-async function mmrApiUpdate() {
-  try {
-    const userProfiles = await getUserProfiles();
-    const db = await initializeFirebase();
-
-    for (const profile of userProfiles) {
-      const { name, tag } = profile;
-      sessionData = getSessionData();
-      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
-      const snapshot = await get(userProfileRef);
-      const data = snapshot.val();
-      const mmrApiData = await mmrApiRequest(name, tag, data.region);
-      const updatedProfile = {
-        name: name,
-        tag: tag,
-        currentRank: mmrApiData.data.current.tier.name,
-        peakRank: mmrApiData.data.peak.tier.name,
-        currentElo: mmrApiData.data.current.elo,
-        timestamp: Date.now(),
-      };
-
-      if (snapshot.exists()) {
-        await update(userProfileRef, updatedProfile);
-      } else {
-        await set(userProfileRef, updatedProfile);
-      }
-    }
-  } catch (error) {
-    console.error('Error during API update:', error);
-  }
-}
-
-setInterval(accountApiUpdate, 20 * 60 * 1000); // 20 min
-setInterval(mmrApiUpdate, 30 * 60 * 1000); // 30 min
 
 module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData }
