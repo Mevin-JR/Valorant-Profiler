@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
 
-const { ref , set, get, onChildAdded, query, orderByChild, update, startAt, startAfter } = require('firebase/database');
+const { ref , set, get, onChildAdded, query, orderByChild, update, startAt } = require('firebase/database');
 const { hashPassword, verifyPassword } = require('./utils');
 const { initializeFirebase } = require("./firebase");
 
@@ -13,8 +13,8 @@ function getSessionData() {
   try {
     const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
     return sessionData;
-  } catch (error) {
-    console.error('Error reading session file:', error);
+  } catch (err) {
+    console.error('Error reading session file:', err);
   }
 }
 
@@ -83,6 +83,7 @@ async function saveSession(username) {
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
 }
 
+// Config files (from server)
 async function fetchHenrikDevConfig() {
   const response = await fetch('https://valorant-profiler.onrender.com/henrikDevConfig', {
       method: 'GET',
@@ -95,40 +96,55 @@ async function fetchHenrikDevConfig() {
   return result;
 }
 
-function getErrorStatus(status, apiData) {
-  switch (status) {
-    case 401:
-      statusReturn = {status: 401, data: "Missing API key"};
-      break;
-    case 403:
-      statusReturn = {status: 403, data: "Invalid API key"};
-      break;
-    case 404:
-      const code = apiData.errors?.[0]?.code;
-      switch (code) {
-        case 22:
-          statusReturn = {status: 404, data: "Account not found"};
-          break;
-        case 24:
-          statusReturn = {status: 404, data: "Could not retrieve player data"};
-          break;
-        case 25:
-          statusReturn = {status: 404, data: "No MMR data found for player"};
-          break;
-        default:
-          statusReturn = {status: 404, data: "Could not fetch player data"};
-          break;
-      }
-      break;
-    case 429:
-      statusReturn = {status: 429, data: "Rate limit reached, Please try again later"};
-      break;
-    case 500:
-      statusReturn = {status: 500, data: "Internal error, Something went wrong"};
-      break;
-    default:
-      statusReturn = {status: 0, data: accountResponse};
-      break;
+
+// API Request & Response handling
+async function getResponseStatus(apiResponse) {
+  const status = apiResponse.status;
+  let statusReturn, accountApiData;
+
+  if (apiResponse.headers.get("content-type")?.includes("application/json")) {
+    accountApiData = await apiResponse.json();
+  } else {
+    return {status: -1, data: "Unexpected content type; expected JSON"};
+  }
+
+  if (apiResponse.ok) {
+    statusReturn = {status: status, data: accountApiData.data}
+  } else {
+    switch (status) {
+      case 401:
+        statusReturn = {status: 401, data: "Missing API key"};
+        break;
+      case 403:
+        statusReturn = {status: 403, data: "Invalid API key"};
+        break;
+      case 404:
+        const code = accountApiData.errors?.[0]?.code;
+        switch (code) {
+          case 22:
+            statusReturn = {status: 404, data: "Account not found"};
+            break;
+          case 24:
+            statusReturn = {status: 404, data: "Could not retrieve player data"};
+            break;
+          case 25:
+            statusReturn = {status: 404, data: "No MMR data found for player"};
+            break;
+          default:
+            statusReturn = {status: 404, data: "Could not fetch player data"};
+            break;
+        }
+        break;
+      case 429:
+        statusReturn = {status: 429, data: "Rate limit reached, Please try again later"};
+        break;
+      case 500:
+        statusReturn = {status: 500, data: "Internal error, Something went wrong"};
+        break;
+      default:
+        statusReturn = {status: 0, data: accountResponse};
+        break;
+    }
   }
   return statusReturn;
 }
@@ -143,23 +159,13 @@ async function accountApiRequest(name, tag) {
         }
     });
 
-    const status = accountResponse.status;
-    let accountApiData = await accountResponse.json();
-    let statusReturn;
-    if (status >= 200 && status < 300) {
-      // FIXME: Add a check to see if this bitch is a json
-      statusReturn = {status: status, data: accountApiData.data}
-    } else {
-      statusReturn = getErrorStatus(status, accountApiData);
-    }
-    return statusReturn;
+    return getResponseStatus(accountResponse);    
 
-  } catch (error) {
-    console.error('Error fetching account data from API:', error);
+  } catch (err) {
+    console.error('Error fetching account data from API:', err);
   }
 }
 
-// TODO: Move the status check into a function and add it to mmr req as well
 async function mmrApiRequest(name, tag, region) {
   try {
     const henrikDevConfig = await fetchHenrikDevConfig();
@@ -169,57 +175,105 @@ async function mmrApiRequest(name, tag, region) {
           Authorization: henrikDevConfig.apiKey
         }
     });
-    const mmrApiData = await mmrResponse.json();
-    return mmrApiData;
-  } catch (error) {
-    console.error('Error fetching mmr data from API:', error);
+    
+    return getResponseStatus(mmrResponse);
+
+  } catch (err) {
+    console.error('Error fetching mmr data from API:', err);
   }
 }
 
-async function valApiData(name, tag) {
+async function mergedApiData(name, tag) {
   try {
     // TODO: Optimize api requests, shits too much
     // Current rate limit 75req/min
     const accountApiData = await accountApiRequest(name, tag);
     if (accountApiData.status > 299) {
       ipcRenderer.send('error-code', accountApiData);
-      return false;
+      return {};
     }
     const mmrApiData = await mmrApiRequest(name, tag, accountApiData.data.region);
+    if (mmrApiData.status > 299) {
+      ipcRenderer.send('error-code', mmrApiData);
+      return {};
+    }
     const mergedApiData = { accountApiData, mmrApiData };
     return mergedApiData;
-  } catch (error) {
-    console.error('Error accessing henrikedev api:', error);
+  } catch (err) {
+    console.error('Error accessing henrikedev api:', err);
   }
 }
 
-async function accountInputData(name, tag) {
+// Profile data handling
+async function insertProfileData(name, tag) {
   try {
-    const db = await initializeFirebase();
-    const mergedApiData = await valApiData(name, tag);
-    if (!mergedApiData) {
+    const mergedData = await mergedApiData(name, tag);
+    if (!mergedData) {
       return;
     }
+
+    const db = await initializeFirebase();
     sessionData = getSessionData();
-    await set(ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}` ), {
+    await set(ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`), {
       name: name,
       tag: tag,
-      accLvl: mergedApiData.accountApiData.data.account_level,
-      puuid: mergedApiData.accountApiData.data.puuid,
-      region: mergedApiData.accountApiData.data.region,
-      cardImg: mergedApiData.accountApiData.data.card.large,
-      currentRank: mergedApiData.mmrApiData.data.current.tier.name,
-      peakRank: mergedApiData.mmrApiData.data.peak.tier.name,
-      currentElo: mergedApiData.mmrApiData.data.current.elo,
+      accLvl: mergedData.accountApiData.data.account_level,
+      puuid: mergedData.accountApiData.data.puuid,
+      region: mergedData.accountApiData.data.region,
+      cardImg: mergedData.accountApiData.data.card.large,
+      currentRank: mergedData.mmrApiData.data.current.tier.name,
+      peakRank: mergedData.mmrApiData.data.peak.tier.name,
+      currentElo: mergedData.mmrApiData.data.current.elo,
       timestamp: Date.now(),
     });
 
   } catch (err) {
-    console.error('Error adding account details:', err);
+    console.error('Error inserting profile details:', err);
   }
 }
 
-// FIXME: Why the fuck is this not registering on newly created accounts 
+async function accountApiUpdate() {
+  try {
+    const userProfiles = await getUserProfiles();
+    const db = await initializeFirebase();
+
+    for (const profile of userProfiles) {
+      const { name, tag } = profile;
+
+      sessionData = getSessionData();
+      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
+
+      const snapshot = await get(userProfileRef);
+      const accountApiData = await accountApiRequest(name, tag); // FIXME: Implement status code check in this bitch
+      const updatedProfile = {
+        accLvl: accountApiData.data.account_level,
+        region: accountApiData.data.region,
+        cardImg: accountApiData.data.card.large,
+        timestamp: Date.now(),
+      };
+
+      if (snapshot.exists()) {
+        await update(userProfileRef, updatedProfile);
+      } else {
+        await set(userProfileRef, updatedProfile);
+      }
+    }
+
+    const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}`);
+    const lastUpdateSnapshot = await get(lastUpdateRef);
+    const currentTimestamp = Date.now();
+
+    if (lastUpdateSnapshot.exists() && lastUpdateSnapshot.val().last_updated !== undefined) {
+      await update(lastUpdateRef, { last_updated: currentTimestamp });
+    } else {
+      await set(lastUpdateRef, { last_updated: currentTimestamp });
+    }
+
+  } catch (error) {
+    console.error('Error during API update:', error);
+  }
+}
+
 async function getLastRefreshed() {
   try {
     const db = await initializeFirebase();
@@ -232,7 +286,7 @@ async function getLastRefreshed() {
       const data = snapshot.val();
       timestamp = data.last_updated;
     } else {
-      timestamp = Date.now();
+      timestamp = -1;
     }
     return timestamp;
   } catch(err) {
@@ -312,46 +366,7 @@ async function refreshData() {
   }
 }
 
-async function accountApiUpdate() { // TODO: Display update time of profile data, fucking headache
-  try {
-    const userProfiles = await getUserProfiles();
-    const db = await initializeFirebase();
 
-    for (const profile of userProfiles) {
-      const { name, tag } = profile;
-      sessionData = getSessionData();
-      const userProfileRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
-      const snapshot = await get(userProfileRef);
-      const accountApiData = await accountApiRequest(name, tag); // FIXME: Implement status code check in this bitch
-      const updatedProfile = {
-        accLvl: accountApiData.data.account_level,
-        puuid: accountApiData.data.puuid,
-        region: accountApiData.data.region,
-        cardImg: accountApiData.data.card.large,
-        timestamp: Date.now(),
-      };
-
-      if (snapshot.exists()) {
-        await update(userProfileRef, updatedProfile);
-      } else {
-        await set(userProfileRef, updatedProfile);
-      }
-    }
-
-    const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}`);
-    const lastUpdateSnapshot = await get(lastUpdateRef);
-    const currentTimestamp = Date.now();
-
-    if (lastUpdateSnapshot.exists()) {
-      await update(lastUpdateRef, { last_updated: currentTimestamp });
-    } else {
-      await set(lastUpdateRef, { last_updated: currentTimestamp });
-    }
-
-  } catch (error) {
-    console.error('Error during API update:', error);
-  }
-}
 
 async function mmrApiUpdate() {
   try {
@@ -388,4 +403,4 @@ async function mmrApiUpdate() {
 setInterval(accountApiUpdate, 20 * 60 * 1000); // 20 min
 setInterval(mmrApiUpdate, 30 * 60 * 1000); // 30 min
 
-module.exports = { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges, getLastRefreshed, refreshData }
+module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData }

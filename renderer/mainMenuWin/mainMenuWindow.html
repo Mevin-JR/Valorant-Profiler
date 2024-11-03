@@ -114,12 +114,60 @@
             </div>
         </div>
         <div class="title-container"></div>
-        <div class="subtitle-container"></div>
-        <div class="content-container">
-            <div class="card-section">
-                <!-- Data retrieved from firebase -->
+        <div class="content-section-inner">
+            <div class="main-content">
+                <div class="no-account-page-container">
+                    <h2>No account(s) found....</h2>
+                    <p>Insert accounts using "Add Accounts" button</p>
+                </div>
+                <div class="subtitle-container"></div>
+                <div class="content-container">
+                    <div class="card-section">
+                        <!-- Data retrieved from firebase -->
+                    </div>
+                </div>
+            </div>
+            <!-- TODO: Finish socials section (Convert the code to dynamic) -->
+            <div class="socials-container">
+                <div class="socials-header">
+                    <h2>Friends</h2>
+                    <svg width="28" height="20" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M40 12V24M46 18H34M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>                    
+                </div>
+                <div class="friend-list">
+                    <div class="friend-account">
+                        <img src="./imgs/default-profile-icon.png">
+                        <div class="friend-account-info">
+                            <span class="friend-account-name">Username</span>
+                            <span class="friend-account-status">Offline</span>
+                        </div>
+                    </div>
+                    <div class="friend-account">
+                        <img src="./imgs/default-profile-icon.png">
+                        <div class="friend-account-info">
+                            <span class="friend-account-name">Username</span>
+                            <span class="friend-account-status">Offline</span>
+                        </div>
+                    </div>
+                    <div class="friend-account">
+                        <img src="./imgs/default-profile-icon.png">
+                        <div class="friend-account-info">
+                            <span class="friend-account-name">Username</span>
+                            <span class="friend-account-status">Offline</span>
+                        </div>
+                    </div>
+                    <div class="friend-account">
+                        <img src="./imgs/default-profile-icon.png">
+                        <div class="friend-account-info">
+                            <span class="friend-account-name">Username</span>
+                            <span class="friend-account-status">Offline</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- TODO: Add a login info box (right) -->
         <div class="disclaimer">
             <svg width="24" height="24" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22 30V22M22 14H22.02M42 22C42 33.0457 33.0457 42 22 42C10.9543 42 2 33.0457 2 22C2 10.9543 10.9543 2 22 2C33.0457 2 42 10.9543 42 22Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>

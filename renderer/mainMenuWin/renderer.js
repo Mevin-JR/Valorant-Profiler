@@ -105,6 +105,10 @@ async function setCards(userProfiles) {
 }
 
 function calculateElapsedTime(lastRefresh) {
+    if (lastRefresh === -1) {
+        return "No Data"; // New accounts
+    }
+
     const now = Date.now();
     const elapsedTime = now - lastRefresh;
 
@@ -279,7 +283,7 @@ addAccount.addEventListener('click', () => {
     const name = document.getElementById('name').value;
     const tag = document.getElementById('tag').value; // TODO: Fuck the constraints
     showLoading('Retrieving account data...');
-    account.accountInputData(name, tag).then(() => {
+    account.insertProfileData(name, tag).then(() => {
         hideLoading();
     });
     closepopup();

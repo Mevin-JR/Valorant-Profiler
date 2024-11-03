@@ -1,7 +1,7 @@
 // Module imports (used in render files)
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, accountInputData, getUserProfiles, liveChanges, getLastRefreshed, refreshData } = require('./backend/db_operations');
+const  { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData } = require('./backend/db_operations');
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -20,10 +20,10 @@ contextBridge.exposeInMainWorld('auth', {
     loginUser: async (username, password) => await loginUser(username, password),
 });
 
-// TODO: Shits ugly, do better naming
+// TODO: Shits ugly, give better name
 // User profile functions
 contextBridge.exposeInMainWorld('account', {
-    accountInputData: async (nameInput, tagInput) => await accountInputData(nameInput, tagInput), // Player name & tag retrival
+    insertProfileData: async (nameInput, tagInput) => await insertProfileData(nameInput, tagInput), // Player name & tag retrival
 });
 
 // Database functions
@@ -32,4 +32,4 @@ contextBridge.exposeInMainWorld('db', {
     liveChanges: async () => await liveChanges(),
     getLastRefreshed: async () => await getLastRefreshed(),
     refreshData: async() => await refreshData()
-})
+});

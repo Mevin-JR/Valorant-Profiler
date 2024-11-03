@@ -35,6 +35,7 @@ body {
 }
 
 nav {
+    flex-shrink: 0;
     position: relative;
     height: 100vh;
     width: 150px;
@@ -240,6 +241,7 @@ nav {
     padding-left: 40px;
 
     .loader-container {
+        align-self: stretch;
         position: absolute;
         display: none;
         flex-direction: column;
@@ -279,25 +281,9 @@ nav {
         }
     }
 
-    .disclaimer {
-        position: absolute;
-        bottom: 35px;
-        left: 45px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-    
-        span {
-            color: gray;
-            font-size: 12px;
-        }
-    }
-
     .title-container {
         margin-top: 40px;
-        width: 90vw;
+        width: 100%;
         height: 60px;
         border-bottom: 2px solid #7D91AA;
     
@@ -308,372 +294,487 @@ nav {
         }
     }
 
-    .subtitle-container {
+    .content-section-inner {
         position: relative;
-        margin: 40px 0;
-        width: 73vw;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        width: 100%;
 
-        .home-subtitle-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-
-            .subtitle-left {
+        .main-content {
+            position: relative;
+            flex-shrink: 0;
+    
+            .no-account-page-container {
+                position: absolute;
+                height: 100vh;
+                width: 100%;
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
+                justify-content: center;
                 align-items: center;
-                gap: 10px;
-
-                p {
-                    color: #a0a0a0;
-                    font-size: 18px;
-        
-                    .h-divider {
-                        color: white;
-                        font-size: 22px;
-                    }
-        
-                    .timer {
-                        color: rgb(255, 255, 129);
-                    }
-                }
-
-                .refresh-btn {
-                    padding: 10px;
-                    background-color: #464545;
-                    border-radius: 10px;
-                    height: 16px;
-                    width: 16px;
-                    cursor: pointer;
-                }
             }
 
-            .subtitle-right {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                
-                .add-account-button {
-                    background: green;
-                    color: white;
-                    font-family: inherit;
-                    padding: 0.15em;
-                    padding-left: 1.2em;
-                    font-size: 17px;
-                    font-weight: 500;
-                    border-radius: 0.9em;
-                    border: none;
-                    letter-spacing: 0.05em;
-                    display: flex;
-                    align-items: center;
-                    box-shadow: inset 0 0 1.6em -0.6em green;
-                    overflow: hidden;
-                    position: relative;
-                    height: 2.8em;
-                    padding-right: 3.3em;
-                    cursor: pointer;
-                }
-                  
-                .add-account-button .icon {
-                    background: white;
-                    margin-left: 1em;
-                    position: absolute;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 2.2em;
-                    width: 2.2em;
-                    border-radius: 0.7em;
-                    box-shadow: 0.1em 0.1em 0.6em 0.2em green;
-                    right: 0.3em;
-                    transition: all 0.3s;
-                }
-                  
-                .add-account-button:hover .icon {
-                    width: calc(100% - 0.6em);
-                }
-                
-                .add-account-button .icon svg {
-                    width: 1.1em;
-                    transition: transform 0.3s;
-                }
-                
-                .add-account-button:hover .icon svg {
-                    transform: translateX(0.1em);
-                }
-                
-                .add-account-button:active .icon {
-                    transform: scale(0.95);
-                }
-                              
-                /* .add-account-button {
-                    position: relative;
+            .subtitle-container {
+                position: relative;
+                margin: 40px 0;
+                width: 100%;
+        
+                .home-subtitle-container {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    background-color: rgb(0, 170, 0);
-                    border-radius: 10px;
-                    padding: 10px;
-                    cursor: pointer;
-                    transition: box-shadow 0.5s;
-
-                    svg {
-                        width: 20px;
-                        height: 20px;
-                    }
-                    
-                    p {
-                        color: white;
-                        font-size: 18px;
-                    }
-                }
-
-                .add-account-button:hover {
-                    box-shadow: 0 0 5px rgb(0, 170, 0),
-                                0 0 25px rgb(0, 170, 0);
-                } */
-            }
-        }
-    }
-
-    .content-container {
-        position: relative;
-        height: max-content;
-        max-width: 73vw;
-
-        .card-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 25px;
-            width: fit-content;
-            
-            .account-card {
-                z-index: 100;
-                position: relative;
-                border-radius: 5px;
-                width: 450px;
-                height: 200px;
-                display: flex;
-                flex-direction: row;
-                transition: all 0.2s ease-in-out;
-            
-                .card-left {
-            
-                    .cardImg-container {
-                        z-index: 110;
-                        position: relative;
-                        width: 200px;
-                        height: 200px;
-                        overflow: hidden;
-                        clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
-                        border-radius: 5px 0 0 5px;
-            
-                        img {
-                            z-index: 110;
-                            position: absolute;
-                            top: 25%;
-                            left: 25%;
-                            transform: translate(-25%, -25%);
-                            min-width: 100%;
-                            min-height: 100%;
-                        }
-                    }
-            
-                    .account-level {
-                        position: absolute;
-                        top: 10px;
-                        left: 10px;
-                        backdrop-filter: blur(10px);
-                        box-shadow: rgba(0, 0, 0, 1) 0px 3px 8px;
-                        border-radius: 5px;
-                        padding: 5px 10px;
-                        color: limegreen;
-                        font-size: 16px;
-                        font-weight: 700;
-                        z-index: 120;
-                    }
-                }
-            
-                .card-right {
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: end;
                     justify-content: space-between;
-                    width: 100%;
-                
-                    .card-text-container {
-                        z-index: 110;
+        
+                    .subtitle-left {
                         display: flex;
-                        flex-direction: column;
-                        position: absolute;
-                        bottom: 25px;
-                        left: 0;
-                        max-width: 200px;
-                
-                        .account-username {
-                            color: white;
-                            font-size: clamp(18px, 1.05vw, 25px);
-                            white-space: nowrap;                            
-                            font-weight: 500;
-                        }
-                
-                        .account-tag {
-                            font-size: 16px;
-                            font-weight: 100;
-                            color: white;
-                            opacity: 0.5;
-                        }
-                
-                        .account-rank {
-                            width: fit-content;
-                            padding: 0 5px;
-                            font-weight: 600;
+                        flex-direction: row;
+                        align-items: center;
+                        gap: 10px;
+        
+                        p {
+                            color: #a0a0a0;
                             font-size: 18px;
-                            letter-spacing: 1px;
-                        }
-                    }
                 
-                    .options-container {
-                        position: relative;
-                        margin: 15px;
-                        z-index: 200;
-
-                        .options-icon {
+                            .h-divider {
+                                color: white;
+                                font-size: 22px;
+                            }
+                
+                            .timer {
+                                color: rgb(255, 255, 129);
+                            }
+                        }
+        
+                        .refresh-btn {
+                            padding: 10px;
+                            background-color: #464545;
+                            border-radius: 10px;
+                            height: 16px;
+                            width: 16px;
                             cursor: pointer;
                         }
-
-                        .dropdown-container {
-                            z-index: 210;
-                            position: absolute;
-                            top: 50%;
-                            right: 100%;
-                            display: none;
-                            flex-direction: column;
-                            gap: 10px;
-                            background-color: #0F1822;
-                            box-shadow: black 3px 3px;
-                            padding: 15px;
-                            border-radius: 10px;
-
-                            a {
-                                display: flex;
-                                flex-direction: row;
-                                align-items: center;
-                                gap: 15px;
-                                color: #aaaaaa;
-                                font-size: 13px;
-                                padding: 0 5px;
-                                cursor: pointer;
-                                transition: transform 0.3s ease-in-out;
-                            }
-
-                            #delete-btn {
-                                color: rgb(180, 0, 0);
-                                font-weight: 800;
-                                border-radius: 10px;
-                            }
-
-                            a:hover {
-                                transform: scale(1.05);
-                            }
-
-                        }
                     }
-            
-                    .copy-container {
+        
+                    .subtitle-right {
                         display: flex;
                         flex-direction: row;
                         align-items: center;
                         justify-content: center;
                         gap: 10px;
-            
-                        .copy-text {
+                        
+                        .add-account-button {
+                            background: green;
                             color: white;
-                            font-size: 16px;
-                            opacity: 0;
-                            transform: translateX(50%);
-                            transition: all 0.4s ease-in-out;
-                            z-index: 200;
-                        }
-            
-                        svg {
-                            margin: 15px;
-                            margin-left: 0;
+                            font-family: inherit;
+                            padding: 0.15em;
+                            padding-left: 1.2em;
+                            font-size: 17px;
+                            font-weight: 500;
+                            border-radius: 0.9em;
+                            border: none;
+                            letter-spacing: 0.05em;
+                            display: flex;
+                            align-items: center;
+                            box-shadow: inset 0 0 1.6em -0.6em green;
+                            overflow: hidden;
+                            position: relative;
+                            height: 2.8em;
+                            padding-right: 3.3em;
                             cursor: pointer;
-                            z-index: 200;
                         }
-            
-                    }
-            
-                    .copy-container:hover .copy-text {
-                        opacity: 1;
-                        transform: translateX(0%);
-                    }
-                }
-
-                .card-bg-img {
-                    z-index: 90;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: hidden;
-                    opacity: 0.5;
-                    
-                    img {
-                        position: absolute;
-                        top: -75%;
-                        right: 0;
-                        width: 75%;
-                    }
-                }
-
-                .card-bg-blur {
-                    z-index: 95;
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 100%;
-                    height: 100%;
-                    backdrop-filter: blur(5px);
-                }
-
-                .card-underlay {
-                    position: absolute;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    text-align: right;
-                    width: 100%;
-                    height: 100%;
-                    overflow: hidden;
-                    
-                    p {
-                        color: black;
-                        font-family: "Alfa Slab One", serif;
-                        text-wrap: nowrap;
-                        font-size: 40px;
-                        letter-spacing: 2px;
-                        z-index: 90;
-                        opacity: 0.15;
+                          
+                        .add-account-button .icon {
+                            background: white;
+                            margin-left: 1em;
+                            position: absolute;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 2.2em;
+                            width: 2.2em;
+                            border-radius: 0.7em;
+                            box-shadow: 0.1em 0.1em 0.6em 0.2em green;
+                            right: 0.3em;
+                            transition: all 0.3s;
+                        }
+                          
+                        .add-account-button:hover .icon {
+                            width: calc(100% - 0.6em);
+                        }
+                        
+                        .add-account-button .icon svg {
+                            width: 1.1em;
+                            transition: transform 0.3s;
+                        }
+                        
+                        .add-account-button:hover .icon svg {
+                            transform: translateX(0.1em);
+                        }
+                        
+                        .add-account-button:active .icon {
+                            transform: scale(0.95);
+                        }
+                                      
+                        /* .add-account-button {
+                            position: relative;
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            background-color: rgb(0, 170, 0);
+                            border-radius: 10px;
+                            padding: 10px;
+                            cursor: pointer;
+                            transition: box-shadow 0.5s;
+        
+                            svg {
+                                width: 20px;
+                                height: 20px;
+                            }
+                            
+                            p {
+                                color: white;
+                                font-size: 18px;
+                            }
+                        }
+        
+                        .add-account-button:hover {
+                            box-shadow: 0 0 5px rgb(0, 170, 0),
+                                        0 0 25px rgb(0, 170, 0);
+                        } */
                     }
                 }
             }
+        
+            .content-container {
+                position: relative;
+                height: max-content;
+                max-width: 73vw;
+        
+                .card-section {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 25px;
+                    width: fit-content;
+                    
+                    .account-card {
+                        z-index: 100;
+                        position: relative;
+                        border-radius: 5px;
+                        width: 450px;
+                        height: 200px;
+                        display: flex;
+                        flex-direction: row;
+                        transition: all 0.2s ease-in-out;
+                    
+                        .card-left {
+                    
+                            .cardImg-container {
+                                z-index: 110;
+                                position: relative;
+                                width: 200px;
+                                height: 200px;
+                                overflow: hidden;
+                                clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+                                border-radius: 5px 0 0 5px;
+                    
+                                img {
+                                    z-index: 110;
+                                    position: absolute;
+                                    top: 25%;
+                                    left: 25%;
+                                    transform: translate(-25%, -25%);
+                                    min-width: 100%;
+                                    min-height: 100%;
+                                }
+                            }
+                    
+                            .account-level {
+                                position: absolute;
+                                top: 10px;
+                                left: 10px;
+                                backdrop-filter: blur(10px);
+                                box-shadow: rgba(0, 0, 0, 1) 0px 3px 8px;
+                                border-radius: 5px;
+                                padding: 5px 10px;
+                                color: limegreen;
+                                font-size: 16px;
+                                font-weight: 700;
+                                z-index: 120;
+                            }
+                        }
+                    
+                        .card-right {
+                            position: relative;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: end;
+                            justify-content: space-between;
+                            width: 100%;
+                        
+                            .card-text-container {
+                                z-index: 110;
+                                display: flex;
+                                flex-direction: column;
+                                position: absolute;
+                                bottom: 25px;
+                                left: 0;
+                                max-width: 200px;
+                        
+                                .account-username {
+                                    color: white;
+                                    font-size: clamp(18px, 1.05vw, 25px);
+                                    white-space: nowrap;                            
+                                    font-weight: 500;
+                                }
+                        
+                                .account-tag {
+                                    font-size: 16px;
+                                    font-weight: 100;
+                                    color: white;
+                                    opacity: 0.5;
+                                }
+                        
+                                .account-rank {
+                                    width: fit-content;
+                                    padding: 0 5px;
+                                    font-weight: 600;
+                                    font-size: 18px;
+                                    letter-spacing: 1px;
+                                }
+                            }
+                        
+                            .options-container {
+                                position: relative;
+                                margin: 15px;
+                                z-index: 200;
+        
+                                .options-icon {
+                                    cursor: pointer;
+                                }
+        
+                                .dropdown-container {
+                                    z-index: 210;
+                                    position: absolute;
+                                    top: 50%;
+                                    right: 100%;
+                                    display: none;
+                                    flex-direction: column;
+                                    gap: 10px;
+                                    background-color: #0F1822;
+                                    box-shadow: black 3px 3px;
+                                    padding: 15px;
+                                    border-radius: 10px;
+        
+                                    a {
+                                        display: flex;
+                                        flex-direction: row;
+                                        align-items: center;
+                                        gap: 15px;
+                                        color: #aaaaaa;
+                                        font-size: 13px;
+                                        padding: 0 5px;
+                                        cursor: pointer;
+                                        transition: transform 0.3s ease-in-out;
+                                    }
+        
+                                    #delete-btn {
+                                        color: rgb(180, 0, 0);
+                                        font-weight: 800;
+                                        border-radius: 10px;
+                                    }
+        
+                                    a:hover {
+                                        transform: scale(1.05);
+                                    }
+        
+                                }
+                            }
+                    
+                            .copy-container {
+                                display: flex;
+                                flex-direction: row;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 10px;
+                    
+                                .copy-text {
+                                    color: white;
+                                    font-size: 16px;
+                                    opacity: 0;
+                                    transform: translateX(50%);
+                                    transition: all 0.4s ease-in-out;
+                                    z-index: 200;
+                                }
+                    
+                                svg {
+                                    margin: 15px;
+                                    margin-left: 0;
+                                    cursor: pointer;
+                                    z-index: 200;
+                                }
+                    
+                            }
+                    
+                            .copy-container:hover .copy-text {
+                                opacity: 1;
+                                transform: translateX(0%);
+                            }
+                        }
+        
+                        .card-bg-img {
+                            z-index: 90;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            overflow: hidden;
+                            opacity: 0.5;
+                            
+                            img {
+                                position: absolute;
+                                top: -75%;
+                                right: 0;
+                                width: 75%;
+                            }
+                        }
+        
+                        .card-bg-blur {
+                            z-index: 95;
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            width: 100%;
+                            height: 100%;
+                            backdrop-filter: blur(5px);
+                        }
+        
+                        .card-underlay {
+                            position: absolute;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            text-align: right;
+                            width: 100%;
+                            height: 100%;
+                            overflow: hidden;
+                            
+                            p {
+                                color: black;
+                                font-family: "Alfa Slab One", serif;
+                                text-wrap: nowrap;
+                                font-size: 40px;
+                                letter-spacing: 2px;
+                                z-index: 90;
+                                opacity: 0.15;
+                            }
+                        }
+                    }
+                    
+                    .account-card:hover {
+                        transform: translateY(-2%) translateX(-2%);
+                        --shadow-color: 255, 70, 84;
+                        box-shadow: rgba(var(--shadow-color), 0.4) 5px 5px, rgba(var(--shadow-color), 0.3) 10px 10px, rgba(var(--shadow-color), 0.2) 15px 15px, rgba(var(--shadow-color), 0.1) 20px 20px, rgba(var(--shadow-color), 0.05) 25px 25px;
+                    }
+                }
+            }
+        }
+    
+        .socials-container {
+            margin: 40px 10px 0 0;
+            width: 100%;
+            height: 69vh;
+            background-color: rgba(37, 37, 37, 0.5);
+            border-radius: 10px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
             
-            .account-card:hover {
-                transform: translateY(-2%) translateX(-2%);
-                --shadow-color: 255, 70, 84;
-                box-shadow: rgba(var(--shadow-color), 0.4) 5px 5px, rgba(var(--shadow-color), 0.3) 10px 10px, rgba(var(--shadow-color), 0.2) 15px 15px, rgba(var(--shadow-color), 0.1) 20px 20px, rgba(var(--shadow-color), 0.05) 25px 25px;
+    
+            .socials-header {
+                margin: 10px 20px;
+                padding: 10px;
+                border-bottom: 1px solid gray;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                color: white;
+
+                /* h2 {
+                    color: #F4552B;
+                }
+
+                svg {
+                    background-color: #F4552B;
+                    padding: 7px;
+                    border-radius: 10px;
+                } */
+            }
+
+            .friend-list {
+                margin: 25px;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+
+                .friend-account {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    transition: transform 0.2s ease-in;
+
+                    img {
+                        border: 2px solid gray;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                    }
+
+                    .friend-account-info {
+                        display: flex;
+                        flex-direction: column;
+                        color: white;
+
+                        .friend-account-name {
+                            font-weight: 500;
+                            font-size: 16px;
+                        }
+
+                        .friend-account-status {
+                            font-size: 14px;
+                            font-weight: 300;
+                            color: red;
+                        }
+                    }
+                }
+
+                .friend-account:hover {
+                    transform: scale(1.075);
+                }
             }
         }
     }
+
+    .disclaimer {
+        position: absolute;
+        bottom: 45px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        width: fit-content;
+    
+        span {
+            color: gray;
+            font-size: 12px;
+        }
+    }
+
+    
 }
 
 /* Animations */
