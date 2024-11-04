@@ -1,7 +1,7 @@
 // Module imports (used in render files)
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData } = require('./backend/db_operations');
+const  { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData, deleteUserProfile } = require('./backend/db_operations');
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -31,5 +31,6 @@ contextBridge.exposeInMainWorld('db', {
     getUserProfiles: async () => await getUserProfiles(), // Retrieving all saved user profiles from firebase
     liveChanges: async () => await liveChanges(),
     getLastRefreshed: async () => await getLastRefreshed(),
-    refreshData: async() => await refreshData()
+    refreshData: async () => await refreshData(),
+    deleteUserProfile: async (name) => await deleteUserProfile(name)
 });

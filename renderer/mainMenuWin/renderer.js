@@ -44,6 +44,8 @@ function setRankColor(accountRankContainer, rank) {
 }
 
 // TODO: Complete the fav icon functionality, where the fuck is it
+let renderedUserProfiles = [];
+
 const cardContainer = document.querySelector('.card-section');
 async function setCards(userProfiles) {
     userProfiles.forEach((profile) => {
@@ -73,13 +75,13 @@ async function setCards(userProfiles) {
                         <path d="M16 24H2V38H16V24Z" stroke="#777777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <div class="dropdown-container fade-in-up">
-                        <a id="edit-btn">
+                        <a class="edit-btn">
                             <svg width="13" height="12" viewBox="0 0 40 39" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 37H38M29 3.99996C29.7956 3.20432 30.8748 2.75732 32 2.75732C32.5572 2.75732 33.1088 2.86706 33.6236 3.08028C34.1383 3.29349 34.606 3.606 35 3.99996C35.394 4.39393 35.7065 4.86164 35.9197 5.37638C36.1329 5.89112 36.2426 6.44281 36.2426 6.99996C36.2426 7.55712 36.1329 8.10881 35.9197 8.62355C35.7065 9.13829 35.394 9.606 35 9.99996L10 35L2 37L4 29L29 3.99996Z" stroke="#aaaaaa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             Edit
                         </a>
-                        <a id="delete-btn">
+                        <a class="delete-btn">
                             <svg width="13" height="17" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 10H6M6 10H38M6 10V38C6 39.0609 6.42143 40.0783 7.17157 40.8284C7.92172 41.5786 8.93913 42 10 42H30C31.0609 42 32.0783 41.5786 32.8284 40.8284C33.5786 40.0783 34 39.0609 34 38V10M12 10V6C12 4.93913 12.4214 3.92172 13.1716 3.17157C13.9217 2.42143 14.9391 2 16 2H24C25.0609 2 26.0783 2.42143 26.8284 3.17157C27.5786 3.92172 28 4.93913 28 6V10M16 20V32M24 20V32" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -102,10 +104,16 @@ async function setCards(userProfiles) {
         
         cardDiv.id = `${profile.name}#${profile.tag}`
         cardContainer.appendChild(cardDiv);
-
+        
+        setupCardOptionsListener(cardDiv);
+        
         const accountRankContainer = cardDiv.querySelector('.account-rank');
         setRankColor(accountRankContainer, profile.rank);
+
+        renderedUserProfiles.push(`${profile.name}#${profile.tag}`);
     });
+    
+    renderedUserProfiles = [...new Set(renderedUserProfiles)];
 }
 
 function calculateElapsedTime(lastRefresh) {
@@ -175,17 +183,27 @@ async function insertHomeSubtitle() {
     });
 }
 
-function setupCardOptionsListener() {
-    const optionsBtns = document.querySelectorAll('.options-icon');
-    optionsBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const optionsParentContainer = btn.closest('.options-container');
-            const optionsDropdown = optionsParentContainer.querySelector('.dropdown-container');
-            if (optionsDropdown.style.display === 'flex') {
-                optionsDropdown.style.display = 'none';
-            } else {
-                optionsDropdown.style.display = 'flex';
-            }
+function setupCardOptionsListener(cardDiv) {
+    const optionsBtn = cardDiv.querySelector('.options-icon');
+    const optionsDropdown = cardDiv.querySelector('.dropdown-container');
+    optionsBtn.addEventListener('click', () => {
+        if (optionsDropdown.style.display === 'flex') {
+            optionsDropdown.style.display = 'none';
+        } else {
+            optionsDropdown.style.display = 'flex';
+        }
+
+    });
+
+    const deleteBtn = cardDiv.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', () => {
+        const rawId = cardDiv.id;
+        const name = rawId.substring(0, rawId.indexOf('#'));
+        db.deleteUserProfile(name)
+        .then(() => {
+            const accIndex = renderedUserProfiles.indexOf(rawId);
+            renderedUserProfiles.splice(accIndex, 1);
+            cardDiv.remove();
         });
     });
 }
@@ -210,32 +228,31 @@ async function loadHome() {
     .then((userProfiles) => {
         setCards(userProfiles);
         hideLoading();
-
-        setupCardOptionsListener();
     })
     .catch((err) => {
         console.error('Error setting profile cards:', err);
         hideLoading();
     })
 
-    // FIXME: Fix this shit
     db.liveChanges()
     .catch((err) => {
-        console.error(`Error enabling live changes:${err}`);
+        console.error('Error enabling live changes:', err);
     });
 }
 
 
 ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
-    console.log('Recieved'); // FIXME: Wtf is this
-    setCards(userProfiles);
+    userProfiles.forEach((profile) => {
+        if (!renderedUserProfiles.includes(`${profile.name}#${profile.tag}`)) {
+            setCards([profile]);
+        }
+    });
 });
 
 
 ipcRenderer.on('userProfile-refresh-forward', (userProfiles) => {
     cardContainer.innerHTML = '';
     setCards(userProfiles);
-    setupCardOptionsListener();
 });
 
 const settingsBtn = document.getElementById('settings-btn');
@@ -290,15 +307,33 @@ closePopupBtn.addEventListener('click', () => {
 const addAccount = document.getElementById('account-add-btn');
 addAccount.addEventListener('click', () => {
     const name = document.getElementById('name').value;
-    const tag = document.getElementById('tag').value; // TODO: Fuck the constraints
+    const tag = document.getElementById('tag').value;
+
+    if (name === '' || tag === '') {
+        displayError('Required field is empty');
+        return;
+    }
+
+    const maxAccountCount = 9;
+    if (renderedUserProfiles.length === maxAccountCount) {
+        displayError('Cannot add any more profiles (max. 9)');
+        return;
+    }
+
+    const nameTagCheck = `${name}#${tag}`;
+    if (renderedUserProfiles.includes(nameTagCheck)) {
+        displayError('Account already exists');
+        return;
+    }
+
     showLoading('Retrieving account data...');
-    account.insertProfileData(name, tag).then(() => {
+    account.insertProfileData(name, tag)
+    .then(() => {
         hideLoading();
     });
     closepopup();
 });
 
-// TODO: Set a cooldown on refresh button to stop the api from bitching
 ipcRenderer.on('load-home', () => {
     loadHome().then(() => {
         const refreshButton = document.querySelector('.refresh-btn');
@@ -339,7 +374,7 @@ function displayError(errorText) {
     }).showToast();
 }
 
-ipcRenderer.on('error-code-forward', (err) => {
+ipcRenderer.on('error-message-forward', (err) => {
     displayError(err);
 });
 

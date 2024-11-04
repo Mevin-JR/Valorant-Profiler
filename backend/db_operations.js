@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
 
-const { ref , set, get, onChildAdded, query, orderByChild, update, startAt } = require('firebase/database');
+const { ref , set, get, onChildAdded, query, orderByChild, update, startAt, off, remove } = require('firebase/database');
 const { hashPassword, verifyPassword } = require('./utils');
 const { initializeFirebase } = require("./firebase");
 
@@ -189,12 +189,12 @@ async function mergedApiData(name, tag) {
     // Current rate limit 75req/min
     const accountApiData = await accountApiRequest(name, tag);
     if (accountApiData.status > 299) {
-      ipcRenderer.send('error-code', accountApiData.data);
+      ipcRenderer.send('error-message', accountApiData.data);
       return {};
     }
     const mmrApiData = await mmrApiRequest(name, tag, accountApiData.data.region);
     if (mmrApiData.status > 299) {
-      ipcRenderer.send('error-code', mmrApiData.data);
+      ipcRenderer.send('error-message', mmrApiData.data);
       return {};
     }
     const mergedApiData = { accountApiData, mmrApiData };
@@ -209,12 +209,14 @@ async function insertProfileData(name, tag) {
   try {
     const mergedData = await mergedApiData(name, tag);
     if (!mergedData) {
-      return;
+      return; // Error handled in mergedApiData()
     }
 
-    const db = await initializeFirebase();
     sessionData = getSessionData();
-    await set(ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`), {
+    const db = await initializeFirebase();
+    const dbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`)
+
+    await set(dbRef, {
       name: name,
       tag: tag,
       accLvl: mergedData.accountApiData.data.account_level,
@@ -371,8 +373,28 @@ async function getUserProfiles() {
     }
 
     return userProfiles;
-  } catch (error) {
-    console.error('Error fetching user profiles:', error);
+  } catch (err) {
+    console.error('Error fetching user profiles:', err);
+  }
+}
+
+async function deleteUserProfile(name) {
+  try {
+    const db = await initializeFirebase();
+    sessionData = getSessionData();
+
+    const profileDbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles/${name}`);
+    const snapshot = await get(profileDbRef);
+
+    if (!snapshot.exists()) {
+      ipcRenderer.send('error-message', "Could not delete profile");
+      return;
+    }
+
+    remove(profileDbRef);
+
+  } catch (err) {
+    console.error('Error deleting user profile:', err)
   }
 }
 
@@ -382,26 +404,20 @@ async function getUserProfiles() {
 async function liveChanges() {
   sessionData = getSessionData();
   const db = await initializeFirebase();
-
-  let lastProfileAddedTimestamp = localStorage.getItem('lastProfileAddedTimestamp') || 0;
-
   const dbRef = ref(db, `userProfiles/${sessionData.username}/saved_profiles`);
-  const queryRef = query(dbRef, orderByChild('timestamp'), startAt(lastProfileAddedTimestamp)); // FIXME: Fix this shit
+  const queryRef = query(dbRef, orderByChild('timestamp'), startAt(Date.now()));
 
   onChildAdded(queryRef, (snapshot) => {
     const data = snapshot.val();
-    const userProfiles = [];
-    userProfiles.push({
+    const userProfiles = [{
       name: data.name,
       tag: data.tag,
       accLvl: data.accLvl,
       cardImg: data.cardImg,
       rank: data.currentRank
-    });
-    console.log('Send');
-    ipcRenderer.send('userProfile-update', userProfiles);
+    }];
 
-    localStorage.setItem('lastProfileAddedTimestamp', Date.now());
+    ipcRenderer.send('userProfile-update', userProfiles);
   });
 }
 
@@ -422,4 +438,4 @@ async function refreshData() {
   }
 }
 
-module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData }
+module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData, deleteUserProfile }

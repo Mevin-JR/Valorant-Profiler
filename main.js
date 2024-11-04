@@ -178,8 +178,8 @@ ipcMain.on('userProfile-refresh', (event, data) => {
     winMain.webContents.send('userProfile-refresh-forward', data);
 });
 
-ipcMain.on('error-code', (event, data) => {
-    winMain.webContents.send('error-code-forward', data);
+ipcMain.on('error-message', (event, data) => {
+    winMain.webContents.send('error-message-forward', data);
 })
 
 ipcMain.on('action-required-accounts', (event, data) => {
