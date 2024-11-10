@@ -178,6 +178,10 @@ ipcMain.on('userProfile-refresh', (event, data) => {
     winMain.webContents.send('userProfile-refresh-forward', data);
 });
 
+ipcMain.on('received-friend-request', (event, data) => {
+    winMain.webContents.send('received-friend-request-forward', data);
+});
+
 ipcMain.on('error-message', (event, data) => {
     winMain.webContents.send('error-message-forward', data);
 })

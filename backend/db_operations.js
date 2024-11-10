@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
 
-const { ref , set, get, onChildAdded, query, orderByChild, update, startAt, off, remove } = require('firebase/database');
+const { ref , set, get, onChildAdded, query, orderByChild, update, startAt, remove, child } = require('firebase/database');
 const { hashPassword, verifyPassword } = require('./utils');
 const { initializeFirebase } = require("./firebase");
 
@@ -20,6 +20,13 @@ function getSessionData() {
 
 let sessionData = getSessionData();
 
+function generateUID() {
+  const timestampCode = Date.now().toString().slice(-6);
+  const randomString = Math.floor(100000 + Math.random() * 900000);
+  const randomUID = `${timestampCode}-${randomString}`
+  return randomUID;
+}
+
 // Register
 async function registerUser(username, password) {
     try {
@@ -32,12 +39,25 @@ async function registerUser(username, password) {
       }
 
       const hashedPassword = await hashPassword(password);
+      const uid = generateUID();
       await set(ref(db, 'users/' + username), {
         username: username,
-        password: hashedPassword
+        password: hashedPassword,
+        uid: uid,
+        social: {
+          requests: {
+            sentCount: 0,
+            receivedCount: 0,
+            sent: {},
+            received: {}
+          },
+          friendCount: 0,
+          friends: {}
+        },
+        // status: "Online",
       });
 
-      saveSession(username);
+      saveSession(username, uid);
 
       return 200;
     } catch (err) {
@@ -65,7 +85,7 @@ async function loginUser(username, password = '') {
     }
 
     // Saving Session data
-    saveSession(username);
+    saveSession(username, data.uid);
 
     return 200;
 
@@ -75,10 +95,11 @@ async function loginUser(username, password = '') {
 }
 
 // Session details
-async function saveSession(username) {
+async function saveSession(username, uid) {
   sessionData = {
     username: username,
-    loginTime: Date.now()
+    uid: uid,
+    loginTime: Date.now(),
   }
   fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
 }
@@ -438,4 +459,82 @@ async function refreshData() {
   }
 }
 
-module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData, deleteUserProfile }
+// Handling social features
+async function sendFriendRequest(friendID) {
+  try {
+    sessionData = getSessionData();
+    if (sessionData.uid === friendID) {
+      return 409;
+    }
+
+    const db = await initializeFirebase();
+    const usersDb = ref(db, 'users');
+    const usersSnapshot = await get(usersDb);
+
+    let friendRef = null;
+    usersSnapshot.forEach((childSnapshot) => {
+      if (childSnapshot.val().uid === friendID) {
+        friendRef = childSnapshot.ref;
+      }
+    });
+
+    if (!friendRef) {
+      return 404;
+    }
+
+    const friendSnapshot = await get(friendRef);
+    const friendData = friendSnapshot.val();
+
+    const currentUserDb = ref(db, 'users/' + sessionData.username);
+
+    // Received (friend)
+    await set(child(friendRef, `social/requests/received/${sessionData.username}`), { 
+      username: sessionData.username, 
+      uid: sessionData.uid, 
+      timestamp: Date.now() 
+    });
+
+    const receivedRequestsRef = child(friendRef, `social/requests/received`);
+    const receivedRequestsSnapshot = await get(receivedRequestsRef);
+    await update(child(friendRef, `social/requests`), {
+      receivedCount: receivedRequestsSnapshot.size
+    });
+    
+    // Sent (current)
+    await set(child(currentUserDb, `social/requests/sent/${friendData.username}`), {
+      username: friendData.username,
+      uid: friendData.uid,
+      timestamp: Date.now()
+    });
+
+    const sentRequestsRef = child(currentUserDb, `social/requests/sent`);
+    const sentRequestsSnapshot = await get(sentRequestsRef);
+    await update(child(currentUserDb, `social/requests`), {
+      sentCount: sentRequestsSnapshot.size
+    });
+
+    return 200;
+
+  } catch (err) {
+    console.error('Error sending friend request:', err);
+  }
+}
+
+async function liveFriendRequests() {
+  sessionData = getSessionData();
+  const db = await initializeFirebase();
+  const requestReceivedRef = ref(db, `users/${sessionData.username}/social/requests/received`);
+  
+  onChildAdded(requestReceivedRef, async (snapshot) => {
+    const requestCountRef = ref(db, `users/${sessionData.username}/social/requests`)
+    const requestCountSnapshot = await get(requestCountRef);
+
+    const requestReceivedData = snapshot.val();
+    ipcRenderer.send('received-friend-request', {
+      receivedCount: requestCountSnapshot.val().receivedCount, 
+      info: requestReceivedData
+    });
+  });
+}
+
+module.exports = { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData, deleteUserProfile, sendFriendRequest, liveFriendRequests }

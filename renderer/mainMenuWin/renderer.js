@@ -46,12 +46,8 @@ function setRankColor(accountRankContainer, rank) {
 // TODO: Complete the fav icon functionality, where the fuck is it
 let renderedUserProfiles = [];
 
-const cardContainer = document.querySelector('.card-section');
-async function setCards(userProfiles) {
-    userProfiles.forEach((profile) => {
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("account-card");
-        cardDiv.innerHTML = `
+function getCardHTML(profile) {
+    return `
             <div class="action-required-container">
                 <span>Action Required</span>
                 <p>Account name or tag has been changed, if so please update it manually</p>
@@ -100,8 +96,60 @@ async function setCards(userProfiles) {
             <div class="card-bg-img">
                 <img src="${profile.cardImg}">
             </div>
-        `;
-        
+    `;
+}
+
+function getFriendListHTML() {
+    return `
+        <div class="socials-header">
+            <h2>Friend List</h2>
+            <div class="requests-btn-container">
+                <div class="requests-notif"></div>
+                <svg class="requests-icon" width="28" height="20" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M46 38V34C45.9987 32.2275 45.4087 30.5055 44.3227 29.1046C43.2368 27.7037 41.7163 26.7031 40 26.26M32 2.26C33.7208 2.7006 35.2461 3.7014 36.3353 5.10462C37.4245 6.50784 38.0157 8.23366 38.0157 10.01C38.0157 11.7863 37.4245 13.5122 36.3353 14.9154C35.2461 16.3186 33.7208 17.3194 32 17.76M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="requests-dropdown-container">
+                <h2>Friend Requests</h2>
+                <div class="requests-account-container"></div>
+            </div>
+        </div>
+        <div class="friend-list"></div>
+        <div class="friend-search-container">
+            <div class="friend-req-sent">
+                <span>Friend request sent</span>
+            </div>
+            <input class="add-friend-field" type="text" placeholder="Enter friend code" spellcheck="false" maxlength=13>
+            <svg class="add-friend-btn" width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2V30M2 16H30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    `;
+}
+
+function getFriendRequestHTML(data) {
+    return `
+        <div class="requests-account-info">
+            <span class="requests-account-username">${data.username}</span>
+            <span class="requests-account-uid">${data.uid}</span>
+        </div>
+        <div class="requests-account-btns">
+            <svg width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M34 18L38 22L46 14M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="limegreen" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="seperator"></div>
+            <svg width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M36 12L46 22M46 12L36 22M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    `;
+}
+
+async function setCards(userProfiles) {
+    userProfiles.forEach((profile) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("account-card");
+        cardDiv.innerHTML = getCardHTML(profile);
         cardDiv.id = `${profile.name}#${profile.tag}`
         cardContainer.appendChild(cardDiv);
         
@@ -112,7 +160,6 @@ async function setCards(userProfiles) {
 
         renderedUserProfiles.push(`${profile.name}#${profile.tag}`);
     });
-    
     renderedUserProfiles = [...new Set(renderedUserProfiles)];
 }
 
@@ -204,6 +251,7 @@ function setupCardOptionsListener(cardDiv) {
             const accIndex = renderedUserProfiles.indexOf(rawId);
             renderedUserProfiles.splice(accIndex, 1);
             cardDiv.remove();
+            noAccountDisplayCheck();
         });
     });
 }
@@ -215,6 +263,49 @@ async function updateRefreshTimer() {
     timer.innerHTML = refreshTimer;
 }
 
+function loadFriendsList() {
+    const socialsContainer = document.createElement("div");
+    socialsContainer.classList.add('socials-container');
+    socialsContainer.innerHTML = getFriendListHTML();
+    
+    const contentSectionInner = document.querySelector('.content-section-inner');
+    contentSectionInner.appendChild(socialsContainer);
+
+    const addFriendBtn = document.querySelector('.add-friend-btn');
+    addFriendBtn.addEventListener('click', () => {
+        const addFriendField = document.querySelector('.add-friend-field');
+        const friendID = addFriendField.value;
+
+        if (friendID === '') {
+            return;
+        }
+
+        social.sendFriendRequest(friendID)
+        .then((status) => {
+            switch (status) {
+                case 200:
+                    const reqSentTooltip = document.querySelector('.friend-req-sent');
+                    reqSentTooltip.style.visibility = 'visible';
+                    setTimeout(() => {
+                        reqSentTooltip.style.visibility = 'hidden';
+                    }, 5000)
+                    addFriendField.value = '';
+                    break;
+                case 404:
+                    displayError('Could not find friend, check friend ID');
+                    break;
+                case 409:
+                    displayError('Go get some friends buddy....');
+                    break;
+                default:
+                    displayError('Something went wrong, try again');
+                    break;
+            }
+        });
+    });
+}
+
+let cardContainer;
 async function loadHome() {
     const titleContainer = document.querySelector('.title-container');
     const title = '<h1>Home</h1>';
@@ -223,23 +314,44 @@ async function loadHome() {
     await insertHomeSubtitle();
     setInterval(updateRefreshTimer, 60000); // 60s
 
+    const contentContainer = document.querySelector('.content-container');
+    cardContainer = document.createElement('div');
+    cardContainer.classList.add('card-container');
+    contentContainer.appendChild(cardContainer);
+
+    loadFriendsList();
+
     showLoading('Setting up the good stuff...')
     db.getUserProfiles()
     .then((userProfiles) => {
-        setCards(userProfiles);
+        setCards(userProfiles).then(() => {
+            setupRefresh();
+            noAccountDisplayCheck();
+        });
         hideLoading();
     })
     .catch((err) => {
         console.error('Error setting profile cards:', err);
         hideLoading();
-    })
+    });
 
     db.liveChanges()
     .catch((err) => {
         console.error('Error enabling live changes:', err);
     });
-}
 
+    db.liveFriendRequests()
+    .then(() => {
+        const requestsIcon = document.querySelector('.requests-icon');
+        requestsIcon.addEventListener('click', () => {
+            const requestsDropdownContainer = document.querySelector('.requests-dropdown-container');
+            requestsDropdownContainer.classList.toggle('show');
+        });
+    })
+    .catch((err) => {
+        console.error('Error enabling live friend requests:', err);
+    });
+}
 
 ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
     userProfiles.forEach((profile) => {
@@ -330,33 +442,50 @@ addAccount.addEventListener('click', () => {
     account.insertProfileData(name, tag)
     .then(() => {
         hideLoading();
+        noAccountDisplayCheck();
     });
     closepopup();
 });
 
-ipcRenderer.on('load-home', () => {
-    loadHome().then(() => {
-        const refreshButton = document.querySelector('.refresh-btn');
-        refreshButton.addEventListener('click', () => {
+function setupRefresh() {
+    const refreshButton = document.querySelector('.refresh-btn');
+    refreshButton.addEventListener('click', () => {
 
-            const cooldownSeconds = 60;
-            if (refreshButton.classList.contains('cooldown')) {
-                displayError(`Refresh is in cooldown for ${cooldownSeconds} seconds`);
-                return;
-            }
+        if (renderedUserProfiles.length === 0) {
+            displayError('No account(s) found');
+            return;
+        }
 
-            refreshButton.classList.add('cooldown');
-            setTimeout(() => {
-                refreshButton.classList.remove('cooldown');
-            }, cooldownSeconds * 1000);
+        const cooldownSeconds = 60;
+        if (refreshButton.classList.contains('cooldown')) {
+            displayError(`Refresh is in cooldown for ${cooldownSeconds} seconds`);
+            return;
+        }
 
-            showLoading('Refreshing data... (May take some time)');
-            db.refreshData().then(() => {
-                updateRefreshTimer();
-                hideLoading();
-            });
+        refreshButton.classList.add('cooldown');
+        setTimeout(() => {
+            refreshButton.classList.remove('cooldown');
+        }, cooldownSeconds * 1000);
+
+        showLoading('Refreshing data... (May take some time)');
+        db.refreshData().then(() => {
+            updateRefreshTimer();
+            hideLoading();
         });
     });
+}
+
+function noAccountDisplayCheck() {
+    const noAccountPageContainer = document.querySelector('.no-account-page-container');
+    if (renderedUserProfiles.length > 0) {
+        noAccountPageContainer.style.display = 'none';
+    } else {
+        noAccountPageContainer.style.display = 'flex';
+    }
+}
+
+ipcRenderer.on('load-home', () => {
+    loadHome();
 });
 
 function displayError(errorText) {
@@ -387,4 +516,17 @@ ipcRenderer.on('action-required-accounts-forward', (err) => {
 
         actionRequiredContainer.style.display = 'flex';
     });
+});
+
+ipcRenderer.on('received-friend-request-forward', (data) => {
+    const requestsNotif = document.querySelector('.requests-notif');
+    requestsNotif.innerHTML = `${data.receivedCount}`
+    requestsNotif.style.display = 'flex';
+
+    const requestsDropdownContainer = document.querySelector('.requests-account-container');
+    const requestAccount = document.createElement('div');
+    requestAccount.classList.add('requests-account');
+    requestAccount.innerHTML = getFriendRequestHTML(data.info);
+
+    requestsDropdownContainer.appendChild(requestAccount);
 });

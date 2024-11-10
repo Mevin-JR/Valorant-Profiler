@@ -1,7 +1,12 @@
 // Module imports (used in render files)
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 const { shell } = require('electron');
-const  { registerUser, loginUser, insertProfileData, getUserProfiles, liveChanges, getLastRefreshed, refreshData, deleteUserProfile } = require('./backend/db_operations');
+const  { 
+    registerUser, loginUser, insertProfileData, 
+    getUserProfiles, liveChanges, getLastRefreshed, 
+    refreshData, deleteUserProfile, sendFriendRequest,
+    liveFriendRequests
+} = require('./backend/db_operations');
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -32,5 +37,10 @@ contextBridge.exposeInMainWorld('db', {
     liveChanges: async () => await liveChanges(),
     getLastRefreshed: async () => await getLastRefreshed(),
     refreshData: async () => await refreshData(),
-    deleteUserProfile: async (name) => await deleteUserProfile(name)
+    deleteUserProfile: async (name) => await deleteUserProfile(name),
+    liveFriendRequests: async () => await liveFriendRequests(),
+});
+
+contextBridge.exposeInMainWorld('social', {
+    sendFriendRequest: async (friendID) => await sendFriendRequest(friendID),
 });
