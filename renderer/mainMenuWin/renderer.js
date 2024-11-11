@@ -1,28 +1,59 @@
 // Loader hide/unhide
-const loaderContainer = document.querySelector('.loader-container');
-const loaderDescription = document.querySelector('.loader-description');
-function showLoading(msg = '') {
-    loaderContainer.style.display = 'flex';
+const loaderContainer = document.querySelector(".loader-container");
+const loaderDescription = document.querySelector(".loader-description");
+function showLoading(msg = "") {
+    loaderContainer.style.display = "flex";
     loaderDescription.textContent = msg;
-    loaderDescription.style.display = 'block';
+    loaderDescription.style.display = "block";
 }
 
 function hideLoading() {
-    loaderContainer.style.display = 'none';
-    loaderDescription.style.display = 'none';
+    loaderContainer.style.display = "none";
+    loaderDescription.style.display = "none";
 }
 
-const cardContainer = document.querySelector('.card-section');
-async function setCards(userProfiles) {
-    userProfiles.forEach((profile) => {
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("account-card");
-        cardDiv.innerHTML = `
+function setRankColor(accountRankContainer, rank) {
+    if (rank.includes("Iron")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#787775";
+    } else if (rank.includes("Bronze")) {
+        accountRankContainer.style.color = "#54370A";
+        accountRankContainer.style.backgroundColor = "#A58642";
+    } else if (rank.includes("Silver")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#464B4E";
+    } else if (rank.includes("Gold")) {
+        accountRankContainer.style.color = "#F4EEAE";
+        accountRankContainer.style.backgroundColor = "#CC8818";
+    } else if (rank.includes("Platinum")) {
+        accountRankContainer.style.color = "#29747F";
+        accountRankContainer.style.backgroundColor = "#52CDDD";
+    } else if (rank.includes("Diamond")) {
+        accountRankContainer.style.color = "#F195F4";
+        accountRankContainer.style.backgroundColor = "#946BD2";
+    } else if (rank.includes("Ascendant")) {
+        accountRankContainer.style.color = "#B6FFD7";
+        accountRankContainer.style.backgroundColor = "#228052";
+    } else if (rank.includes("Immortal")) {
+        accountRankContainer.style.color = "#E8C3A8";
+        accountRankContainer.style.backgroundColor = "#C3324E";
+    } else if (rank.includes("Radiant")) {
+        accountRankContainer.style.color = "#E39C41";
+        accountRankContainer.style.backgroundColor = "#FFFFB4";
+    }
+}
+
+// TODO: Complete the fav icon functionality, where the fuck is it
+let renderedUserProfiles = [];
+
+function getCardHTML(profile) {
+    return `
+            <div class="action-required-container">
+                <span>Action Required</span>
+                <p>Account name or tag has been changed, if so please update it manually</p>
+            </div>
             <div class="card-left">
-                <span class="account-level">Level: <span>${profile.accLvl}</span></span>
-                <svg class="fav-icon" id="fav-empty-icon" width="24" height="23" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.99992 13.2526L13.759 15.7188L12.8501 10.4952L16.7003 6.79589L11.3795 6.03378L8.99992 1.28123L6.62037 6.03378L1.29953 6.79589L5.14972 10.4952L4.24082 15.7188L8.99992 13.2526ZM4.84554 16.8526C4.21027 17.1818 3.42454 16.9411 3.09056 16.3149C2.95757 16.0655 2.91168 15.7799 2.95999 15.5023L3.7534 10.9424L0.392443 7.71316C-0.121499 7.21935 -0.132015 6.40837 0.368955 5.90177C0.568444 5.70005 0.829834 5.56877 1.11266 5.52826L5.75739 4.86299L7.83458 0.714329C8.15221 0.0799358 8.93145 -0.180531 9.57504 0.132561C9.83133 0.257236 10.0388 0.461711 10.1652 0.714329L12.2424 4.86299L16.8872 5.52826C17.5974 5.62999 18.0895 6.27999 17.9863 6.98009C17.9452 7.25887 17.812 7.51652 17.6074 7.71316L14.2464 10.9424L15.0398 15.5023C15.1612 16.1995 14.6861 16.8617 13.9787 16.9813C13.697 17.0289 13.4073 16.9837 13.1543 16.8526L8.99992 14.6997L4.84554 16.8526Z" fill="white"/>
-                </svg>
+                <span class="account-level">${profile.accLvl}</span>
                 <div class="cardImg-container">
                     <img src="${profile.cardImg}" alt="Profile Card">
                 </div>
@@ -32,9 +63,28 @@ async function setCards(userProfiles) {
                     <span class="account-username">${profile.name}<span class="account-tag">#${profile.tag}</span></span>
                     <span class="account-rank">${profile.rank}</span>
                 </div>
-                <svg class="options-icon" id="options-btn" width="5" height="21" viewBox="0 0 3 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1.5 8.01205C0.671562 8.01205 0 8.67822 0 9.5C0 10.3218 0.671562 10.988 1.5 10.988C2.32842 10.988 3 10.3218 3 9.5C3 8.67822 2.32842 8.01205 1.5 8.01205ZM1.5 16.0241C0.671562 16.0241 0 16.6903 0 17.512C0 18.3339 0.671562 19 1.5 19C2.32842 19 3 18.3339 3 17.512C3 16.6903 2.32842 16.0241 1.5 16.0241ZM1.5 0C0.671562 0 0 0.666167 0 1.48795C0 2.30971 0.671562 2.9759 1.5 2.9759C2.32842 2.9759 3 2.30974 3 1.48795C3 0.666167 2.32842 0 1.5 0Z" fill="black"/>
-                </svg>
+                <div class="options-container">
+                    <svg class="options-icon" width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2H2V16H16V2Z" stroke="#777777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M38 2H24V16H38V2Z" stroke="#777777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M38 24H24V38H38V24Z" stroke="#777777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 24H2V38H16V24Z" stroke="#777777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="dropdown-container fade-in-up">
+                        <a class="edit-btn">
+                            <svg width="13" height="12" viewBox="0 0 40 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 37H38M29 3.99996C29.7956 3.20432 30.8748 2.75732 32 2.75732C32.5572 2.75732 33.1088 2.86706 33.6236 3.08028C34.1383 3.29349 34.606 3.606 35 3.99996C35.394 4.39393 35.7065 4.86164 35.9197 5.37638C36.1329 5.89112 36.2426 6.44281 36.2426 6.99996C36.2426 7.55712 36.1329 8.10881 35.9197 8.62355C35.7065 9.13829 35.394 9.606 35 9.99996L10 35L2 37L4 29L29 3.99996Z" stroke="#aaaaaa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Edit
+                        </a>
+                        <a class="delete-btn">
+                            <svg width="13" height="17" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 10H6M6 10H38M6 10V38C6 39.0609 6.42143 40.0783 7.17157 40.8284C7.92172 41.5786 8.93913 42 10 42H30C31.0609 42 32.0783 41.5786 32.8284 40.8284C33.5786 40.0783 34 39.0609 34 38V10M12 10V6C12 4.93913 12.4214 3.92172 13.1716 3.17157C13.9217 2.42143 14.9391 2 16 2H24C25.0609 2 26.0783 2.42143 26.8284 3.17157C27.5786 3.92172 28 4.93913 28 6V10M16 20V32M24 20V32" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Delete
+                        </a>
+                    </div>
+                </div>
                 <div class="copy-container">
                     <span class="copy-text">Copy</span>
                     <svg class="copy-icon" id="copy-btn" width="20" height="22" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,52 +92,134 @@ async function setCards(userProfiles) {
                     </svg>
                 </div>
             </div>
-            <div class="card-underlay">
-                <p>${profile.name}#${profile.tag}</p>
-                <p>${profile.name}#${profile.tag}</p>
-                <p>${profile.name}#${profile.tag}</p>
-                <p>${profile.name}#${profile.tag}</p>
+            <div class="card-bg-blur"></div>
+            <div class="card-bg-img">
+                <img src="${profile.cardImg}">
             </div>
-        `;
-        
-        cardContainer.appendChild(cardDiv);
+    `;
+}
+
+function getSocialsHTML() {
+    return `
+        <div class="socials-header">
+            <h2>Friend List</h2>
+            <div class="requests-btn-container">
+                <div class="requests-notif"></div>
+                <svg class="requests-icon" width="28" height="20" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M46 38V34C45.9987 32.2275 45.4087 30.5055 44.3227 29.1046C43.2368 27.7037 41.7163 26.7031 40 26.26M32 2.26C33.7208 2.7006 35.2461 3.7014 36.3353 5.10462C37.4245 6.50784 38.0157 8.23366 38.0157 10.01C38.0157 11.7863 37.4245 13.5122 36.3353 14.9154C35.2461 16.3186 33.7208 17.3194 32 17.76M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="requests-dropdown-container">
+                <h2>Friend Requests</h2>
+                <div class="requests-account-container"></div>
+            </div>
+        </div>
+        <div class="friend-list"></div>
+        <div class="friend-search-container">
+            <div class="friend-req-sent">
+                <span>Friend request sent</span>
+            </div>
+            <input class="add-friend-field" type="text" placeholder="Enter friend code" spellcheck="false" maxlength=13>
+            <svg class="add-friend-btn" width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2V30M2 16H30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    `;
+}
+
+function getFriendAccountHTML(friendData) {
+    return `
+        <img src="./imgs/default-profile-icon.png">
+        <div class="friend-account-info">
+            <span class="friend-account-name">${friendData.username}</span>
+            <span class="friend-account-status">Offline</span>
+        </div>
+    `;
+}
+
+function getFriendRequestHTML(data) {
+    return `
+        <div class="requests-account-info">
+            <span class="requests-account-username">${data.username}</span>
+            <span class="requests-account-uid">${data.uid}</span>
+        </div>
+        <div class="requests-account-btns">
+            <svg class="request-accept-btn" width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M34 18L38 22L46 14M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="limegreen" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="seperator"></div>
+            <svg class="request-deny-btn" width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M36 12L46 22M46 12L36 22M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    `;
+}
+
+function addFriendAccount(data) {
+    const friendListContainer = document.querySelector(".friend-list");
+
+    const friendAccount = document.createElement("div");
+    friendAccount.classList.add("friend-account");
+    friendAccount.id = data.username;
+    friendAccount.innerHTML = getFriendAccountHTML(data);
+
+    friendListContainer.append(friendAccount);
+}
+
+function updateRequestsNotif() {
+    const requestsNotif = document.querySelector(".requests-notif");
+    if (Number(requestsNotif.innerHTML) === 1) {
+        requestsNotif.style.display = "none";
+    } else {
+        requestsNotif.innerHTML = Number(requestsNotif.innerHTML) - 1;
+    }
+}
+
+async function setupRequestInteractions(requestAccount) {
+    const acceptBtn = requestAccount.querySelector(".request-accept-btn");
+    acceptBtn.addEventListener("click", () => {
+        social.acceptFriendRequest(requestAccount.id).catch((err) => {
+            console.error("Error accepting friend req:", err);
+            return;
+        });
+        requestAccount.remove();
+        updateRequestsNotif();
     });
-    
-    const accountRank = document.querySelectorAll('.account-rank');
-    accountRank.forEach((rank) => {
-        const rankText = rank.textContent;
-        if (rankText.includes('Iron')) {
-            rank.style.color = '#FDFDFD';
-            rank.style.backgroundColor = '#787775';
-        } else if (rankText.includes('Bronze')) {
-            rank.style.color = '#54370A';
-            rank.style.backgroundColor = '#A58642';
-        } else if (rankText.includes('Silver')) {
-            rank.style.color = '#FDFDFD';
-            rank.style.backgroundColor = '#464B4E';
-        } else if (rankText.includes('Gold')) {
-            rank.style.color = '#F4EEAE';
-            rank.style.backgroundColor = '#CC8818';
-        } else if (rankText.includes('Platinum')) {
-            rank.style.color = '#29747F';
-            rank.style.backgroundColor = '#52CDDD';
-        } else if (rankText.includes('Diamond')) {
-            rank.style.color = '#F195F4';
-            rank.style.backgroundColor = '#946BD2';
-        } else if (rankText.includes('Ascendant')) {
-            rank.style.color = '#B6FFD7';
-            rank.style.backgroundColor = '#228052';
-        } else if (rankText.includes('Immortal')) {
-            rank.style.color = '#E8C3A8';
-            rank.style.backgroundColor = '#C3324E';
-        } else if (rankText.includes('Radiant')) {
-            rank.style.color = '#E39C41';
-            rank.style.backgroundColor = '#FFFFB4';
-        }
+
+    const denyBtn = requestAccount.querySelector(".request-deny-btn");
+    denyBtn.addEventListener("click", () => {
+        social.denyFriendRequest(requestAccount.id).catch((err) => {
+            console.error("Error denying friend req:", err);
+            return;
+        });
+        requestAccount.remove();
+        updateRequestsNotif();
     });
 }
 
+async function setCards(userProfiles) {
+    userProfiles.forEach((profile) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("account-card");
+        cardDiv.innerHTML = getCardHTML(profile);
+        cardDiv.id = `${profile.name}#${profile.tag}`;
+        cardContainer.appendChild(cardDiv);
+
+        setupCardOptionsListener(cardDiv);
+
+        const accountRankContainer = cardDiv.querySelector(".account-rank");
+        setRankColor(accountRankContainer, profile.rank);
+
+        renderedUserProfiles.push(`${profile.name}#${profile.tag}`);
+    });
+    renderedUserProfiles = [...new Set(renderedUserProfiles)];
+}
+
 function calculateElapsedTime(lastRefresh) {
+    if (lastRefresh === -1) {
+        return "No Data"; // New accounts
+    }
+
     const now = Date.now();
     const elapsedTime = now - lastRefresh;
 
@@ -103,18 +235,18 @@ function calculateElapsedTime(lastRefresh) {
     } else if (minutes > 0) {
         return `${minutes} minute(s) ago`;
     } else {
-        return `Just now`
+        return `Just now`;
     }
 }
 
 async function insertHomeSubtitle() {
-    const subtitleContainer = document.querySelector('.subtitle-container');
-    subtitleContainer.innerHTML = '';
-    const homeSubtitleContainer = document.createElement('div');
-    homeSubtitleContainer.classList.add('home-subtitle-container');
+    const subtitleContainer = document.querySelector(".subtitle-container");
+    subtitleContainer.innerHTML = "";
+    const homeSubtitleContainer = document.createElement("div");
+    homeSubtitleContainer.classList.add("home-subtitle-container");
 
-    const subtitleLeft = document.createElement('div');
-    subtitleLeft.classList.add('subtitle-left');
+    const subtitleLeft = document.createElement("div");
+    subtitleLeft.classList.add("subtitle-left");
     const lastRefreshTImestamp = await db.getLastRefreshed();
     const refreshTimer = calculateElapsedTime(lastRefreshTImestamp);
     let subtitle = `
@@ -125,13 +257,15 @@ async function insertHomeSubtitle() {
     subtitleLeft.innerHTML = subtitle;
     homeSubtitleContainer.appendChild(subtitleLeft);
 
-    const subtitleRight = document.createElement('div');
-    subtitleRight.classList.add('subtitle-right');
+    const subtitleRight = document.createElement("div");
+    subtitleRight.classList.add("subtitle-right");
     subtitle = `
     <div class="add-account-button" id="add-popup-open">
-        <svg viewBox="0 0 208 208" fill="none" xmlns="http://www.w3.org/2000/svg"> 
-            <path d="M104 52C112.702 52 121.209 54.5806 128.445 59.4154C135.681 64.2502 141.32 71.122 144.651 79.162C147.981 87.2019 148.852 96.0488 147.155 104.584C145.457 113.119 141.266 120.959 135.113 127.113C128.959 133.266 121.119 137.457 112.584 139.155C104.049 140.852 95.2019 139.981 87.1619 136.651C79.122 133.32 72.2501 127.681 67.4153 120.445C62.5806 113.209 60 104.702 60 96C60 90.2219 61.1381 84.5003 63.3493 79.1619C65.5605 73.8236 68.8015 68.9731 72.8873 64.8873C76.973 60.8015 81.8236 57.5605 87.1619 55.3493C92.5002 53.1381 98.2218 52 104 52ZM152 40H168V56C168 58.1218 168.843 60.1566 170.343 61.6569C171.843 63.1572 173.878 64 176 64C178.122 64 180.157 63.1572 181.657 61.6569C183.157 60.1566 184 58.1218 184 56V40H200C202.122 40 204.157 39.1572 205.657 37.6569C207.157 36.1566 208 34.1218 208 32C208 29.8783 207.157 27.8435 205.657 26.3432C204.157 24.8429 202.122 24 200 24H184V8.00004C184 5.87831 183.157 3.84347 181.657 2.34318C180.157 0.842892 178.122 3.74156e-05 176 3.74156e-05C173.878 3.74156e-05 171.843 0.842892 170.343 2.34318C168.843 3.84347 168 5.87831 168 8.00004V24H152C149.878 24 147.843 24.8429 146.343 26.3432C144.843 27.8435 144 29.8783 144 32C144 34.1218 144.843 36.1566 146.343 37.6569C147.843 39.1572 149.878 40 152 40ZM197.56 80.9561C195.465 81.2883 193.587 82.4394 192.34 84.156C191.093 85.8727 190.579 88.0143 190.911 90.1099C191.637 94.7044 192.001 99.3487 192 104C192.017 125.542 184.099 146.335 169.758 162.41C163.336 153.106 155.008 145.274 145.327 139.436C134.195 150.067 119.394 156 104 156C88.6065 156 73.8051 150.067 62.6729 139.436C52.9919 145.274 44.6639 153.106 38.2417 162.41C26.9666 149.737 19.5969 134.074 17.0204 117.308C14.444 100.543 16.7708 83.3894 23.7206 67.9159C30.6704 52.4423 41.9465 39.3086 56.1902 30.0974C70.4339 20.8861 87.0374 15.9904 104 16C108.652 15.9996 113.296 16.3636 117.891 17.0889C118.928 17.2534 119.988 17.212 121.01 16.9669C122.032 16.7217 122.995 16.2778 123.845 15.6603C124.695 15.0429 125.415 14.264 125.964 13.3682C126.513 12.4725 126.88 11.4773 127.045 10.4396C127.209 9.40193 127.168 8.34201 126.922 7.32039C126.677 6.29877 126.233 5.33546 125.616 4.48547C124.998 3.63548 124.219 2.91545 123.323 2.36652C122.427 1.81758 121.432 1.45047 120.395 1.28617C105.539 -1.07107 90.35 -0.180682 75.872 3.89601C61.3941 7.97271 47.9717 15.1388 36.5292 24.901C25.0867 34.6631 15.8959 46.7892 9.58978 60.4443C3.28363 74.0994 0.01194 88.9591 8.26596e-06 104C-0.00575188 118.431 2.99902 132.704 8.8223 145.907C14.6456 159.111 23.1593 170.954 33.8193 180.681C34.2155 181.126 34.6603 181.525 35.1456 181.87C54.1318 198.705 78.6276 208.001 104.002 208C129.377 207.999 153.873 198.703 172.858 181.867C173.34 181.524 173.781 181.128 174.175 180.686C184.837 170.959 193.352 159.115 199.176 145.911C205 132.706 208.006 118.432 208 104C208 98.51 207.57 93.0283 206.714 87.6055C206.55 86.5677 206.183 85.5724 205.634 84.6765C205.085 83.7806 204.365 83.0016 203.515 82.3841C202.665 81.7666 201.701 81.3226 200.68 81.0776C199.658 80.8326 198.598 80.7913 197.56 80.9561Z" fill="white"/>
-        </svg>
+        <div class="icon">
+            <svg viewBox="0 0 208 208" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                <path d="M104 52C112.702 52 121.209 54.5806 128.445 59.4154C135.681 64.2502 141.32 71.122 144.651 79.162C147.981 87.2019 148.852 96.0488 147.155 104.584C145.457 113.119 141.266 120.959 135.113 127.113C128.959 133.266 121.119 137.457 112.584 139.155C104.049 140.852 95.2019 139.981 87.1619 136.651C79.122 133.32 72.2501 127.681 67.4153 120.445C62.5806 113.209 60 104.702 60 96C60 90.2219 61.1381 84.5003 63.3493 79.1619C65.5605 73.8236 68.8015 68.9731 72.8873 64.8873C76.973 60.8015 81.8236 57.5605 87.1619 55.3493C92.5002 53.1381 98.2218 52 104 52ZM152 40H168V56C168 58.1218 168.843 60.1566 170.343 61.6569C171.843 63.1572 173.878 64 176 64C178.122 64 180.157 63.1572 181.657 61.6569C183.157 60.1566 184 58.1218 184 56V40H200C202.122 40 204.157 39.1572 205.657 37.6569C207.157 36.1566 208 34.1218 208 32C208 29.8783 207.157 27.8435 205.657 26.3432C204.157 24.8429 202.122 24 200 24H184V8.00004C184 5.87831 183.157 3.84347 181.657 2.34318C180.157 0.842892 178.122 3.74156e-05 176 3.74156e-05C173.878 3.74156e-05 171.843 0.842892 170.343 2.34318C168.843 3.84347 168 5.87831 168 8.00004V24H152C149.878 24 147.843 24.8429 146.343 26.3432C144.843 27.8435 144 29.8783 144 32C144 34.1218 144.843 36.1566 146.343 37.6569C147.843 39.1572 149.878 40 152 40ZM197.56 80.9561C195.465 81.2883 193.587 82.4394 192.34 84.156C191.093 85.8727 190.579 88.0143 190.911 90.1099C191.637 94.7044 192.001 99.3487 192 104C192.017 125.542 184.099 146.335 169.758 162.41C163.336 153.106 155.008 145.274 145.327 139.436C134.195 150.067 119.394 156 104 156C88.6065 156 73.8051 150.067 62.6729 139.436C52.9919 145.274 44.6639 153.106 38.2417 162.41C26.9666 149.737 19.5969 134.074 17.0204 117.308C14.444 100.543 16.7708 83.3894 23.7206 67.9159C30.6704 52.4423 41.9465 39.3086 56.1902 30.0974C70.4339 20.8861 87.0374 15.9904 104 16C108.652 15.9996 113.296 16.3636 117.891 17.0889C118.928 17.2534 119.988 17.212 121.01 16.9669C122.032 16.7217 122.995 16.2778 123.845 15.6603C124.695 15.0429 125.415 14.264 125.964 13.3682C126.513 12.4725 126.88 11.4773 127.045 10.4396C127.209 9.40193 127.168 8.34201 126.922 7.32039C126.677 6.29877 126.233 5.33546 125.616 4.48547C124.998 3.63548 124.219 2.91545 123.323 2.36652C122.427 1.81758 121.432 1.45047 120.395 1.28617C105.539 -1.07107 90.35 -0.180682 75.872 3.89601C61.3941 7.97271 47.9717 15.1388 36.5292 24.901C25.0867 34.6631 15.8959 46.7892 9.58978 60.4443C3.28363 74.0994 0.01194 88.9591 8.26596e-06 104C-0.00575188 118.431 2.99902 132.704 8.8223 145.907C14.6456 159.111 23.1593 170.954 33.8193 180.681C34.2155 181.126 34.6603 181.525 35.1456 181.87C54.1318 198.705 78.6276 208.001 104.002 208C129.377 207.999 153.873 198.703 172.858 181.867C173.34 181.524 173.781 181.128 174.175 180.686C184.837 170.959 193.352 159.115 199.176 145.911C205 132.706 208.006 118.432 208 104C208 98.51 207.57 93.0283 206.714 87.6055C206.55 86.5677 206.183 85.5724 205.634 84.6765C205.085 83.7806 204.365 83.0016 203.515 82.3841C202.665 81.7666 201.701 81.3226 200.68 81.0776C199.658 80.8326 198.598 80.7913 197.56 80.9561Z" fill="black"/>
+            </svg>
+        </div>
         <p>Add Account</p>
     </div>`;
     subtitleRight.innerHTML = subtitle;
@@ -139,130 +273,284 @@ async function insertHomeSubtitle() {
 
     subtitleContainer.appendChild(homeSubtitleContainer);
 
-    const addPopupOpen = document.getElementById('add-popup-open');
-    const bgBlur = document.querySelector('.bg-blur');
-    const accountAddPopup = document.querySelector('.add-popup-container');
-    addPopupOpen.addEventListener('click', () => {
-        bgBlur.style.display = 'block';
-        accountAddPopup.style.display = 'flex';
+    const addPopupOpen = document.getElementById("add-popup-open");
+    const bgBlur = document.querySelector(".bg-blur");
+    const accountAddPopup = document.querySelector(".popup-container");
+    addPopupOpen.addEventListener("click", () => {
+        bgBlur.style.display = "block";
+        accountAddPopup.style.display = "flex";
+    });
+}
+
+function setupCardOptionsListener(cardDiv) {
+    const optionsBtn = cardDiv.querySelector(".options-icon");
+    const optionsDropdown = cardDiv.querySelector(".dropdown-container");
+    optionsBtn.addEventListener("click", () => {
+        if (optionsDropdown.style.display === "flex") {
+            optionsDropdown.style.display = "none";
+        } else {
+            optionsDropdown.style.display = "flex";
+        }
+    });
+
+    const deleteBtn = cardDiv.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", () => {
+        const rawId = cardDiv.id;
+        const name = rawId.substring(0, rawId.indexOf("#"));
+        db.deleteUserProfile(name).then(() => {
+            const accIndex = renderedUserProfiles.indexOf(rawId);
+            renderedUserProfiles.splice(accIndex, 1);
+            cardDiv.remove();
+            noAccountDisplayCheck();
+        });
     });
 }
 
 async function updateRefreshTimer() {
-    const timer = document.querySelector('.timer');
+    const timer = document.querySelector(".timer");
     const lastRefreshTImestamp = await db.getLastRefreshed();
     const refreshTimer = calculateElapsedTime(lastRefreshTImestamp);
     timer.innerHTML = refreshTimer;
 }
 
+function loadFriendsList() {
+    const socialsContainer = document.createElement("div");
+    socialsContainer.classList.add("socials-container");
+    socialsContainer.innerHTML = getSocialsHTML();
+
+    const contentSectionInner = document.querySelector(
+        ".content-section-inner"
+    );
+    contentSectionInner.appendChild(socialsContainer);
+
+    social.getFriends().then((friendsList) => {
+        friendsList.forEach((friendData) => {
+            addFriendAccount(friendData);
+        });
+    });
+
+    const addFriendBtn = document.querySelector(".add-friend-btn");
+    addFriendBtn.addEventListener("click", () => {
+        const addFriendField = document.querySelector(".add-friend-field");
+        const friendID = addFriendField.value;
+
+        if (friendID === "") {
+            return;
+        }
+
+        social.sendFriendRequest(friendID).then((status) => {
+            switch (status) {
+                case 200:
+                    const reqSentTooltip =
+                        document.querySelector(".friend-req-sent");
+                    reqSentTooltip.style.visibility = "visible";
+                    setTimeout(() => {
+                        reqSentTooltip.style.visibility = "hidden";
+                    }, 5000);
+                    addFriendField.value = "";
+                    break;
+                case 404:
+                    displayError("Could not find friend, check friend ID");
+                    break;
+                case 400:
+                    displayError("Go get some friends buddy....");
+                    break;
+                case 409:
+                    displayError("Already friends with that user");
+                    break;
+                default:
+                    displayError("Something went wrong, try again");
+                    break;
+            }
+        });
+    });
+}
+
+let cardContainer;
 async function loadHome() {
-    const titleContainer = document.querySelector('.title-container');
-    const title = '<h1>Home</h1>';
+    const titleContainer = document.querySelector(".title-container");
+    const title = "<h1>Home</h1>";
     titleContainer.innerHTML = title;
 
     await insertHomeSubtitle();
     setInterval(updateRefreshTimer, 60000); // 60s
 
-    showLoading('Setting up the good stuff...')
-    db.getUserProfiles()
-    .then((userProfiles) => {
-        setCards(userProfiles);
-        hideLoading();
-    })
-    .catch((err) => {
-        console.error('Error setting profile cards:', err);
-        hideLoading();
-    })
+    const contentContainer = document.querySelector(".content-container");
+    cardContainer = document.createElement("div");
+    cardContainer.classList.add("card-container");
+    contentContainer.appendChild(cardContainer);
 
-    db.liveChanges()
-    .catch((err) => {
-        console.error(`Error enabling live changes:${err}`);
+    loadFriendsList();
+
+    showLoading("Setting up the good stuff...");
+    db.getUserProfiles()
+        .then((userProfiles) => {
+            setCards(userProfiles).then(() => {
+                setupRefresh();
+                noAccountDisplayCheck();
+            });
+            hideLoading();
+        })
+        .catch((err) => {
+            console.error("Error setting profile cards:", err);
+            hideLoading();
+        });
+
+    db.liveChanges().catch((err) => {
+        console.error("Error enabling live changes:", err);
     });
+
+    db.liveFriendRequests()
+        .then(() => {
+            const requestsIcon = document.querySelector(".requests-icon");
+            requestsIcon.addEventListener("click", () => {
+                const requestsDropdownContainer = document.querySelector(
+                    ".requests-dropdown-container"
+                );
+                requestsDropdownContainer.classList.toggle("show");
+            });
+        })
+        .catch((err) => {
+            console.error("Error enabling live friend requests:", err);
+        });
 }
 
+ipcRenderer.on("userProfile-update-forward", (userProfiles) => {
+    userProfiles.forEach((profile) => {
+        if (!renderedUserProfiles.includes(`${profile.name}#${profile.tag}`)) {
+            setCards([profile]);
+        }
+    });
+});
 
-ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
+ipcRenderer.on("userProfile-refresh-forward", (userProfiles) => {
+    cardContainer.innerHTML = "";
     setCards(userProfiles);
 });
 
-
-ipcRenderer.on('userProfile-refresh-forward', (userProfiles) => {
-    cardContainer.innerHTML = '';
-    setCards(userProfiles);
-});
-
-const settingsBtn = document.getElementById('settings-btn');
-const settingsDropdown = document.querySelector('.dropdown');
-settingsBtn.addEventListener('click', () => {
+const settingsBtn = document.getElementById("settings-btn");
+const settingsDropdown = document.querySelector(".dropdown");
+settingsBtn.addEventListener("click", () => {
     const currentVisibility = getComputedStyle(settingsDropdown).visibility;
-    if (currentVisibility === 'hidden') {
-        settingsDropdown.classList.add('show')
-    } else if (currentVisibility === 'visible') {
-        settingsDropdown.classList.remove('show')
+    if (currentVisibility === "hidden") {
+        settingsDropdown.classList.add("show");
+    } else if (currentVisibility === "visible") {
+        settingsDropdown.classList.remove("show");
     }
 });
 
-document.addEventListener('click', (event) => {
-    if (!settingsDropdown.contains(event.target) && 
-        !settingsBtn.contains(event.target)) {
-        settingsDropdown.classList.remove('show');
+document.addEventListener("click", (event) => {
+    if (
+        !settingsDropdown.contains(event.target) &&
+        !settingsBtn.contains(event.target)
+    ) {
+        settingsDropdown.classList.remove("show");
     }
 });
 
-const logoutBtn = document.getElementById('log-out');
-logoutBtn.addEventListener('click', () => {
-    ipcRenderer.send('action:logout');
+const logoutBtn = document.getElementById("log-out");
+logoutBtn.addEventListener("click", () => {
+    ipcRenderer.send("action:logout");
 });
 
-const githubBtn = document.getElementById('github');
-githubBtn.addEventListener('click', () => {
-    shell.openExternal('https://github.com/Mevin-JR/Valorant-Profiler');
+const githubBtn = document.getElementById("github");
+githubBtn.addEventListener("click", () => {
+    shell.openExternal("https://github.com/Mevin-JR/Valorant-Profiler");
 });
 
-const closePopupBtn = document.getElementById('popup-close-btn');
+const closePopupBtn = document.getElementById("popup-close-btn");
 function closepopup() {
-    const nameInput = document.getElementById('name');
-    const tagInput = document.getElementById('tag');
-    const bgBlur = document.querySelector('.bg-blur');
-    const accountAddPopup = document.querySelector('.add-popup-container');
+    const nameInput = document.getElementById("name");
+    const tagInput = document.getElementById("tag");
+    const bgBlur = document.querySelector(".bg-blur");
+    const accountAddPopup = document.querySelector(".popup-container");
 
-    accountAddPopup.style.animation = 'zoomOut 0.4s ease';
-    nameInput.value = '';
-    tagInput.value = '';
+    accountAddPopup.style.animation = "zoomOut 0.4s ease";
+    nameInput.value = "";
+    tagInput.value = "";
     setTimeout(() => {
-        bgBlur.style.display = 'none';
-        accountAddPopup.style.display = 'none';
-        accountAddPopup.style.animation = 'zoomIn 0.4s ease-in-out';
+        bgBlur.style.display = "none";
+        accountAddPopup.style.display = "none";
+        accountAddPopup.style.animation = "zoomIn 0.4s ease-in-out";
     }, 300);
 }
 
-closePopupBtn.addEventListener('click', () => {
+closePopupBtn.addEventListener("click", () => {
     closepopup();
 });
 
-const addAccount = document.getElementById('add-account');
-addAccount.addEventListener('click', () => {
-    const name = document.getElementById('name').value;
-    const tag = document.getElementById('tag').value; // TODO: Constraints
-    showLoading('Retrieving account data...');
-    account.accountInputData(name, tag).then(() => {
+const addAccount = document.getElementById("account-add-btn");
+addAccount.addEventListener("click", () => {
+    const name = document.getElementById("name").value;
+    const tag = document.getElementById("tag").value;
+
+    if (name === "" || tag === "") {
+        displayError("Required field is empty");
+        return;
+    }
+
+    const maxAccountCount = 9;
+    if (renderedUserProfiles.length === maxAccountCount) {
+        displayError("Cannot add any more profiles (max. 9)");
+        return;
+    }
+
+    const nameTagCheck = `${name}#${tag}`;
+    if (renderedUserProfiles.includes(nameTagCheck)) {
+        displayError("Account already exists");
+        return;
+    }
+
+    showLoading("Retrieving account data...");
+    account.insertProfileData(name, tag).then(() => {
         hideLoading();
+        noAccountDisplayCheck();
     });
     closepopup();
 });
 
-// TODO: Set a cooldown on refresh button
-ipcRenderer.on('load-home', () => {
-    loadHome().then(() => {
-        const refreshButton = document.querySelector('.refresh-btn');
-        refreshButton.addEventListener('click', () => {
-            showLoading('Refreshing data... (May take some time)');
-            db.refreshData().then(() => {
-                updateRefreshTimer();
-                hideLoading();
-            });
+function setupRefresh() {
+    const refreshButton = document.querySelector(".refresh-btn");
+    refreshButton.addEventListener("click", () => {
+        if (renderedUserProfiles.length === 0) {
+            displayError("No account(s) found");
+            return;
+        }
+
+        const cooldownSeconds = 60;
+        if (refreshButton.classList.contains("cooldown")) {
+            displayError(
+                `Refresh is in cooldown for ${cooldownSeconds} seconds`
+            );
+            return;
+        }
+
+        refreshButton.classList.add("cooldown");
+        setTimeout(() => {
+            refreshButton.classList.remove("cooldown");
+        }, cooldownSeconds * 1000);
+
+        showLoading("Refreshing data... (May take some time)");
+        db.refreshData().then(() => {
+            updateRefreshTimer();
+            hideLoading();
         });
     });
+}
+
+function noAccountDisplayCheck() {
+    const noAccountPageContainer = document.querySelector(
+        ".no-account-page-container"
+    );
+    if (renderedUserProfiles.length > 0) {
+        noAccountPageContainer.style.display = "none";
+    } else {
+        noAccountPageContainer.style.display = "flex";
+    }
+}
+
+ipcRenderer.on("load-home", () => {
+    loadHome();
 });
 
 function displayError(errorText) {
@@ -273,13 +561,47 @@ function displayError(errorText) {
         duration: 3000,
         gravity: "top",
         position: "center",
-        className: 'popup-error',
+        className: "popup-error",
         escapeMarkup: false,
         stopOnFocus: false,
         close: false,
     }).showToast();
 }
 
-ipcRenderer.on('error-cdoe-forward', (err) => {
-    displayError(err.data);
+ipcRenderer.on("error-message-forward", (err) => {
+    displayError(err);
+});
+
+ipcRenderer.on("action-required-accounts-forward", (err) => {
+    const actionRequiredAccounts = err;
+
+    actionRequiredAccounts.forEach((accountID) => {
+        const card = document.getElementById(accountID);
+        const actionRequiredContainer = card.querySelector(
+            ".action-required-container"
+        );
+
+        actionRequiredContainer.style.display = "flex";
+    });
+});
+
+ipcRenderer.on("received-friend-request-forward", (data) => {
+    const requestsNotif = document.querySelector(".requests-notif");
+    requestsNotif.innerHTML = `${data.receivedCount}`;
+    requestsNotif.style.display = "flex";
+
+    const requestsDropdownContainer = document.querySelector(
+        ".requests-account-container"
+    );
+    const requestAccount = document.createElement("div");
+    requestAccount.classList.add("requests-account");
+    requestAccount.id = data.info.username;
+    requestAccount.innerHTML = getFriendRequestHTML(data.info);
+
+    requestsDropdownContainer.appendChild(requestAccount);
+    setupRequestInteractions(requestAccount);
+});
+
+ipcRenderer.on("add-friend-forward", (data) => {
+    addFriendAccount(data);
 });
