@@ -1,38 +1,51 @@
 // Module imports (used in render files)
-const { contextBridge, ipcRenderer } = require('electron/renderer');
-const { shell } = require('electron');
-const  { 
-    registerUser, loginUser, insertProfileData, 
-    getUserProfiles, liveChanges, getLastRefreshed, 
-    refreshData, deleteUserProfile, sendFriendRequest,
-    liveFriendRequests
-} = require('./backend/db_operations');
+const { contextBridge, ipcRenderer } = require("electron/renderer");
+const { shell } = require("electron");
+const {
+    registerUser,
+    loginUser,
+    insertProfileData,
+    getUserProfiles,
+    liveChanges,
+    getLastRefreshed,
+    refreshData,
+    deleteUserProfile,
+    sendFriendRequest,
+    liveFriendRequests,
+    acceptFriendRequest,
+    denyFriendRequest,
+    getFriends,
+} = require("./backend/db_operations");
 
 // Inter Process Communication (Renderer) module
-contextBridge.exposeInMainWorld('ipcRenderer', {
+contextBridge.exposeInMainWorld("ipcRenderer", {
     send: (channel, data) => ipcRenderer.send(channel, data), // Sending data from renderer files to main
-    on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)), // Recieving data from main to renderer files
+    on: (channel, func) =>
+        ipcRenderer.on(channel, (event, ...args) => func(...args)), // Recieving data from main to renderer files
 });
 
 // Shell module for redirection to external sources
-contextBridge.exposeInMainWorld('shell', {
-    openExternal: async (url) => await shell.openExternal(url) // Opening external links (in client browser)
+contextBridge.exposeInMainWorld("shell", {
+    openExternal: async (url) => await shell.openExternal(url), // Opening external links (in client browser)
 });
 
 // User authentication functions
-contextBridge.exposeInMainWorld('auth', {
-    registerUser: async (username, password) => await registerUser(username, password),
-    loginUser: async (username, password) => await loginUser(username, password),
+contextBridge.exposeInMainWorld("auth", {
+    registerUser: async (username, password) =>
+        await registerUser(username, password),
+    loginUser: async (username, password) =>
+        await loginUser(username, password),
 });
 
 // TODO: Shits ugly, give better name
 // User profile functions
-contextBridge.exposeInMainWorld('account', {
-    insertProfileData: async (nameInput, tagInput) => await insertProfileData(nameInput, tagInput), // Player name & tag retrival
+contextBridge.exposeInMainWorld("account", {
+    insertProfileData: async (nameInput, tagInput) =>
+        await insertProfileData(nameInput, tagInput), // Player name & tag retrival
 });
 
 // Database functions
-contextBridge.exposeInMainWorld('db', {
+contextBridge.exposeInMainWorld("db", {
     getUserProfiles: async () => await getUserProfiles(), // Retrieving all saved user profiles from firebase
     liveChanges: async () => await liveChanges(),
     getLastRefreshed: async () => await getLastRefreshed(),
@@ -41,6 +54,9 @@ contextBridge.exposeInMainWorld('db', {
     liveFriendRequests: async () => await liveFriendRequests(),
 });
 
-contextBridge.exposeInMainWorld('social', {
+contextBridge.exposeInMainWorld("social", {
     sendFriendRequest: async (friendID) => await sendFriendRequest(friendID),
+    acceptFriendRequest: async (sender) => await acceptFriendRequest(sender),
+    denyFriendRequest: async (sender) => await denyFriendRequest(sender),
+    getFriends: async () => await getFriends(),
 });

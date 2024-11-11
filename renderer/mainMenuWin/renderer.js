@@ -1,45 +1,45 @@
 // Loader hide/unhide
-const loaderContainer = document.querySelector('.loader-container');
-const loaderDescription = document.querySelector('.loader-description');
-function showLoading(msg = '') {
-    loaderContainer.style.display = 'flex';
+const loaderContainer = document.querySelector(".loader-container");
+const loaderDescription = document.querySelector(".loader-description");
+function showLoading(msg = "") {
+    loaderContainer.style.display = "flex";
     loaderDescription.textContent = msg;
-    loaderDescription.style.display = 'block';
+    loaderDescription.style.display = "block";
 }
 
 function hideLoading() {
-    loaderContainer.style.display = 'none';
-    loaderDescription.style.display = 'none';
+    loaderContainer.style.display = "none";
+    loaderDescription.style.display = "none";
 }
 
 function setRankColor(accountRankContainer, rank) {
-    if (rank.includes('Iron')) {
-        accountRankContainer.style.color = '#FDFDFD';
-        accountRankContainer.style.backgroundColor = '#787775';
-    } else if (rank.includes('Bronze')) {
-        accountRankContainer.style.color = '#54370A';
-        accountRankContainer.style.backgroundColor = '#A58642';
-    } else if (rank.includes('Silver')) {
-        accountRankContainer.style.color = '#FDFDFD';
-        accountRankContainer.style.backgroundColor = '#464B4E';
-    } else if (rank.includes('Gold')) {
-        accountRankContainer.style.color = '#F4EEAE';
-        accountRankContainer.style.backgroundColor = '#CC8818';
-    } else if (rank.includes('Platinum')) {
-        accountRankContainer.style.color = '#29747F';
-        accountRankContainer.style.backgroundColor = '#52CDDD';
-    } else if (rank.includes('Diamond')) {
-        accountRankContainer.style.color = '#F195F4';
-        accountRankContainer.style.backgroundColor = '#946BD2';
-    } else if (rank.includes('Ascendant')) {
-        accountRankContainer.style.color = '#B6FFD7';
-        accountRankContainer.style.backgroundColor = '#228052';
-    } else if (rank.includes('Immortal')) {
-        accountRankContainer.style.color = '#E8C3A8';
-        accountRankContainer.style.backgroundColor = '#C3324E';
-    } else if (rank.includes('Radiant')) {
-        accountRankContainer.style.color = '#E39C41';
-        accountRankContainer.style.backgroundColor = '#FFFFB4';
+    if (rank.includes("Iron")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#787775";
+    } else if (rank.includes("Bronze")) {
+        accountRankContainer.style.color = "#54370A";
+        accountRankContainer.style.backgroundColor = "#A58642";
+    } else if (rank.includes("Silver")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#464B4E";
+    } else if (rank.includes("Gold")) {
+        accountRankContainer.style.color = "#F4EEAE";
+        accountRankContainer.style.backgroundColor = "#CC8818";
+    } else if (rank.includes("Platinum")) {
+        accountRankContainer.style.color = "#29747F";
+        accountRankContainer.style.backgroundColor = "#52CDDD";
+    } else if (rank.includes("Diamond")) {
+        accountRankContainer.style.color = "#F195F4";
+        accountRankContainer.style.backgroundColor = "#946BD2";
+    } else if (rank.includes("Ascendant")) {
+        accountRankContainer.style.color = "#B6FFD7";
+        accountRankContainer.style.backgroundColor = "#228052";
+    } else if (rank.includes("Immortal")) {
+        accountRankContainer.style.color = "#E8C3A8";
+        accountRankContainer.style.backgroundColor = "#C3324E";
+    } else if (rank.includes("Radiant")) {
+        accountRankContainer.style.color = "#E39C41";
+        accountRankContainer.style.backgroundColor = "#FFFFB4";
     }
 }
 
@@ -99,7 +99,7 @@ function getCardHTML(profile) {
     `;
 }
 
-function getFriendListHTML() {
+function getSocialsHTML() {
     return `
         <div class="socials-header">
             <h2>Friend List</h2>
@@ -127,6 +127,16 @@ function getFriendListHTML() {
     `;
 }
 
+function getFriendAccountHTML(friendData) {
+    return `
+        <img src="./imgs/default-profile-icon.png">
+        <div class="friend-account-info">
+            <span class="friend-account-name">${friendData.username}</span>
+            <span class="friend-account-status">Offline</span>
+        </div>
+    `;
+}
+
 function getFriendRequestHTML(data) {
     return `
         <div class="requests-account-info">
@@ -134,15 +144,57 @@ function getFriendRequestHTML(data) {
             <span class="requests-account-uid">${data.uid}</span>
         </div>
         <div class="requests-account-btns">
-            <svg width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="request-accept-btn" width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M34 18L38 22L46 14M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="limegreen" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <div class="seperator"></div>
-            <svg width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="request-deny-btn" width="24" height="18" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M32 38V34C32 31.8783 31.1571 29.8434 29.6569 28.3431C28.1566 26.8429 26.1217 26 24 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M36 12L46 22M46 12L36 22M25 10C25 14.4183 21.4183 18 17 18C12.5817 18 9 14.4183 9 10C9 5.58172 12.5817 2 17 2C21.4183 2 25 5.58172 25 10Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
     `;
+}
+
+function addFriendAccount(data) {
+    const friendListContainer = document.querySelector(".friend-list");
+
+    const friendAccount = document.createElement("div");
+    friendAccount.classList.add("friend-account");
+    friendAccount.id = data.username;
+    friendAccount.innerHTML = getFriendAccountHTML(data);
+
+    friendListContainer.append(friendAccount);
+}
+
+function updateRequestsNotif() {
+    const requestsNotif = document.querySelector(".requests-notif");
+    if (Number(requestsNotif.innerHTML) === 1) {
+        requestsNotif.style.display = "none";
+    } else {
+        requestsNotif.innerHTML = Number(requestsNotif.innerHTML) - 1;
+    }
+}
+
+async function setupRequestInteractions(requestAccount) {
+    const acceptBtn = requestAccount.querySelector(".request-accept-btn");
+    acceptBtn.addEventListener("click", () => {
+        social.acceptFriendRequest(requestAccount.id).catch((err) => {
+            console.error("Error accepting friend req:", err);
+            return;
+        });
+        requestAccount.remove();
+        updateRequestsNotif();
+    });
+
+    const denyBtn = requestAccount.querySelector(".request-deny-btn");
+    denyBtn.addEventListener("click", () => {
+        social.denyFriendRequest(requestAccount.id).catch((err) => {
+            console.error("Error denying friend req:", err);
+            return;
+        });
+        requestAccount.remove();
+        updateRequestsNotif();
+    });
 }
 
 async function setCards(userProfiles) {
@@ -150,12 +202,12 @@ async function setCards(userProfiles) {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("account-card");
         cardDiv.innerHTML = getCardHTML(profile);
-        cardDiv.id = `${profile.name}#${profile.tag}`
+        cardDiv.id = `${profile.name}#${profile.tag}`;
         cardContainer.appendChild(cardDiv);
-        
+
         setupCardOptionsListener(cardDiv);
-        
-        const accountRankContainer = cardDiv.querySelector('.account-rank');
+
+        const accountRankContainer = cardDiv.querySelector(".account-rank");
         setRankColor(accountRankContainer, profile.rank);
 
         renderedUserProfiles.push(`${profile.name}#${profile.tag}`);
@@ -183,18 +235,18 @@ function calculateElapsedTime(lastRefresh) {
     } else if (minutes > 0) {
         return `${minutes} minute(s) ago`;
     } else {
-        return `Just now`
+        return `Just now`;
     }
 }
 
 async function insertHomeSubtitle() {
-    const subtitleContainer = document.querySelector('.subtitle-container');
-    subtitleContainer.innerHTML = '';
-    const homeSubtitleContainer = document.createElement('div');
-    homeSubtitleContainer.classList.add('home-subtitle-container');
+    const subtitleContainer = document.querySelector(".subtitle-container");
+    subtitleContainer.innerHTML = "";
+    const homeSubtitleContainer = document.createElement("div");
+    homeSubtitleContainer.classList.add("home-subtitle-container");
 
-    const subtitleLeft = document.createElement('div');
-    subtitleLeft.classList.add('subtitle-left');
+    const subtitleLeft = document.createElement("div");
+    subtitleLeft.classList.add("subtitle-left");
     const lastRefreshTImestamp = await db.getLastRefreshed();
     const refreshTimer = calculateElapsedTime(lastRefreshTImestamp);
     let subtitle = `
@@ -205,8 +257,8 @@ async function insertHomeSubtitle() {
     subtitleLeft.innerHTML = subtitle;
     homeSubtitleContainer.appendChild(subtitleLeft);
 
-    const subtitleRight = document.createElement('div');
-    subtitleRight.classList.add('subtitle-right');
+    const subtitleRight = document.createElement("div");
+    subtitleRight.classList.add("subtitle-right");
     subtitle = `
     <div class="add-account-button" id="add-popup-open">
         <div class="icon">
@@ -221,33 +273,31 @@ async function insertHomeSubtitle() {
 
     subtitleContainer.appendChild(homeSubtitleContainer);
 
-    const addPopupOpen = document.getElementById('add-popup-open');
-    const bgBlur = document.querySelector('.bg-blur');
-    const accountAddPopup = document.querySelector('.popup-container');
-    addPopupOpen.addEventListener('click', () => {
-        bgBlur.style.display = 'block';
-        accountAddPopup.style.display = 'flex';
+    const addPopupOpen = document.getElementById("add-popup-open");
+    const bgBlur = document.querySelector(".bg-blur");
+    const accountAddPopup = document.querySelector(".popup-container");
+    addPopupOpen.addEventListener("click", () => {
+        bgBlur.style.display = "block";
+        accountAddPopup.style.display = "flex";
     });
 }
 
 function setupCardOptionsListener(cardDiv) {
-    const optionsBtn = cardDiv.querySelector('.options-icon');
-    const optionsDropdown = cardDiv.querySelector('.dropdown-container');
-    optionsBtn.addEventListener('click', () => {
-        if (optionsDropdown.style.display === 'flex') {
-            optionsDropdown.style.display = 'none';
+    const optionsBtn = cardDiv.querySelector(".options-icon");
+    const optionsDropdown = cardDiv.querySelector(".dropdown-container");
+    optionsBtn.addEventListener("click", () => {
+        if (optionsDropdown.style.display === "flex") {
+            optionsDropdown.style.display = "none";
         } else {
-            optionsDropdown.style.display = 'flex';
+            optionsDropdown.style.display = "flex";
         }
-
     });
 
-    const deleteBtn = cardDiv.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', () => {
+    const deleteBtn = cardDiv.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", () => {
         const rawId = cardDiv.id;
-        const name = rawId.substring(0, rawId.indexOf('#'));
-        db.deleteUserProfile(name)
-        .then(() => {
+        const name = rawId.substring(0, rawId.indexOf("#"));
+        db.deleteUserProfile(name).then(() => {
             const accIndex = renderedUserProfiles.indexOf(rawId);
             renderedUserProfiles.splice(accIndex, 1);
             cardDiv.remove();
@@ -257,7 +307,7 @@ function setupCardOptionsListener(cardDiv) {
 }
 
 async function updateRefreshTimer() {
-    const timer = document.querySelector('.timer');
+    const timer = document.querySelector(".timer");
     const lastRefreshTImestamp = await db.getLastRefreshed();
     const refreshTimer = calculateElapsedTime(lastRefreshTImestamp);
     timer.innerHTML = refreshTimer;
@@ -265,40 +315,51 @@ async function updateRefreshTimer() {
 
 function loadFriendsList() {
     const socialsContainer = document.createElement("div");
-    socialsContainer.classList.add('socials-container');
-    socialsContainer.innerHTML = getFriendListHTML();
-    
-    const contentSectionInner = document.querySelector('.content-section-inner');
+    socialsContainer.classList.add("socials-container");
+    socialsContainer.innerHTML = getSocialsHTML();
+
+    const contentSectionInner = document.querySelector(
+        ".content-section-inner"
+    );
     contentSectionInner.appendChild(socialsContainer);
 
-    const addFriendBtn = document.querySelector('.add-friend-btn');
-    addFriendBtn.addEventListener('click', () => {
-        const addFriendField = document.querySelector('.add-friend-field');
+    social.getFriends().then((friendsList) => {
+        friendsList.forEach((friendData) => {
+            addFriendAccount(friendData);
+        });
+    });
+
+    const addFriendBtn = document.querySelector(".add-friend-btn");
+    addFriendBtn.addEventListener("click", () => {
+        const addFriendField = document.querySelector(".add-friend-field");
         const friendID = addFriendField.value;
 
-        if (friendID === '') {
+        if (friendID === "") {
             return;
         }
 
-        social.sendFriendRequest(friendID)
-        .then((status) => {
+        social.sendFriendRequest(friendID).then((status) => {
             switch (status) {
                 case 200:
-                    const reqSentTooltip = document.querySelector('.friend-req-sent');
-                    reqSentTooltip.style.visibility = 'visible';
+                    const reqSentTooltip =
+                        document.querySelector(".friend-req-sent");
+                    reqSentTooltip.style.visibility = "visible";
                     setTimeout(() => {
-                        reqSentTooltip.style.visibility = 'hidden';
-                    }, 5000)
-                    addFriendField.value = '';
+                        reqSentTooltip.style.visibility = "hidden";
+                    }, 5000);
+                    addFriendField.value = "";
                     break;
                 case 404:
-                    displayError('Could not find friend, check friend ID');
+                    displayError("Could not find friend, check friend ID");
+                    break;
+                case 400:
+                    displayError("Go get some friends buddy....");
                     break;
                 case 409:
-                    displayError('Go get some friends buddy....');
+                    displayError("Already friends with that user");
                     break;
                 default:
-                    displayError('Something went wrong, try again');
+                    displayError("Something went wrong, try again");
                     break;
             }
         });
@@ -307,53 +368,54 @@ function loadFriendsList() {
 
 let cardContainer;
 async function loadHome() {
-    const titleContainer = document.querySelector('.title-container');
-    const title = '<h1>Home</h1>';
+    const titleContainer = document.querySelector(".title-container");
+    const title = "<h1>Home</h1>";
     titleContainer.innerHTML = title;
 
     await insertHomeSubtitle();
     setInterval(updateRefreshTimer, 60000); // 60s
 
-    const contentContainer = document.querySelector('.content-container');
-    cardContainer = document.createElement('div');
-    cardContainer.classList.add('card-container');
+    const contentContainer = document.querySelector(".content-container");
+    cardContainer = document.createElement("div");
+    cardContainer.classList.add("card-container");
     contentContainer.appendChild(cardContainer);
 
     loadFriendsList();
 
-    showLoading('Setting up the good stuff...')
+    showLoading("Setting up the good stuff...");
     db.getUserProfiles()
-    .then((userProfiles) => {
-        setCards(userProfiles).then(() => {
-            setupRefresh();
-            noAccountDisplayCheck();
+        .then((userProfiles) => {
+            setCards(userProfiles).then(() => {
+                setupRefresh();
+                noAccountDisplayCheck();
+            });
+            hideLoading();
+        })
+        .catch((err) => {
+            console.error("Error setting profile cards:", err);
+            hideLoading();
         });
-        hideLoading();
-    })
-    .catch((err) => {
-        console.error('Error setting profile cards:', err);
-        hideLoading();
-    });
 
-    db.liveChanges()
-    .catch((err) => {
-        console.error('Error enabling live changes:', err);
+    db.liveChanges().catch((err) => {
+        console.error("Error enabling live changes:", err);
     });
 
     db.liveFriendRequests()
-    .then(() => {
-        const requestsIcon = document.querySelector('.requests-icon');
-        requestsIcon.addEventListener('click', () => {
-            const requestsDropdownContainer = document.querySelector('.requests-dropdown-container');
-            requestsDropdownContainer.classList.toggle('show');
+        .then(() => {
+            const requestsIcon = document.querySelector(".requests-icon");
+            requestsIcon.addEventListener("click", () => {
+                const requestsDropdownContainer = document.querySelector(
+                    ".requests-dropdown-container"
+                );
+                requestsDropdownContainer.classList.toggle("show");
+            });
+        })
+        .catch((err) => {
+            console.error("Error enabling live friend requests:", err);
         });
-    })
-    .catch((err) => {
-        console.error('Error enabling live friend requests:', err);
-    });
 }
 
-ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
+ipcRenderer.on("userProfile-update-forward", (userProfiles) => {
     userProfiles.forEach((profile) => {
         if (!renderedUserProfiles.includes(`${profile.name}#${profile.tag}`)) {
             setCards([profile]);
@@ -361,86 +423,86 @@ ipcRenderer.on('userProfile-update-forward', (userProfiles) => {
     });
 });
 
-
-ipcRenderer.on('userProfile-refresh-forward', (userProfiles) => {
-    cardContainer.innerHTML = '';
+ipcRenderer.on("userProfile-refresh-forward", (userProfiles) => {
+    cardContainer.innerHTML = "";
     setCards(userProfiles);
 });
 
-const settingsBtn = document.getElementById('settings-btn');
-const settingsDropdown = document.querySelector('.dropdown');
-settingsBtn.addEventListener('click', () => {
+const settingsBtn = document.getElementById("settings-btn");
+const settingsDropdown = document.querySelector(".dropdown");
+settingsBtn.addEventListener("click", () => {
     const currentVisibility = getComputedStyle(settingsDropdown).visibility;
-    if (currentVisibility === 'hidden') {
-        settingsDropdown.classList.add('show')
-    } else if (currentVisibility === 'visible') {
-        settingsDropdown.classList.remove('show')
+    if (currentVisibility === "hidden") {
+        settingsDropdown.classList.add("show");
+    } else if (currentVisibility === "visible") {
+        settingsDropdown.classList.remove("show");
     }
 });
 
-document.addEventListener('click', (event) => {
-    if (!settingsDropdown.contains(event.target) && 
-        !settingsBtn.contains(event.target)) {
-        settingsDropdown.classList.remove('show');
+document.addEventListener("click", (event) => {
+    if (
+        !settingsDropdown.contains(event.target) &&
+        !settingsBtn.contains(event.target)
+    ) {
+        settingsDropdown.classList.remove("show");
     }
 });
 
-const logoutBtn = document.getElementById('log-out');
-logoutBtn.addEventListener('click', () => {
-    ipcRenderer.send('action:logout');
+const logoutBtn = document.getElementById("log-out");
+logoutBtn.addEventListener("click", () => {
+    ipcRenderer.send("action:logout");
 });
 
-const githubBtn = document.getElementById('github');
-githubBtn.addEventListener('click', () => {
-    shell.openExternal('https://github.com/Mevin-JR/Valorant-Profiler');
+const githubBtn = document.getElementById("github");
+githubBtn.addEventListener("click", () => {
+    shell.openExternal("https://github.com/Mevin-JR/Valorant-Profiler");
 });
 
-const closePopupBtn = document.getElementById('popup-close-btn');
+const closePopupBtn = document.getElementById("popup-close-btn");
 function closepopup() {
-    const nameInput = document.getElementById('name');
-    const tagInput = document.getElementById('tag');
-    const bgBlur = document.querySelector('.bg-blur');
-    const accountAddPopup = document.querySelector('.popup-container');
+    const nameInput = document.getElementById("name");
+    const tagInput = document.getElementById("tag");
+    const bgBlur = document.querySelector(".bg-blur");
+    const accountAddPopup = document.querySelector(".popup-container");
 
-    accountAddPopup.style.animation = 'zoomOut 0.4s ease';
-    nameInput.value = '';
-    tagInput.value = '';
+    accountAddPopup.style.animation = "zoomOut 0.4s ease";
+    nameInput.value = "";
+    tagInput.value = "";
     setTimeout(() => {
-        bgBlur.style.display = 'none';
-        accountAddPopup.style.display = 'none';
-        accountAddPopup.style.animation = 'zoomIn 0.4s ease-in-out';
+        bgBlur.style.display = "none";
+        accountAddPopup.style.display = "none";
+        accountAddPopup.style.animation = "zoomIn 0.4s ease-in-out";
     }, 300);
 }
 
-closePopupBtn.addEventListener('click', () => {
+closePopupBtn.addEventListener("click", () => {
     closepopup();
 });
 
-const addAccount = document.getElementById('account-add-btn');
-addAccount.addEventListener('click', () => {
-    const name = document.getElementById('name').value;
-    const tag = document.getElementById('tag').value;
+const addAccount = document.getElementById("account-add-btn");
+addAccount.addEventListener("click", () => {
+    const name = document.getElementById("name").value;
+    const tag = document.getElementById("tag").value;
 
-    if (name === '' || tag === '') {
-        displayError('Required field is empty');
+    if (name === "" || tag === "") {
+        displayError("Required field is empty");
         return;
     }
 
     const maxAccountCount = 9;
     if (renderedUserProfiles.length === maxAccountCount) {
-        displayError('Cannot add any more profiles (max. 9)');
+        displayError("Cannot add any more profiles (max. 9)");
         return;
     }
 
     const nameTagCheck = `${name}#${tag}`;
     if (renderedUserProfiles.includes(nameTagCheck)) {
-        displayError('Account already exists');
+        displayError("Account already exists");
         return;
     }
 
-    showLoading('Retrieving account data...');
-    account.insertProfileData(name, tag)
-    .then(() => {
+    showLoading("Retrieving account data...");
+    account.insertProfileData(name, tag).then(() => {
         hideLoading();
         noAccountDisplayCheck();
     });
@@ -448,26 +510,27 @@ addAccount.addEventListener('click', () => {
 });
 
 function setupRefresh() {
-    const refreshButton = document.querySelector('.refresh-btn');
-    refreshButton.addEventListener('click', () => {
-
+    const refreshButton = document.querySelector(".refresh-btn");
+    refreshButton.addEventListener("click", () => {
         if (renderedUserProfiles.length === 0) {
-            displayError('No account(s) found');
+            displayError("No account(s) found");
             return;
         }
 
         const cooldownSeconds = 60;
-        if (refreshButton.classList.contains('cooldown')) {
-            displayError(`Refresh is in cooldown for ${cooldownSeconds} seconds`);
+        if (refreshButton.classList.contains("cooldown")) {
+            displayError(
+                `Refresh is in cooldown for ${cooldownSeconds} seconds`
+            );
             return;
         }
 
-        refreshButton.classList.add('cooldown');
+        refreshButton.classList.add("cooldown");
         setTimeout(() => {
-            refreshButton.classList.remove('cooldown');
+            refreshButton.classList.remove("cooldown");
         }, cooldownSeconds * 1000);
 
-        showLoading('Refreshing data... (May take some time)');
+        showLoading("Refreshing data... (May take some time)");
         db.refreshData().then(() => {
             updateRefreshTimer();
             hideLoading();
@@ -476,15 +539,17 @@ function setupRefresh() {
 }
 
 function noAccountDisplayCheck() {
-    const noAccountPageContainer = document.querySelector('.no-account-page-container');
+    const noAccountPageContainer = document.querySelector(
+        ".no-account-page-container"
+    );
     if (renderedUserProfiles.length > 0) {
-        noAccountPageContainer.style.display = 'none';
+        noAccountPageContainer.style.display = "none";
     } else {
-        noAccountPageContainer.style.display = 'flex';
+        noAccountPageContainer.style.display = "flex";
     }
 }
 
-ipcRenderer.on('load-home', () => {
+ipcRenderer.on("load-home", () => {
     loadHome();
 });
 
@@ -496,37 +561,47 @@ function displayError(errorText) {
         duration: 3000,
         gravity: "top",
         position: "center",
-        className: 'popup-error',
+        className: "popup-error",
         escapeMarkup: false,
         stopOnFocus: false,
         close: false,
     }).showToast();
 }
 
-ipcRenderer.on('error-message-forward', (err) => {
+ipcRenderer.on("error-message-forward", (err) => {
     displayError(err);
 });
 
-ipcRenderer.on('action-required-accounts-forward', (err) => {
+ipcRenderer.on("action-required-accounts-forward", (err) => {
     const actionRequiredAccounts = err;
 
     actionRequiredAccounts.forEach((accountID) => {
         const card = document.getElementById(accountID);
-        const actionRequiredContainer = card.querySelector('.action-required-container');
+        const actionRequiredContainer = card.querySelector(
+            ".action-required-container"
+        );
 
-        actionRequiredContainer.style.display = 'flex';
+        actionRequiredContainer.style.display = "flex";
     });
 });
 
-ipcRenderer.on('received-friend-request-forward', (data) => {
-    const requestsNotif = document.querySelector('.requests-notif');
-    requestsNotif.innerHTML = `${data.receivedCount}`
-    requestsNotif.style.display = 'flex';
+ipcRenderer.on("received-friend-request-forward", (data) => {
+    const requestsNotif = document.querySelector(".requests-notif");
+    requestsNotif.innerHTML = `${data.receivedCount}`;
+    requestsNotif.style.display = "flex";
 
-    const requestsDropdownContainer = document.querySelector('.requests-account-container');
-    const requestAccount = document.createElement('div');
-    requestAccount.classList.add('requests-account');
+    const requestsDropdownContainer = document.querySelector(
+        ".requests-account-container"
+    );
+    const requestAccount = document.createElement("div");
+    requestAccount.classList.add("requests-account");
+    requestAccount.id = data.info.username;
     requestAccount.innerHTML = getFriendRequestHTML(data.info);
 
     requestsDropdownContainer.appendChild(requestAccount);
+    setupRequestInteractions(requestAccount);
+});
+
+ipcRenderer.on("add-friend-forward", (data) => {
+    addFriendAccount(data);
 });

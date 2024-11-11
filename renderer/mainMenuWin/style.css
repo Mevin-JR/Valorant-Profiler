@@ -759,6 +759,7 @@ nav {
                     left: 0;
                     right: 0;
                     background-color: rgba(15, 24, 34, 0.25);
+                    backdrop-filter: blur(15px);
                     box-shadow: rgba(0, 0, 0, 0.23) 0px 10px 20px, rgba(0, 0, 0, 0.20) 0px 6px 6px;
                     padding-bottom: 25px;
                     border-radius: 10px;
@@ -829,6 +830,11 @@ nav {
 
                                 svg {
                                     cursor: pointer;
+                                    transition: transform 0.3s ease-in-out;
+                                }
+
+                                svg:hover {
+                                    transform: translateY(-2.5px);
                                 }
                             }
                         }
@@ -878,10 +884,6 @@ nav {
                             color: red;
                         }
                     }
-                }
-
-                .friend-account:hover {
-                    transform: scale(1.075);
                 }
             }
 
