@@ -884,8 +884,7 @@ nav {
                     gap: 10px;
 
                     img {
-                        border: 2px solid gray;
-                        border-radius: 50%;
+                        border-radius: 5px;
                         width: 40px;
                         height: 40px;
                     }
@@ -904,41 +903,6 @@ nav {
                             font-size: 14px;
                             font-weight: 300;
                             color: red;
-                        }
-                    }
-
-                    .friend-account-menu {
-                        position: absolute;
-                        right: 25px;
-
-                        .friend-account-menu-btn {
-                            cursor: pointer;
-                        }
-
-                        .friend-account-menu-dropdown {
-                            z-index: 200;
-                            position: absolute;
-                            top: 70%;
-                            right: 100%;
-                            width: max-content;
-                            display: none;
-                            flex-direction: row;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 10px;
-                            padding: 8px;
-                            background-color: #0f1822;
-                            border-radius: 10px;
-
-                            span {
-                                color: red;
-                                font-size: 14px;
-                                cursor: pointer;
-                            }
-                        }
-
-                        .friend-account-menu-dropdown.show {
-                            display: flex;
                         }
                     }
                 }
