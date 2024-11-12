@@ -134,6 +134,19 @@ function getFriendAccountHTML(friendData) {
             <span class="friend-account-name">${friendData.username}</span>
             <span class="friend-account-status">Offline</span>
         </div>
+        <div class="friend-account-menu">
+            <svg class="friend-account-menu-btn" width="8" height="20" viewBox="0 0 8 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20C5.10457 20 6 19.1046 6 18C6 16.8954 5.10457 16 4 16C2.89543 16 2 16.8954 2 18C2 19.1046 2.89543 20 4 20Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 6C5.10457 6 6 5.10457 6 4C6 2.89543 5.10457 2 4 2C2.89543 2 2 2.89543 2 4C2 5.10457 2.89543 6 4 6Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 34C5.10457 34 6 33.1046 6 32C6 30.8954 5.10457 30 4 30C2.89543 30 2 30.8954 2 32C2 33.1046 2.89543 34 4 34Z" stroke="gray" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="friend-account-menu-dropdown">
+                <svg width="14" height="14" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 22H30M42 22C42 33.0457 33.0457 42 22 42C10.9543 42 2 33.0457 2 22C2 10.9543 10.9543 2 22 2C33.0457 2 42 10.9543 42 22Z" stroke="red" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Remove friend</span>
+            </div>
+        </div>
     `;
 }
 
@@ -164,6 +177,16 @@ function addFriendAccount(data) {
     friendAccount.innerHTML = getFriendAccountHTML(data);
 
     friendListContainer.append(friendAccount);
+
+    const menuBtn = friendAccount.querySelector(".friend-account-menu-btn");
+    menuBtn.addEventListener("click", () => {
+        const menuDropdown = friendAccount.querySelector(
+            ".friend-account-menu-dropdown"
+        );
+        menuDropdown.classList.toggle("show"); // FIXME: Change this to something better
+    });
+
+    //TODO: Add a drag feature to delete friend accounts (similar to steam)
 }
 
 function updateRequestsNotif() {
@@ -213,30 +236,6 @@ async function setCards(userProfiles) {
         renderedUserProfiles.push(`${profile.name}#${profile.tag}`);
     });
     renderedUserProfiles = [...new Set(renderedUserProfiles)];
-}
-
-function calculateElapsedTime(lastRefresh) {
-    if (lastRefresh === -1) {
-        return "No Data"; // New accounts
-    }
-
-    const now = Date.now();
-    const elapsedTime = now - lastRefresh;
-
-    const seconds = Math.floor(elapsedTime / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) {
-        return `${days} day(s) ago`;
-    } else if (hours > 0) {
-        return `${hours} hour(s) ago`;
-    } else if (minutes > 0) {
-        return `${minutes} minute(s) ago`;
-    } else {
-        return `Just now`;
-    }
 }
 
 async function insertHomeSubtitle() {
@@ -306,6 +305,30 @@ function setupCardOptionsListener(cardDiv) {
     });
 }
 
+function calculateElapsedTime(lastRefresh) {
+    if (lastRefresh === -1) {
+        return "No Data"; // New accounts
+    }
+
+    const now = Date.now();
+    const elapsedTime = now - lastRefresh;
+
+    const seconds = Math.floor(elapsedTime / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+        return `${days} day(s) ago`;
+    } else if (hours > 0) {
+        return `${hours} hour(s) ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minute(s) ago`;
+    } else {
+        return `Just now`;
+    }
+}
+
 async function updateRefreshTimer() {
     const timer = document.querySelector(".timer");
     const lastRefreshTImestamp = await db.getLastRefreshed();
@@ -368,6 +391,7 @@ function loadFriendsList() {
 
 let cardContainer;
 async function loadHome() {
+    showLoading("Setting up the good stuff...");
     const titleContainer = document.querySelector(".title-container");
     const title = "<h1>Home</h1>";
     titleContainer.innerHTML = title;
@@ -382,7 +406,6 @@ async function loadHome() {
 
     loadFriendsList();
 
-    showLoading("Setting up the good stuff...");
     db.getUserProfiles()
         .then((userProfiles) => {
             setCards(userProfiles).then(() => {
@@ -407,7 +430,13 @@ async function loadHome() {
                 const requestsDropdownContainer = document.querySelector(
                     ".requests-dropdown-container"
                 );
-                requestsDropdownContainer.classList.toggle("show");
+                if (requestsDropdownContainer.classList.contains("show")) {
+                    requestsDropdownContainer.classList.remove("show");
+                    requestsDropdownContainer.style.zIndex = 1;
+                } else {
+                    requestsDropdownContainer.classList.add("show");
+                    requestsDropdownContainer.style.zIndex = 200;
+                }
             });
         })
         .catch((err) => {
@@ -501,7 +530,7 @@ addAccount.addEventListener("click", () => {
         return;
     }
 
-    showLoading("Retrieving account data...");
+    showLoading("Retrieving account information...");
     account.insertProfileData(name, tag).then(() => {
         hideLoading();
         noAccountDisplayCheck();
