@@ -1,58 +1,38 @@
-// Loader hide/unhide
+// TODO: Complete the fav icon functionality, where the fuck is it
+// TODO: Assign an ID to each button (for faster access)
+
+/**
+ *
+ * Global elements (cached)
+ *
+ */
+
+let renderedUserProfiles = [];
+
 const loaderContainer = document.querySelector(".overlay__loader-container");
 const loaderDescription = document.querySelector(
     ".overlay__loader-description"
 );
 
-function showLoading(msg = "") {
-    loaderContainer.style.display = "flex";
-    loaderDescription.textContent = msg;
-    loaderDescription.style.display = "block";
-}
+/**
+ *
+ * Dynamic html functions
+ *
+ */
 
-function hideLoading() {
-    loaderContainer.style.display = "none";
-    loaderDescription.style.display = "none";
-}
-
-function setRankColor(accountRankContainer, rank) {
-    if (rank.includes("Iron")) {
-        accountRankContainer.style.color = "#FDFDFD";
-        accountRankContainer.style.backgroundColor = "#787775";
-    } else if (rank.includes("Bronze")) {
-        accountRankContainer.style.color = "#54370A";
-        accountRankContainer.style.backgroundColor = "#A58642";
-    } else if (rank.includes("Silver")) {
-        accountRankContainer.style.color = "#FDFDFD";
-        accountRankContainer.style.backgroundColor = "#464B4E";
-    } else if (rank.includes("Gold")) {
-        accountRankContainer.style.color = "#F4EEAE";
-        accountRankContainer.style.backgroundColor = "#CC8818";
-    } else if (rank.includes("Platinum")) {
-        accountRankContainer.style.color = "#29747F";
-        accountRankContainer.style.backgroundColor = "#52CDDD";
-    } else if (rank.includes("Diamond")) {
-        accountRankContainer.style.color = "#F195F4";
-        accountRankContainer.style.backgroundColor = "#946BD2";
-    } else if (rank.includes("Ascendant")) {
-        accountRankContainer.style.color = "#B6FFD7";
-        accountRankContainer.style.backgroundColor = "#228052";
-    } else if (rank.includes("Immortal")) {
-        accountRankContainer.style.color = "#E8C3A8";
-        accountRankContainer.style.backgroundColor = "#C3324E";
-    } else if (rank.includes("Radiant")) {
-        accountRankContainer.style.color = "#E39C41";
-        accountRankContainer.style.backgroundColor = "#FFFFB4";
-    }
-}
-
-// TODO: Complete the fav icon functionality, where the fuck is it
-// TODO: Transform div buttons to actual buttons
-// TODO: Assign an ID to each button (for faster access)
-
-let renderedUserProfiles = [];
-
-function getCardHTML(profile) {
+/**
+ * Generates HTML for a profile card
+ *
+ * @param {object} profile - Profile object
+ * @param {string} profile.name - Profile player's ingame username
+ * @param {string} profile.tag - Profile player's ingame tag
+ * @param {string} profile.rank - Profile player's ingame rank
+ * @param {number} profile.accLvl - Profile player's ingame level
+ * @param {string} profile.cardImg - URL of player's ingame card
+ *
+ * @returns {string} - The HTML script representing the user profile card
+ */
+function getProfileCardHTML(profile) {
     return `
             <div class="card__action-required">
                 <span>Action Required</span>
@@ -109,34 +89,110 @@ function getCardHTML(profile) {
     `;
 }
 
-function getFriendListHTML() {
+/**
+ *
+ * Generates HTML layout of the home page
+ *
+ * @returns {string} - The HTML script of the home page layout
+ */
+function getHomePageLayoutHTML() {
     return `
-        <div class="friend-list__header">
-            <h2>Friend List</h2>
-            <button class="friend-list__requests-btn">
-                <div class="friend-list__requests-btn-notif"></div>
-                <svg width="28" height="20" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M46 38V34C45.9987 32.2275 45.4087 30.5055 44.3227 29.1046C43.2368 27.7037 41.7163 26.7031 40 26.26M32 2.26C33.7208 2.7006 35.2461 3.7014 36.3353 5.10462C37.4245 6.50784 38.0157 8.23366 38.0157 10.01C38.0157 11.7863 37.4245 13.5122 36.3353 14.9154C35.2461 16.3186 33.7208 17.3194 32 17.76M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            <div class="friend-list__requests-menu">
-                <h2>Friend Requests</h2>
-                <div class="friend-list__requests-container"></div>
+        <div class="main__outer-container">
+            <div class="main__no-account-prompt">
+                <h2>No account(s) found....</h2>
+                <p>Insert accounts using "Add Account" button</p>
             </div>
+            <div class="main__subtitle-container"></div>
+            <div class="main__inner-container"></div>
         </div>
-        <div class="friend-list__account-container"></div>
-        <div class="friend-list__friend-id-container">
-            <div class="friend-list__request-confirmation">
-                <span>Friend request sent</span>
+        <div class="friend-list">
+            <div class="friend-list__header">
+                <h2>Friend List</h2>
+                <button class="friend-list__requests-btn">
+                    <div class="friend-list__requests-btn-notif"></div>
+                    <svg width="28" height="20" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M34 38V34C34 31.8783 33.1571 29.8434 31.6569 28.3431C30.1566 26.8429 28.1217 26 26 26H10C7.87827 26 5.84344 26.8429 4.34315 28.3431C2.84285 29.8434 2 31.8783 2 34V38M46 38V34C45.9987 32.2275 45.4087 30.5055 44.3227 29.1046C43.2368 27.7037 41.7163 26.7031 40 26.26M32 2.26C33.7208 2.7006 35.2461 3.7014 36.3353 5.10462C37.4245 6.50784 38.0157 8.23366 38.0157 10.01C38.0157 11.7863 37.4245 13.5122 36.3353 14.9154C35.2461 16.3186 33.7208 17.3194 32 17.76M26 10C26 14.4183 22.4183 18 18 18C13.5817 18 10 14.4183 10 10C10 5.58172 13.5817 2 18 2C22.4183 2 26 5.58172 26 10Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="friend-list__requests-menu">
+                    <h2>Friend Requests</h2>
+                    <div class="friend-list__requests-container"></div>
+                </div>
             </div>
-            <input class="friend-list__friend-id-input" type="text" placeholder="Enter friend code" spellcheck="false" maxlength=13>
-            <button class="friend-list__request-send-btn">
-                <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M16 2V30M2 16H30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+            <div class="friend-list__account-container"></div>
+            <div class="friend-list__friend-id-container">
+                <div class="friend-list__request-confirmation">
+                    <span>Friend request sent</span>
+                </div>
+                <input class="friend-list__friend-id-input" type="text" placeholder="Enter friend code" spellcheck="false" maxlength=13>
+                <button class="friend-list__request-send-btn">
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2V30M2 16H30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     `;
+}
+
+/**
+ *
+ * Home page functions
+ *
+ */
+
+/**
+ * Displays loading screen with msg (default, empty string)
+ * @param {string} msg - Message to be displayed under spinner
+ */
+function showLoading(msg = "") {
+    if (!loaderContainer || !loaderDescription) {
+        console.error("Loader elements are not defined.");
+        return;
+    }
+    loaderContainer.style.display = "flex";
+    loaderDescription.textContent = msg;
+    loaderDescription.style.display = "block";
+}
+
+function hideLoading() {
+    if (!loaderContainer || !loaderDescription) {
+        console.error("Loader elements are not defined.");
+        return;
+    }
+    loaderContainer.style.display = "none";
+    loaderDescription.style.display = "none";
+}
+
+function setRankColor(accountRankContainer, rank) {
+    if (rank.includes("Iron")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#787775";
+    } else if (rank.includes("Bronze")) {
+        accountRankContainer.style.color = "#54370A";
+        accountRankContainer.style.backgroundColor = "#A58642";
+    } else if (rank.includes("Silver")) {
+        accountRankContainer.style.color = "#FDFDFD";
+        accountRankContainer.style.backgroundColor = "#464B4E";
+    } else if (rank.includes("Gold")) {
+        accountRankContainer.style.color = "#F4EEAE";
+        accountRankContainer.style.backgroundColor = "#CC8818";
+    } else if (rank.includes("Platinum")) {
+        accountRankContainer.style.color = "#29747F";
+        accountRankContainer.style.backgroundColor = "#52CDDD";
+    } else if (rank.includes("Diamond")) {
+        accountRankContainer.style.color = "#F195F4";
+        accountRankContainer.style.backgroundColor = "#946BD2";
+    } else if (rank.includes("Ascendant")) {
+        accountRankContainer.style.color = "#B6FFD7";
+        accountRankContainer.style.backgroundColor = "#228052";
+    } else if (rank.includes("Immortal")) {
+        accountRankContainer.style.color = "#E8C3A8";
+        accountRankContainer.style.backgroundColor = "#C3324E";
+    } else if (rank.includes("Radiant")) {
+        accountRankContainer.style.color = "#E39C41";
+        accountRankContainer.style.backgroundColor = "#FFFFB4";
+    }
 }
 
 function getFriendAccountHTML(friendData) {
@@ -227,7 +283,7 @@ async function setCards(userProfiles) {
     userProfiles.forEach((profile) => {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("card");
-        cardDiv.innerHTML = getCardHTML(profile);
+        cardDiv.innerHTML = getProfileCardHTML(profile);
         cardDiv.id = `${profile.name}#${profile.tag}`;
         cardContainer.appendChild(cardDiv);
 
@@ -342,14 +398,9 @@ async function updateRefreshTimer() {
 }
 
 const contentContainer = document.querySelector(".main__content");
+const friendListContainer = document.querySelector(".friend-list");
 
 function loadFriendsList() {
-    const friendListContainer = document.createElement("div");
-    friendListContainer.classList.add("friend-list");
-    friendListContainer.innerHTML = getFriendListHTML();
-
-    contentContainer.appendChild(friendListContainer);
-
     social.getFriends().then((friendsList) => {
         friendsList.forEach((friendData) => {
             addFriendAccount(friendData);
@@ -398,20 +449,6 @@ function loadFriendsList() {
     });
 }
 
-function loadContentLayout() {
-    const homeLayout = `
-        <div class="main__outer-container">
-            <div class="main__no-account-prompt">
-                <h2>No account(s) found....</h2>
-                <p>Insert accounts using "Add Account" button</p>
-            </div>
-            <div class="main__subtitle-container"></div>
-            <div class="main__inner-container"></div>
-        </div>
-    `;
-    contentContainer.innerHTML = homeLayout;
-}
-
 let cardContainer;
 async function loadHome() {
     showLoading("Setting up the good stuff...");
@@ -419,7 +456,7 @@ async function loadHome() {
     const title = "<h1>Home</h1>";
     titleContainer.innerHTML = title;
 
-    loadContentLayout();
+    contentContainer.innerHTML = getHomePageLayoutHTML();
 
     await insertHomeSubtitle();
     setInterval(updateRefreshTimer, 60000); // 60s
