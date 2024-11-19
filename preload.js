@@ -4,9 +4,9 @@ const { shell } = require("electron");
 const {
     registerUser,
     loginUser,
-    insertProfileData,
+    addProfile,
     getUserProfiles,
-    liveChanges,
+    liveProfileChanges,
     getLastRefreshed,
     refreshData,
     deleteUserProfile,
@@ -21,15 +21,10 @@ const {
 contextBridge.exposeInMainWorld("ipcRenderer", {
     send: (channel, data) => ipcRenderer.send(channel, data), // Sending data from renderer files to main
     on: (channel, func) =>
-        ipcRenderer.on(channel, (event, ...args) => func(...args)), // Recieving data from main to renderer files
+        ipcRenderer.on(channel, (event, ...args) => func(...args)), // Receiving data from main to renderer files
 });
 
-// Shell module for redirection to external sources
-contextBridge.exposeInMainWorld("shell", {
-    openExternal: async (url) => await shell.openExternal(url), // Opening external links (in client browser)
-});
-
-// User authentication functions
+// User authentication functions (Used in login window)
 contextBridge.exposeInMainWorld("auth", {
     registerUser: async (username, password) =>
         await registerUser(username, password),
@@ -37,26 +32,31 @@ contextBridge.exposeInMainWorld("auth", {
         await loginUser(username, password),
 });
 
-// TODO: Shits ugly, give better name
-// User profile functions
-contextBridge.exposeInMainWorld("account", {
-    insertProfileData: async (nameInput, tagInput) =>
-        await insertProfileData(nameInput, tagInput), // Player name & tag retrival
+// Shell module for redirection to external sources
+contextBridge.exposeInMainWorld("shell", {
+    openExternal: async (url) => await shell.openExternal(url), // Opening external links (in client browser)
 });
 
 // Database functions
-contextBridge.exposeInMainWorld("db", {
-    getUserProfiles: async () => await getUserProfiles(), // Retrieving all saved user profiles from firebase
-    liveChanges: async () => await liveChanges(),
-    getLastRefreshed: async () => await getLastRefreshed(),
-    refreshData: async () => await refreshData(),
-    deleteUserProfile: async (name) => await deleteUserProfile(name),
-    liveFriendRequests: async () => await liveFriendRequests(),
+contextBridge.exposeInMainWorld("database", {
+    liveProfileChanges: async () => await liveProfileChanges(), // Enabling live profile changes
+    liveFriendRequests: async () => await liveFriendRequests(), // Enabling live friend requests
 });
 
+// User profile functions
+contextBridge.exposeInMainWorld("profile", {
+    addProfile: async (nameInput, tagInput) =>
+        await addProfile(nameInput, tagInput),
+    getUserProfiles: async () => await getUserProfiles(), // Retrieving all saved user profiles from firebase
+    deleteUserProfile: async (name) => await deleteUserProfile(name),
+    getLastRefreshed: async () => await getLastRefreshed(), // Retrieving last refresh timestamp (usage of refresh button)
+    refreshData: async () => await refreshData(), // Refreshing all user profiles
+});
+
+// Social functions
 contextBridge.exposeInMainWorld("social", {
-    sendFriendRequest: async (friendID) => await sendFriendRequest(friendID),
-    acceptFriendRequest: async (sender) => await acceptFriendRequest(sender),
+    sendFriendRequest: async (friendID) => await sendFriendRequest(friendID), // Sending friend request (using friend ID/uid)
+    acceptFriendRequest: async (sender) => await acceptFriendRequest(sender), // Accepting friend request (using sender username)
     denyFriendRequest: async (sender) => await denyFriendRequest(sender),
     getFriends: async () => await getFriends(),
 });

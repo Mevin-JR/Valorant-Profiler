@@ -282,7 +282,7 @@ async function mergedApiData(name, tag) {
 }
 
 // Profile data handling
-async function insertProfileData(name, tag) {
+async function addProfile(name, tag) {
     try {
         const mergedData = await mergedApiData(name, tag);
         if (!mergedData) {
@@ -310,6 +310,18 @@ async function insertProfileData(name, tag) {
         });
     } catch (err) {
         console.error("Error inserting profile details:", err);
+    }
+}
+
+async function setLastUpdated() {
+    try {
+        const db = await initializeFirebase();
+        const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}`);
+        const currentTimestamp = Date.now();
+
+        await update(lastUpdateRef, { last_updated: currentTimestamp });
+    } catch (err) {
+        console.log("Error updating last update timestamp:", err);
     }
 }
 
@@ -351,22 +363,11 @@ async function accountApiUpdate() {
             }
         }
 
-        const lastUpdateRef = ref(db, `userProfiles/${sessionData.username}`);
-        const lastUpdateSnapshot = await get(lastUpdateRef);
-        const currentTimestamp = Date.now();
-
-        if (
-            lastUpdateSnapshot.exists() &&
-            lastUpdateSnapshot.val().last_updated !== undefined
-        ) {
-            await update(lastUpdateRef, { last_updated: currentTimestamp });
-        } else {
-            await set(lastUpdateRef, { last_updated: currentTimestamp });
-        }
+        setLastUpdated();
 
         return actionRequiredProfiles;
     } catch (error) {
-        console.error("Error during API update:", error);
+        console.error("Error during account API update:", error);
     }
 }
 
@@ -411,10 +412,12 @@ async function mmrApiUpdate() {
                 await set(userProfileRef, updatedProfile);
             }
 
+            setLastUpdated();
+
             return actionRequiredProfiles;
         }
     } catch (error) {
-        console.error("Error during API update:", error);
+        console.error("Error during mmr API update:", error);
     }
 }
 
@@ -497,7 +500,7 @@ async function deleteUserProfile(name) {
 // TODO: Serialize api refresh
 // TODO: Add secure firebase rules
 // Realtime changes
-async function liveChanges() {
+async function liveProfileChanges() {
     sessionData = getSessionData();
     const db = await initializeFirebase();
     const dbRef = ref(
@@ -762,9 +765,9 @@ async function getFriends() {
 module.exports = {
     registerUser,
     loginUser,
-    insertProfileData,
+    addProfile,
     getUserProfiles,
-    liveChanges,
+    liveProfileChanges,
     getLastRefreshed,
     refreshData,
     deleteUserProfile,
