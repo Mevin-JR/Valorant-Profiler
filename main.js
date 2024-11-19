@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const log = require("electron-log");
-log.info("App starting...");
+log.info("App starting..."); // TODO: Apply log functionality to entire app
 
 // Development mode check
 const isDev = true;
@@ -81,6 +81,7 @@ app.whenReady().then(() => {
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder); // Create new if it dosn't exist
     }
+
     // Check for session file
     if (!fs.existsSync(sessionFile)) {
         const emptyJSON = {};
@@ -89,16 +90,14 @@ app.whenReady().then(() => {
 
     winLogin.on("closed", () => (winLogin = null));
     winMain.on("closed", () => (winMain = null));
-
-    app.on("activate", () => {
-        if (BrowserWindow().getAllWindows().length === 0) {
-            createLoginWindow();
-            createMainWindow();
-        }
-    });
 });
 
-// Check active session
+/**
+ *
+ * Session file handlers
+ *
+ */
+
 function clearSessionFile() {
     const emptyJSON = {};
     fs.writeFileSync(sessionFile, JSON.stringify(emptyJSON));
@@ -118,7 +117,12 @@ function checkActiveSession() {
     }
 }
 
-// IPC
+/**
+ *
+ * Inter-Process Communication (IPCs)
+ *
+ */
+
 ipcMain.on("check-active-session", () => {
     checkActiveSession();
 });

@@ -282,7 +282,7 @@ async function mergedApiData(name, tag) {
 }
 
 // Profile data handling
-async function insertProfileData(name, tag) {
+async function addProfile(name, tag) {
     try {
         const mergedData = await mergedApiData(name, tag);
         if (!mergedData) {
@@ -500,7 +500,7 @@ async function deleteUserProfile(name) {
 // TODO: Serialize api refresh
 // TODO: Add secure firebase rules
 // Realtime changes
-async function liveChanges() {
+async function liveProfileChanges() {
     sessionData = getSessionData();
     const db = await initializeFirebase();
     const dbRef = ref(
@@ -765,9 +765,9 @@ async function getFriends() {
 module.exports = {
     registerUser,
     loginUser,
-    insertProfileData,
+    addProfile,
     getUserProfiles,
-    liveChanges,
+    liveProfileChanges,
     getLastRefreshed,
     refreshData,
     deleteUserProfile,

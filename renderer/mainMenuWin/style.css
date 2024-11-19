@@ -19,6 +19,10 @@ img {
     -webkit-user-drag: none;
 }
 
+button {
+    all: unset;
+}
+
 body {
     position: relative;
     font-family: "Quantico", sans-serif;
@@ -34,6 +38,145 @@ body {
     -webkit-user-drag: none;
 }
 
+/* Overlays */
+.overlay__bg-blur {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+}
+
+.overlay__popup-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    animation: zoomIn 0.4s ease-in-out;
+
+    .overlay__popup-bg {
+        position: relative;
+        background-image: url(./imgs/bg-account-add-popup-dark.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 1082px;
+        height: 452px;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
+
+    .overlay__popup-content {
+        position: absolute;
+        right: 175px;
+        width: 350px;
+        color: white;
+
+        h2 {
+            font-weight: 700;
+        }
+
+        .overlay__popup-username-field,
+        .overlay__popup-tag-field {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 50px;
+            background-color: white;
+            border: 1px solid rgba(51, 51, 51, 0.1);
+
+            input[type="text"] {
+                font-family: "Quantico", sans-serif;
+                outline: none;
+                font-size: 16px;
+
+                ::placeholder {
+                    color: rgba(51, 51, 51, 0.4);
+                }
+            }
+        }
+
+        .overlay__profile-add-btn {
+            margin-top: 20px;
+            background-color: #0575e6;
+            color: white;
+            border-radius: 50px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .overlay__profile-add-btn:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    .overlay__popup-close-btn {
+        position: absolute;
+        right: 50px;
+        top: 15px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .overlay__popup-close-btn:hover {
+        transform: scale(1.2);
+    }
+}
+
+.overlay__loader-container {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+
+    .overlay__loader-bg {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        border-radius: 10px;
+        border: 2px solid black;
+        padding: 50px;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .overlay__loader {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        box-sizing: border-box;
+        border-top: 8px solid white;
+        border-left: 8px solid white;
+        border-right: 8px solid #ff00;
+        animation: loader 0.7s infinite linear;
+    }
+
+    .overlay__loader-description {
+        color: white;
+    }
+}
+
+/* Navbar (Vertical) */
+
 nav {
     flex-shrink: 0;
     position: relative;
@@ -45,49 +188,49 @@ nav {
     justify-content: center;
     border-right: 2px solid #7d91aa;
 
-    ul {
+    .nav__items {
         list-style-type: none;
         display: flex;
         flex-direction: column;
         gap: 65px;
         padding: 0;
 
+        .nav__btn--active {
+            background-color: rgba(60, 67, 74, 0.7);
+            box-shadow: rgba(0, 0, 0, 0.75) 0px 5px 15px;
+        }
+
         li {
             padding: 12px 15px;
             border-radius: 10px;
 
-            svg {
+            button {
                 cursor: pointer;
                 transition: transform 0.3s ease-in-out;
                 height: 28px;
                 width: 28px;
             }
 
-            svg:hover {
+            button:hover {
                 transform: scale(1.075);
             }
         }
-
-        .selection-indicator {
-            background-color: rgba(60, 67, 74, 0.7);
-            box-shadow: rgba(0, 0, 0, 0.75) 0px 5px 15px;
-        }
     }
 
-    .settings-container {
+    .nav__settings-container {
         position: absolute;
         bottom: 50px;
         left: 50%;
         transform: translateX(-10%);
         z-index: 900;
 
-        #settings-btn {
+        .nav__settings-btn {
             cursor: pointer;
             height: 28px;
             width: 28px;
         }
 
-        .dropdown {
+        .nav__settings-menu {
             visibility: hidden;
             opacity: 0;
             transform: translateY(20px);
@@ -104,7 +247,7 @@ nav {
             margin-bottom: 10px;
             -webkit-user-select: none;
 
-            div {
+            button {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -119,12 +262,12 @@ nav {
                 cursor: pointer;
             }
 
-            div:hover {
+            button:hover {
                 transform: scale(1.1);
             }
         }
 
-        .show {
+        .nav__settings-menu--show {
             visibility: visible;
             opacity: 1;
             transform: translateY(0);
@@ -134,143 +277,7 @@ nav {
 
 /* Content Section */
 /* TODO: Reorganize and reapply zindexs, CSS sucks */
-.bg-blur {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(3px);
-    z-index: 1000;
-}
-
-.popup-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-    animation: zoomIn 0.4s ease-in-out;
-
-    .popup-bg {
-        position: relative;
-        background-image: url(./imgs/bg-account-add-popup-dark.png);
-        background-position: center;
-        background-repeat: no-repeat;
-        width: 1082px;
-        height: 452px;
-        display: flex;
-        align-items: center;
-        justify-content: end;
-    }
-
-    .popup-content {
-        position: absolute;
-        right: 175px;
-        width: 350px;
-        color: white;
-
-        h2 {
-            font-weight: 700;
-        }
-
-        .name-input,
-        .tag-input {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            padding: 20px;
-            border-radius: 50px;
-            background-color: white;
-            border: 1px solid rgba(51, 51, 51, 0.1);
-        }
-
-        input[type="text"] {
-            font-family: "Quantico", sans-serif;
-            outline: none;
-            font-size: 16px;
-
-            ::placeholder {
-                color: rgba(51, 51, 51, 0.4);
-            }
-        }
-
-        .account-add-btn {
-            margin-top: 20px;
-            background-color: #0575e6;
-            color: white;
-            border-radius: 50px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .account-add-btn:hover {
-            transform: scale(1.05);
-        }
-    }
-
-    .popup-close-btn {
-        position: absolute;
-        right: 50px;
-        top: 15px;
-        cursor: pointer;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .popup-close-btn:hover {
-        transform: scale(1.2);
-    }
-}
-
-.loader-container {
-    position: absolute;
-    display: none;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-
-    .loader-bg {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        border-radius: 10px;
-        border: 2px solid black;
-        padding: 50px;
-        background-color: rgba(0, 0, 0, 0.7);
-    }
-
-    .loader {
-        width: 4rem;
-        height: 4rem;
-        border-radius: 50%;
-        box-sizing: border-box;
-        border-top: 8px solid white;
-        border-left: 8px solid white;
-        border-right: 8px solid #ff00;
-        animation: loader 0.7s infinite linear;
-    }
-
-    p {
-        color: white;
-    }
-}
-
-.content-section {
+main {
     position: relative;
     background-image: url(./imgs/bg-content.png);
     background-position: center;
@@ -279,7 +286,7 @@ nav {
     height: 100%;
     padding-left: 40px;
 
-    .title-container {
+    .main__title-container {
         margin-top: 40px;
         width: 100%;
         height: 60px;
@@ -292,7 +299,7 @@ nav {
         }
     }
 
-    .content-section-inner {
+    .main__content {
         position: relative;
         display: flex;
         flex-direction: row;
@@ -300,12 +307,12 @@ nav {
         gap: 20px;
         width: 100%;
 
-        .main-content {
+        .main__outer-container {
             position: relative;
             flex-grow: 1;
             width: fit-content;
 
-            .no-account-page-container {
+            .main__no-account-prompt {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -328,122 +335,183 @@ nav {
                 }
             }
 
-            .subtitle-container {
+            .main__subtitle-container {
                 position: relative;
                 margin: 40px 0;
                 width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
 
-                .home-subtitle-container {
+                .main__subtitle-left {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
-                    justify-content: space-between;
+                    gap: 10px;
 
-                    .subtitle-left {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        gap: 10px;
+                    p {
+                        color: #a0a0a0;
+                        font-size: 18px;
 
-                        p {
-                            color: #a0a0a0;
-                            font-size: 18px;
-
-                            .h-divider {
-                                color: white;
-                                font-size: 22px;
-                            }
-
-                            .timer {
-                                color: rgb(255, 255, 129);
-                            }
+                        .h-divider {
+                            color: white;
+                            font-size: 22px;
                         }
 
-                        .refresh-btn {
-                            padding: 10px;
-                            background-color: #464545;
-                            border-radius: 10px;
-                            height: 16px;
-                            width: 16px;
-                            cursor: pointer;
+                        .main__subtitle-timer {
+                            color: rgb(255, 255, 129);
                         }
                     }
 
-                    .subtitle-right {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 10px;
+                    .main__subtitle-refresh-btn {
+                        cursor: pointer;
+                        height: 16px;
+                        width: 16px;
+                        margin-left: 5px;
 
-                        .add-account-button {
-                            background: green;
-                            color: white;
-                            font-family: inherit;
-                            padding: 0.15em;
-                            padding-left: 1.2em;
-                            font-size: 17px;
-                            font-weight: 500;
-                            border-radius: 0.9em;
-                            border: none;
-                            letter-spacing: 0.05em;
-                            display: flex;
-                            align-items: center;
-                            box-shadow: inset 0 0 1.6em -0.6em green;
-                            overflow: hidden;
-                            position: relative;
-                            height: 2.8em;
-                            padding-right: 3.3em;
-                            cursor: pointer;
+                        svg {
+                            height: inherit;
+                            width: inherit;
                         }
+                    }
+                }
 
-                        .add-account-button .icon {
-                            background: white;
-                            margin-left: 1em;
-                            position: absolute;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            height: 2.2em;
-                            width: 2.2em;
-                            border-radius: 0.7em;
-                            box-shadow: 0.1em 0.1em 0.6em 0.2em green;
-                            right: 0.3em;
-                            transition: all 0.3s;
-                        }
+                .main__subtitle-right {
+                    .main__subtitle-profile-button {
+                        -moz-appearance: none;
+                        -webkit-appearance: none;
+                        appearance: none;
+                        border: none;
+                        background: none;
+                        color: #0f1923;
+                        cursor: pointer;
+                        position: relative;
+                        padding: 8px;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                        font-size: 14px;
+                        transition: all 0.15s ease;
+                    }
 
-                        .add-account-button:hover .icon {
-                            width: calc(100% - 0.6em);
-                        }
+                    .main__subtitle-profile-button::before,
+                    .main__subtitle-profile-button::after {
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        right: 0;
+                        left: 0;
+                        height: calc(50% - 5px);
+                        border: 1px solid #7d8082;
+                        transition: all 0.15s ease;
+                    }
 
-                        .add-account-button .icon svg {
-                            width: 1.1em;
-                            transition: transform 0.3s;
-                        }
+                    .main__subtitle-profile-button::before {
+                        top: 0;
+                        border-bottom-width: 0;
+                    }
 
-                        .add-account-button:hover .icon svg {
-                            transform: translateX(0.1em);
-                        }
+                    .main__subtitle-profile-button::after {
+                        bottom: 0;
+                        border-top-width: 0;
+                    }
 
-                        .add-account-button:active .icon {
-                            transform: scale(0.95);
-                        }
+                    .main__subtitle-profile-button:active,
+                    .main__subtitle-profile-button:focus {
+                        outline: none;
+                    }
+
+                    .main__subtitle-profile-button:active::before,
+                    .main__subtitle-profile-button:active::after {
+                        right: 3px;
+                        left: 3px;
+                    }
+
+                    .main__subtitle-profile-button:active::before {
+                        top: 3px;
+                    }
+
+                    .main__subtitle-profile-button:active::after {
+                        bottom: 3px;
+                    }
+
+                    .main__subtitle-profile-button_lg {
+                        position: relative;
+                        display: block;
+                        padding: 10px 20px;
+                        color: #fff;
+                        background-color: #0f1923;
+                        overflow: hidden;
+                        box-shadow: inset 0px 0px 0px 1px transparent;
+                    }
+
+                    .main__subtitle-profile-button_lg::before {
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 2px;
+                        height: 2px;
+                        background-color: #0f1923;
+                    }
+
+                    .main__subtitle-profile-button_lg::after {
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+                        width: 4px;
+                        height: 4px;
+                        background-color: #0f1923;
+                        transition: all 0.2s ease;
+                    }
+
+                    .main__subtitle-profile-button_sl {
+                        display: block;
+                        position: absolute;
+                        top: 0;
+                        bottom: -1px;
+                        left: -8px;
+                        width: 0;
+                        background-color: #ff4655;
+                        transform: skew(-15deg);
+                        transition: all 0.2s ease;
+                    }
+
+                    .main__subtitle-profile-button_text {
+                        position: relative;
+                    }
+
+                    .main__subtitle-profile-button:hover {
+                        color: #0f1923;
+                    }
+
+                    .main__subtitle-profile-button:hover
+                        .main__subtitle-profile-button_sl {
+                        width: calc(100% + 15px);
+                    }
+
+                    .main__subtitle-profile-button:hover
+                        .main__subtitle-profile-button_lg::after {
+                        background-color: #fff;
                     }
                 }
             }
 
-            .content-container {
+            .main__inner-container {
                 position: relative;
                 height: max-content;
                 max-width: 73vw;
 
-                .card-container {
+                .main__card-container {
                     display: grid;
                     grid-template-columns: 1fr 1fr 1fr;
                     gap: 25px;
                     width: fit-content;
 
-                    .account-card {
+                    .card {
                         z-index: 100;
                         position: relative;
                         border-radius: 5px;
@@ -453,7 +521,7 @@ nav {
                         flex-direction: row;
                         transition: all 0.2s ease-in-out;
 
-                        .action-required-container {
+                        .card__action-required {
                             z-index: 200;
                             position: absolute;
                             top: 0;
@@ -483,8 +551,36 @@ nav {
                             }
                         }
 
-                        .card-left {
-                            .cardImg-container {
+                        .card__bg-blur {
+                            z-index: 95;
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            width: 100%;
+                            height: 100%;
+                            backdrop-filter: blur(5px);
+                        }
+
+                        .card__bg-img {
+                            z-index: 90;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            overflow: hidden;
+                            opacity: 0.5;
+
+                            img {
+                                position: absolute;
+                                top: -75%;
+                                right: 0;
+                                width: 75%;
+                            }
+                        }
+
+                        .card__left-container {
+                            .card__profile-img-container {
                                 z-index: 110;
                                 position: relative;
                                 width: 200px;
@@ -509,7 +605,7 @@ nav {
                                 }
                             }
 
-                            .account-level {
+                            .card__profile-level {
                                 position: absolute;
                                 top: 10px;
                                 left: 10px;
@@ -524,7 +620,7 @@ nav {
                             }
                         }
 
-                        .card-right {
+                        .card__right-container {
                             position: relative;
                             display: flex;
                             flex-direction: column;
@@ -532,7 +628,7 @@ nav {
                             justify-content: space-between;
                             width: 100%;
 
-                            .card-text-container {
+                            .card__right-text-container {
                                 z-index: 110;
                                 display: flex;
                                 flex-direction: column;
@@ -541,21 +637,21 @@ nav {
                                 left: 0;
                                 max-width: 200px;
 
-                                .account-username {
+                                .card__profile-username {
                                     color: white;
                                     font-size: clamp(18px, 1.05vw, 25px);
                                     white-space: nowrap;
                                     font-weight: 500;
                                 }
 
-                                .account-tag {
+                                .card__profile-tag {
                                     font-size: 16px;
                                     font-weight: 100;
                                     color: white;
                                     opacity: 0.5;
                                 }
 
-                                .account-rank {
+                                .card__profile-rank {
                                     width: fit-content;
                                     padding: 0 5px;
                                     font-weight: 600;
@@ -564,16 +660,16 @@ nav {
                                 }
                             }
 
-                            .options-container {
+                            .card__right-options-container {
                                 position: relative;
                                 margin: 15px;
                                 z-index: 210;
 
-                                .options-icon {
+                                .card__options-btn {
                                     cursor: pointer;
                                 }
 
-                                .dropdown-container {
+                                .card__options-menu {
                                     z-index: 210;
                                     position: absolute;
                                     top: 50%;
@@ -586,7 +682,7 @@ nav {
                                     padding: 15px;
                                     border-radius: 10px;
 
-                                    a {
+                                    button {
                                         display: flex;
                                         flex-direction: row;
                                         align-items: center;
@@ -598,19 +694,19 @@ nav {
                                         transition: transform 0.3s ease-in-out;
                                     }
 
-                                    .delete-btn {
+                                    button:hover {
+                                        transform: scale(1.05);
+                                    }
+
+                                    .card__options-delete-btn {
                                         color: rgb(180, 0, 0);
                                         font-weight: 800;
                                         border-radius: 10px;
                                     }
-
-                                    a:hover {
-                                        transform: scale(1.05);
-                                    }
                                 }
                             }
 
-                            .copy-container {
+                            .card__copy-container {
                                 z-index: 190;
                                 display: flex;
                                 flex-direction: row;
@@ -618,7 +714,7 @@ nav {
                                 justify-content: center;
                                 gap: 10px;
 
-                                .copy-text {
+                                .card__copy-text {
                                     color: white;
                                     font-size: 16px;
                                     opacity: 0;
@@ -627,7 +723,7 @@ nav {
                                     z-index: 200;
                                 }
 
-                                svg {
+                                .card__copy-btn {
                                     margin: 15px;
                                     margin-left: 0;
                                     cursor: pointer;
@@ -635,63 +731,14 @@ nav {
                                 }
                             }
 
-                            .copy-container:hover .copy-text {
+                            .card__copy-container:hover .card__copy-text {
                                 opacity: 1;
                                 transform: translateX(0%);
                             }
                         }
-
-                        .card-bg-img {
-                            z-index: 90;
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            overflow: hidden;
-                            opacity: 0.5;
-
-                            img {
-                                position: absolute;
-                                top: -75%;
-                                right: 0;
-                                width: 75%;
-                            }
-                        }
-
-                        .card-bg-blur {
-                            z-index: 95;
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            width: 100%;
-                            height: 100%;
-                            backdrop-filter: blur(5px);
-                        }
-
-                        .card-underlay {
-                            position: absolute;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            text-align: right;
-                            width: 100%;
-                            height: 100%;
-                            overflow: hidden;
-
-                            p {
-                                color: black;
-                                font-family: "Alfa Slab One", serif;
-                                text-wrap: nowrap;
-                                font-size: 40px;
-                                letter-spacing: 2px;
-                                z-index: 90;
-                                opacity: 0.15;
-                            }
-                        }
                     }
 
-                    .account-card:hover {
+                    .card:hover {
                         transform: translateY(-2%) translateX(-2%);
                         --shadow-color: 255, 70, 84;
                         box-shadow: rgba(var(--shadow-color), 0.4) 5px 5px,
@@ -704,7 +751,7 @@ nav {
             }
         }
 
-        .socials-container {
+        .friend-list {
             position: relative;
             margin: 40px 10px 0 0;
             width: 15.5vw;
@@ -717,7 +764,7 @@ nav {
                 rgba(0, 0, 0, 0.17) 0px 12px 13px,
                 rgba(0, 0, 0, 0.09) 0px -3px 5px;
 
-            .socials-header {
+            .friend-list__header {
                 position: relative;
                 margin: 10px 20px;
                 padding: 10px;
@@ -731,11 +778,11 @@ nav {
                     color: white;
                 }
 
-                .requests-btn-container {
+                .friend-list__requests-btn {
                     position: relative;
                     cursor: pointer;
 
-                    .requests-notif {
+                    .friend-list__requests-btn-notif {
                         position: absolute;
                         right: 0;
                         top: 0;
@@ -750,19 +797,20 @@ nav {
                         background-color: red;
                         color: white;
                         font-size: 10px;
-                    } 
+                    }
                 }
 
-                .requests-dropdown-container {
+                .friend-list__requests-menu {
                     z-index: 1;
                     position: absolute;
                     top: 110%;
                     left: 0;
                     right: 0;
                     max-height: 475px;
-                    background-color: rgba(15, 24, 34, 0.25);
+                    background-color: rgba(15, 24, 34, 0.65);
                     backdrop-filter: blur(15px);
-                    box-shadow: rgba(0, 0, 0, 0.23) 0px 10px 20px, rgba(0, 0, 0, 0.20) 0px 6px 6px;
+                    box-shadow: rgba(0, 0, 0, 0.23) 0px 10px 20px,
+                        rgba(0, 0, 0, 0.2) 0px 6px 6px;
                     padding-bottom: 25px;
                     border-radius: 10px;
                     overflow: hidden;
@@ -778,7 +826,7 @@ nav {
                         opacity: 0.75;
                     }
 
-                    .requests-account-container {
+                    .friend-list__requests-container {
                         margin-top: 10px;
                         display: flex;
                         flex-direction: column;
@@ -787,7 +835,7 @@ nav {
                         max-height: 350px;
                         overflow-y: auto;
 
-                        .requests-account {
+                        .friend-list__request-account {
                             display: flex;
                             flex-direction: row;
                             justify-content: space-between;
@@ -796,15 +844,16 @@ nav {
                             background-color: rgba(37, 37, 37, 0.5);
                             padding: 10px;
                             border-radius: 10px;
-                            box-shadow: rgba(0, 0, 0, 0.19) 0px 5px 10px, rgba(0, 0, 0, 0.23) 0px 3px 3px;
+                            box-shadow: rgba(0, 0, 0, 0.19) 0px 5px 10px,
+                                rgba(0, 0, 0, 0.23) 0px 3px 3px;
 
-                            .requests-account-info {
+                            .friend-list__request-account-info {
                                 display: flex;
                                 flex-direction: column;
                                 color: white;
                                 width: 50%;
 
-                                .requests-account-username {
+                                .friend-list__request-account-username {
                                     font-size: 16px;
                                     font-weight: 400;
                                     overflow: hidden;
@@ -812,61 +861,60 @@ nav {
                                     display: inline-block;
                                 }
 
-                                .requests-account-uid {
+                                .friend-list__request-account-uid {
                                     font-size: 10px;
                                     opacity: 0.5;
                                 }
                             }
 
-                            .requests-account-btns {
+                            .friend-list__request-account-btns {
                                 margin-right: 10px;
                                 display: flex;
                                 flex-direction: row;
                                 gap: 12px;
                                 align-items: center;
 
-                                .seperator {
+                                .friend-list__request-btn-seperator {
                                     width: 3px;
                                     height: 25px;
                                     border-radius: 10px;
                                     background-color: #464545;
                                 }
 
-                                svg {
+                                button {
                                     cursor: pointer;
                                     transition: transform 0.3s ease-in-out;
                                 }
 
-                                svg:hover {
+                                button:hover {
                                     transform: translateY(-2.5px);
                                 }
                             }
                         }
                     }
 
-                    .requests-account-container::-webkit-scrollbar {
+                    .friend-list__requests-container::-webkit-scrollbar {
                         width: 5px;
                     }
 
-                    .requests-account-container::-webkit-scrollbar-thumb {
+                    .friend-list__requests-container::-webkit-scrollbar-thumb {
                         background-color: #464545;
                         border-radius: 10px;
                     }
 
-                    .requests-account-container::-webkit-scrollbar-track {
+                    .friend-list__requests-container::-webkit-scrollbar-track {
                         background-color: transparent;
                         border-radius: 10px;
                     }
                 }
 
-                .requests-dropdown-container.show {
+                .friend-list__requests-menu--show {
                     transform: translateY(0);
                     opacity: 1;
                 }
-
             }
 
-            .friend-list {
+            .friend-list__account-container {
                 margin: 25px;
                 display: flex;
                 flex-direction: column;
@@ -875,7 +923,7 @@ nav {
                 overflow-y: auto;
                 box-sizing: border-box;
 
-                .friend-account {
+                .friend-list__account {
                     z-index: 150;
                     position: relative;
                     display: flex;
@@ -883,23 +931,23 @@ nav {
                     align-items: center;
                     gap: 10px;
 
-                    img {
+                    .friend-list__account-image {
                         border-radius: 5px;
                         width: 40px;
                         height: 40px;
                     }
 
-                    .friend-account-info {
+                    .friend-list__account-info {
                         display: flex;
                         flex-direction: column;
                         color: white;
 
-                        .friend-account-name {
+                        .friend-list__account-name {
                             font-weight: 500;
                             font-size: 16px;
                         }
 
-                        .friend-account-status {
+                        .friend-list__account-status {
                             font-size: 14px;
                             font-weight: 300;
                             color: red;
@@ -908,21 +956,21 @@ nav {
                 }
             }
 
-            .friend-list::-webkit-scrollbar {
+            .friend-list__account-container::-webkit-scrollbar {
                 width: 5px;
             }
 
-            .friend-list::-webkit-scrollbar-thumb {
+            .friend-list__account-container::-webkit-scrollbar-thumb {
                 background-color: #464545;
                 border-radius: 10px;
             }
 
-            .friend-list::-webkit-scrollbar-track {
+            .friend-list__account-container::-webkit-scrollbar-track {
                 background-color: transparent;
                 border-radius: 10px;
             }
 
-            .friend-search-container {
+            .friend-list__friend-id-container {
                 margin: 0 20px;
                 position: absolute;
                 left: 0;
@@ -931,7 +979,7 @@ nav {
                 display: flex;
                 align-items: stretch;
 
-                .friend-req-sent {
+                .friend-list__request-confirmation {
                     visibility: hidden;
                     position: absolute;
                     width: max-content;
@@ -941,7 +989,7 @@ nav {
                     color: limegreen;
                 }
 
-                input {
+                .friend-list__friend-id-input {
                     flex-grow: 1;
                     padding: 15px;
                     outline: none;
@@ -954,80 +1002,81 @@ nav {
                     }
                 }
 
-                .add-friend-btn {
+                .friend-list__request-send-btn {
                     background-color: #464545;
                     padding: 15px;
                     border-left: 1px solid #5f5f5f;
                     cursor: pointer;
                 }
 
-                .add-friend-btn:hover {
+                .friend-list__request-send-btn:hover {
                     background-color: #5f5f5f;
                 }
             }
         }
     }
 
-    .disclaimer {
-        position: absolute;
-        bottom: 45px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        width: fit-content;
-
-        span {
-            color: gray;
-            font-size: 12px;
-        }
-    }
-
-    .login-info-container {
-        position: absolute;
-        right: 45px;
-        bottom: 45px;
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-        align-items: center;
-        justify-content: center;
-        /* background-color: rgba(40, 40, 40, 0.55); */
-        border-radius: 5px;
-        padding: 10px;
-        width: fit-content;
-
-        img {
-            border-radius: 5px;
-            height: 50px;
-            width: 50px;
-            /* border: 1px solid green; */
-        }
-
-        .login-info-text {
+    .footer {
+        .footer__disclaimer-container {
+            position: absolute;
+            bottom: 45px;
             display: flex;
-            flex-direction: column;
-            color: white;
-            padding-right: 5px;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: fit-content;
 
-            .logged-in-text {
-                font-size: 10px;
-                font-weight: 100;
-                color: white;
-                opacity: 0.5;
-            }
-
-            .login-info-username {
-                font-size: clamp(14px, 1vw, 18px);
-                font-weight: 400;
-                color: limegreen;
-            }
-
-            .login-info-uid {
+            span {
+                color: gray;
                 font-size: 12px;
-                font-weight: 200;
-                opacity: 0.5;
+            }
+        }
+
+        /* FIXME: Make this dynamic */
+        .footer__login-info-container {
+            position: absolute;
+            right: 45px;
+            bottom: 45px;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            padding: 10px;
+            width: fit-content;
+
+            img {
+                border-radius: 5px;
+                height: 50px;
+                width: 50px;
+            }
+
+            .footer__login-info-text {
+                display: flex;
+                flex-direction: column;
+                color: white;
+                padding-right: 5px;
+
+                .footer__logged-in-text {
+                    font-size: 10px;
+                    font-weight: 100;
+                    color: white;
+                    opacity: 0.5;
+                }
+
+                .footer__login-info-username {
+                    font-size: clamp(14px, 1vw, 18px);
+                    font-weight: 400;
+                    color: limegreen;
+                }
+
+                .footer__login-info-uid {
+                    font-size: 12px;
+                    font-weight: 200;
+                    opacity: 0.5;
+                }
             }
         }
     }
