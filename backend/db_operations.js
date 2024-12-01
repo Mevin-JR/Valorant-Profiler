@@ -33,6 +33,9 @@ function getSessionData() {
     }
 }
 
+
+// TODO: Handle offline usage of app
+
 // TODO: Optimize usage of session data
 // TODO: Optimize usage of db
 let sessionData = getSessionData();

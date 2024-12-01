@@ -6,7 +6,7 @@ const log = require("electron-log");
 log.info("App starting..."); // TODO: Apply log functionality to entire app
 
 // Development mode check
-const isDev = true;
+const isDev = false;
 
 // Windows (Login & Main window)
 let winLogin;
