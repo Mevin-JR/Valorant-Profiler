@@ -7,7 +7,9 @@
  *
  */
 
+let currentPage = "home";
 let renderedUserProfiles = [];
+let cardContainer;
 
 const loaderContainer = document.querySelector(".overlay__loader-container");
 const loaderDescription = document.querySelector(
@@ -67,10 +69,10 @@ function getHomePageLayoutHTML() {
 
 /**
  * Generates HTML of the home page subtitle
- * 
+ *
  * Contains a dynamic last refresh timer displaying
  * elapsed time since last refresh
- * 
+ *
  * @param {string} refreshTimer Elapsed time to be displayed (Last refresh timer)
  * @returns HTML script of the home page subtitle
  */
@@ -169,7 +171,7 @@ function getProfileCardHTML(profile) {
  *
  * @param {object} friendData Contains details of friend account
  * @param {string} friendData.username Friend account username
- * 
+ *
  * @returns {string} The HTML script representing the friend account
  */
 function getFriendAccountHTML(friendData) {
@@ -184,16 +186,16 @@ function getFriendAccountHTML(friendData) {
 
 /**
  * Generates HTML for a friend request account (in friend request menu)
- * 
+ *
  * Provides options to accept or decline the friend request
- * 
+ *
  * @param {object} friendAccount Contains details about the friend request account
  * @param {string} friendAccount.username Friend request account username
  * @param {string} friendAccount.uid Friend request account uid (friend code)
  * @returns {string} The HTML script representing the friend request account
  */
 function getFriendRequestAccountHTML(friendAccount) {
-    return `
+  return `
         <div class="friend-list__request-account-info">
             <span class="friend-list__request-account-username">${friendAccount.username}</span>
             <span class="friend-list__request-account-uid">${friendAccount.uid}</span>
@@ -214,7 +216,6 @@ function getFriendRequestAccountHTML(friendAccount) {
     `;
 }
 
-
 /**
  *
  * Home page functions
@@ -223,7 +224,7 @@ function getFriendRequestAccountHTML(friendAccount) {
 
 /**
  * Displays loading screen with msg (default, empty string)
- * 
+ *
  * @param {string | null} msg - Message to be displayed under spinner
  */
 function showLoading(msg = "") {
@@ -246,9 +247,51 @@ function hideLoading() {
 }
 
 /**
+ * Restrict functions from being called multiple times, consecutivly
+ *
+ * @param {Function} func Functions to be debounced or throttled
+ * @param {Number} delay Seconds the function should be throttled for
+ * @returns The debounced function
+ */
+function debounce(func, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+/**
+ * Setup Navigation bar buttons
+ */
+function setupNavButtons() {
+  document.querySelectorAll(".nav__items button").forEach((navButton) => {
+    navButton.addEventListener("click", () => {
+      const pageId = navButton.id;
+      if (currentPage === pageId) {
+        return;
+      }
+
+      switch (pageId) {
+        case "home":
+          debounceLoadHome();
+          break;
+        case "stats":
+          page.loadStats();
+          break;
+        default:
+          break;
+      }
+
+      currentPage = pageId;
+    });
+  });
+}
+
+/**
  * Calculates and returns last refresh timestamp, if newly created
  * account with no refresh data, it returns "No Data"
- * 
+ *
  * @param {number} lastRefreshedRaw Unix timestamp of last refresh of profile data
  * @returns {string} String of calculated seconds, minutes, hours or day
  */
@@ -282,26 +325,29 @@ function calculateLastRefreshed(lastRefreshedRaw) {
  */
 async function updateRefreshTimer() {
   try {
+    if (currentPage !== "home") {
+      return;
+    }
     const subtitleTimer = document.querySelector(".main__subtitle-timer");
     const lastRefreshTimestamp = await profile.getLastRefreshed();
     const refreshTimer = calculateLastRefreshed(lastRefreshTimestamp);
-    subtitleTimer.innerHTML = refreshTimer; 
+    subtitleTimer.innerHTML = refreshTimer;
   } catch (error) {
-    console.error('Error updating refresh timer:', error);
+    console.error("Error updating refresh timer:", error);
   }
 }
 
 /**
  * Initializes the refresh button events in home page subtitle,
  * refreshes data once upon intialization
- * 
+ *
  * Refresh button contains a cooldown with the specified
  * seconds
  */
 function setupRefresh() {
   const refreshButton = document.querySelector(".main__subtitle-refresh-btn");
   if (!refreshButton) {
-    console.error('Refresh button element not found');
+    console.error("Refresh button element not found");
     return;
   }
 
@@ -312,7 +358,9 @@ function setupRefresh() {
     }
 
     const cooldownSeconds = 60;
-    if (refreshButton.classList.contains("main__subtitle-refresh-btn--cooldown")) {
+    if (
+      refreshButton.classList.contains("main__subtitle-refresh-btn--cooldown")
+    ) {
       displayError(`Refresh is in cooldown for ${cooldownSeconds} seconds`);
       return;
     }
@@ -322,12 +370,15 @@ function setupRefresh() {
     }, cooldownSeconds * 1000);
 
     showLoading("Refreshing data... (May take some time)");
-    profile.refreshData().then(() => {
-      updateRefreshTimer();
-      hideLoading();
-    }).catch((error) => {
-      console.error('Error refreshing data:', error);
-    });
+    profile
+      .refreshData()
+      .then(() => {
+        updateRefreshTimer();
+        hideLoading();
+      })
+      .catch((error) => {
+        console.error("Error refreshing data:", error);
+      });
   });
 }
 
@@ -335,7 +386,7 @@ function setupRefresh() {
  * Sets the subtitle element and initializes
  * the last refresh timer, refresh button events and
  * profile add popup
- * 
+ *
  * Initializes a setInterval() to update last
  * refreshed timer every specified
  * updateInterval
@@ -344,31 +395,33 @@ async function setSubtitle() {
   try {
     const lastRefreshTimestamp = await profile.getLastRefreshed();
     const lastRefreshed = calculateLastRefreshed(lastRefreshTimestamp);
-  
-    const subtitleContainer = document.querySelector(".main__subtitle-container");
+
+    const subtitleContainer = document.querySelector(
+      ".main__subtitle-container"
+    );
     subtitleContainer.innerHTML = getSubtitleHTML(lastRefreshed);
-  
+
     setupRefresh();
     const updateInterval = 60; // Seconds
     setInterval(updateRefreshTimer, updateInterval * 1000);
-  
+
     const profileBtn = document.querySelector(".main__subtitle-profile-button");
     const profilePopup = document.querySelector(".overlay__popup-container");
     profileBtn.addEventListener("click", () => {
       profilePopup.style.display = "flex";
-    }); 
+    });
   } catch (error) {
-    console.error('Error setting home page subtitles:', error);
+    console.error("Error setting home page subtitles:", error);
   }
 }
 
 /**
  * Set the corresponding color and background color
  * to each profile card's rank
- * 
- * Mapped colors for each rank determines rank's 
+ *
+ * Mapped colors for each rank determines rank's
  * color and background color
- * 
+ *
  * @param {Element} accountRankContainer - HTML element of profile card's account rank
  * @param {string} rank - String representing the profile's ingame rank
  */
@@ -386,20 +439,27 @@ function setRankStyle(accountRankContainer, rank) {
   };
 
   const matchedRank = Object.keys(rankStyles).find((key) => rank.includes(key));
-  let color = "#000", backgroundColor = "#fff";
+  let color = "#000",
+    backgroundColor = "#fff";
   if (matchedRank) {
-    ({color, backgroundColor} = rankStyles[matchedRank]);
+    ({ color, backgroundColor } = rankStyles[matchedRank]);
   }
   accountRankContainer.style.color = color;
   accountRankContainer.style.backgroundColor = backgroundColor;
 }
 
+/**
+ * Add or append friend account to the user's friend
+ * list UI
+ *
+ * @param {object} data Contains details about friend account
+ */
 function addFriendAccount(data) {
   const friendListContainer = document.querySelector(
     ".friend-list__account-container"
   );
-
   const friendAccount = document.createElement("div");
+
   friendAccount.classList.add("friend-list__account");
   friendAccount.id = data.username;
   friendAccount.innerHTML = getFriendAccountHTML(data);
@@ -409,6 +469,10 @@ function addFriendAccount(data) {
   //TODO: Add a drag feature to delete friend accounts (similar to steam)
 }
 
+/**
+ * Update the number of friend request notifications,
+ * if no requests are found the notification is removed
+ */
 function updateRequestsNotif() {
   const requestsNotif = document.querySelector(
     ".friend-list__requests-btn-notif"
@@ -420,6 +484,12 @@ function updateRequestsNotif() {
   }
 }
 
+/**
+ * Setup the accept and deny interactions in the
+ * friend requests UI
+ *
+ * @param {object} requestAccount Contains details about the request account (Account from which the friend request is sent)
+ */
 async function setupRequestInteractions(requestAccount) {
   const acceptBtn = requestAccount.querySelector(
     ".friend-list__request-accept-btn"
@@ -446,6 +516,15 @@ async function setupRequestInteractions(requestAccount) {
   });
 }
 
+/**
+ * Set profile cards, along with profile information and
+ * setup card option listeners
+ *
+ * Stores each rendered user profile object into an
+ * array internally
+ *
+ * @param {Array} userProfiles Array of profile card objects
+ */
 async function setCards(userProfiles) {
   userProfiles.forEach((profile) => {
     const cardDiv = document.createElement("div");
@@ -464,6 +543,11 @@ async function setCards(userProfiles) {
   renderedUserProfiles = [...new Set(renderedUserProfiles)];
 }
 
+/**
+ * Setup card options interaction
+ *
+ * @param {HTMLElement} cardDiv Profile card HTML element object
+ */
 function setupCardOptionsListener(cardDiv) {
   const optionsBtn = cardDiv.querySelector(".card__options-btn");
   const optionsDropdown = cardDiv.querySelector(".card__options-menu");
@@ -488,9 +572,9 @@ function setupCardOptionsListener(cardDiv) {
   });
 }
 
-const contentContainer = document.querySelector(".main__content");
-const friendListContainer = document.querySelector(".friend-list");
-
+/**
+ * Loads friend list and sets up the friend add interactions
+ */
 function loadFriendsList() {
   social.getFriends().then((friendsList) => {
     friendsList.forEach((friendData) => {
@@ -499,6 +583,7 @@ function loadFriendsList() {
   });
 
   const addFriendBtn = document.querySelector(".friend-list__request-send-btn");
+
   addFriendBtn.addEventListener("click", () => {
     const addFriendField = document.querySelector(
       ".friend-list__friend-id-input"
@@ -531,27 +616,48 @@ function loadFriendsList() {
           displayError("Already friends with that user");
           break;
         default:
-          displayError("Something went wrong, try again");
+          displayError();
           break;
       }
     });
   });
 }
 
-let cardContainer;
+/**
+ * Sets the current login session info
+ */
+function setLoginInfoFooter() {
+  const sessionData = database.getSessionData();
+
+  const footerUsername = document.querySelector(".footer__login-info-username");
+  const footerUID = document.querySelector(".footer__login-info-uid");
+
+  footerUsername.textContent = sessionData.username;
+  footerUID.textContent = sessionData.uid;
+}
+
+/**
+ * Main startup function, renders home page along with setting up
+ * every interactions in it
+ *
+ * Sets up profile cards, live card changes and live friend requests
+ */
 async function loadHome() {
   showLoading("Setting up the good stuff...");
   const titleContainer = document.querySelector(".main__title-container");
   const title = "<h1>Home</h1>";
   titleContainer.innerHTML = title;
 
+  const contentContainer = document.querySelector(".main__content");
+  contentContainer.innerHTML = "";
   contentContainer.innerHTML = getHomePageLayoutHTML();
-
   await setSubtitle();
+  setupNavButtons();
 
   const innerContentContainer = document.querySelector(
     ".main__inner-container"
   );
+  innerContentContainer.innerHTML = "";
   cardContainer = document.createElement("div");
   cardContainer.classList.add("main__card-container");
   innerContentContainer.appendChild(cardContainer);
@@ -574,7 +680,6 @@ async function loadHome() {
   });
 
   loadFriendsList();
-
   database
     .liveFriendRequests()
     .then(() => {
@@ -603,47 +708,15 @@ async function loadHome() {
     .catch((err) => {
       console.error("Error enabling live friend requests:", err);
     });
+
+  setLoginInfoFooter();
 }
 
-ipcRenderer.on("userProfile-update-forward", (userProfiles) => {
-  userProfiles.forEach((profile) => {
-    if (!renderedUserProfiles.includes(`${profile.name}#${profile.tag}`)) {
-      setCards([profile]);
-    }
-  });
-});
+const debounceLoadHome = debounce(loadHome, 30);
 
-ipcRenderer.on("userProfile-refresh-forward", (userProfiles) => {
-  cardContainer.innerHTML = "";
-  setCards(userProfiles);
-});
-
-const settingsBtn = document.querySelector(".nav__settings-btn");
-const settingsDropdown = document.querySelector(".nav__settings-menu");
-settingsBtn.addEventListener("click", () => {
-  settingsDropdown.classList.toggle("nav__settings-menu--show");
-});
-
-document.addEventListener("click", (event) => {
-  if (
-    !settingsDropdown.contains(event.target) &&
-    !settingsBtn.contains(event.target)
-  ) {
-    settingsDropdown.classList.remove("nav__settings-menu--show");
-  }
-});
-
-const logoutBtn = document.querySelector(".nav__settings-logout");
-logoutBtn.addEventListener("click", () => {
-  ipcRenderer.send("action:logout");
-});
-
-const githubBtn = document.querySelector(".nav__settings-github");
-githubBtn.addEventListener("click", () => {
-  shell.openExternal("https://github.com/Mevin-JR/Valorant-Profiler");
-});
-
-const closePopupBtn = document.querySelector(".overlay__popup-close-btn");
+/**
+ * Closes the account add popup
+ */
 function closepopup() {
   const nameInput = document.querySelector(".overlay__popup-username-input");
   const tagInput = document.querySelector(".overlay__popup-tag-input");
@@ -658,40 +731,9 @@ function closepopup() {
   }, 300);
 }
 
-closePopupBtn.addEventListener("click", () => {
-  closepopup();
-});
-
-const addAccount = document.querySelector(".overlay__profile-add-btn");
-addAccount.addEventListener("click", () => {
-  const name = document.querySelector(".overlay__popup-username-input").value;
-  const tag = document.querySelector(".overlay__popup-tag-input").value;
-
-  if (name === "" || tag === "") {
-    displayError("Required field is empty");
-    return;
-  }
-
-  const maxAccountCount = 9;
-  if (renderedUserProfiles.length === maxAccountCount) {
-    displayError("Cannot add any more profiles (max. 9)");
-    return;
-  }
-
-  const nameTagCheck = `${name}#${tag}`;
-  if (renderedUserProfiles.includes(nameTagCheck)) {
-    displayError("Account already exists");
-    return;
-  }
-
-  showLoading("Retrieving account information...");
-  profile.addProfile(name, tag).then(() => {
-    hideLoading();
-    noAccountDisplayCheck();
-  });
-  closepopup();
-});
-
+/**
+ * Displays no accounts page if no accounts are rendered
+ */
 function noAccountDisplayCheck() {
   const noAccountPageContainer = document.querySelector(
     ".main__no-account-prompt"
@@ -703,11 +745,16 @@ function noAccountDisplayCheck() {
   }
 }
 
-ipcRenderer.on("load-home", () => {
-  loadHome();
-});
-
-function displayError(errorText) {
+/**
+ * Displays an error message popup with the specified
+ * argument
+ *
+ * If no argument is provided, a default error message is
+ * displayed
+ *
+ * @param {String} errorText Message to be displayed on error
+ */
+function displayError(errorText = "Something went wrong, try again") {
   Toastify({
     text: `<svg width="11" height="11" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11.7612 9.99893L19.6305 2.14129C19.8657 1.90606 19.9979 1.58701 19.9979 1.25434C19.9979 0.921668 19.8657 0.602622 19.6305 0.367388C19.3953 0.132153 19.0763 0 18.7437 0C18.411 0 18.092 0.132153 17.8568 0.367388L10 8.23752L2.14319 0.367388C1.90799 0.132153 1.58897 2.95361e-07 1.25634 2.97839e-07C0.923701 3.00318e-07 0.604689 0.132153 0.36948 0.367388C0.134271 0.602622 0.00213201 0.921668 0.002132 1.25434C0.002132 1.58701 0.134271 1.90606 0.36948 2.14129L8.23878 9.99893L0.36948 17.8566C0.252404 17.9727 0.159479 18.1109 0.0960643 18.2631C0.0326494 18.4153 0 18.5786 0 18.7435C0 18.9084 0.0326494 19.0717 0.0960643 19.224C0.159479 19.3762 0.252404 19.5143 0.36948 19.6305C0.4856 19.7476 0.623751 19.8405 0.775965 19.9039C0.928178 19.9673 1.09144 20 1.25634 20C1.42123 20 1.5845 19.9673 1.73671 19.9039C1.88892 19.8405 2.02708 19.7476 2.14319 19.6305L10 11.7603L17.8568 19.6305C17.9729 19.7476 18.1111 19.8405 18.2633 19.9039C18.4155 19.9673 18.5788 20 18.7437 20C18.9086 20 19.0718 19.9673 19.224 19.9039C19.3763 19.8405 19.5144 19.7476 19.6305 19.6305C19.7476 19.5143 19.8405 19.3762 19.9039 19.224C19.9674 19.0717 20 18.9084 20 18.7435C20 18.5786 19.9674 18.4153 19.9039 18.2631C19.8405 18.1109 19.7476 17.9727 19.6305 17.8566L11.7612 9.99893Z" fill="red"/>
@@ -722,8 +769,91 @@ function displayError(errorText) {
   }).showToast();
 }
 
+/**
+ *
+ * Page Events
+ *
+ */
+
+document.querySelector(".nav__settings-btn").addEventListener("click", () => {
+  const settingsDropdown = document.querySelector(".nav__settings-menu");
+  settingsDropdown.classList.toggle("nav__settings-menu--show");
+});
+
+document
+  .querySelector(".nav__settings-logout")
+  .addEventListener("click", () => {
+    ipcRenderer.send("action:logout");
+  });
+
+document
+  .querySelector(".nav__settings-github")
+  .addEventListener("click", () => {
+    shell.openExternal("https://github.com/Mevin-JR/Valorant-Profiler");
+  });
+
+document
+  .querySelector(".overlay__popup-close-btn")
+  .addEventListener("click", () => {
+    closepopup();
+  });
+
+document
+  .querySelector(".overlay__profile-add-btn")
+  .addEventListener("click", () => {
+    const name = document.querySelector(".overlay__popup-username-input").value;
+    const tag = document.querySelector(".overlay__popup-tag-input").value;
+
+    if (name === "" || tag === "") {
+      displayError("Required field is empty");
+      return;
+    }
+
+    const maxAccountCount = 9;
+    if (renderedUserProfiles.length === maxAccountCount) {
+      displayError("Cannot add any more profiles (max. 9)");
+      return;
+    }
+
+    const nameTagCheck = `${name}#${tag}`;
+    if (renderedUserProfiles.includes(nameTagCheck)) {
+      displayError("Account already exists");
+      return;
+    }
+
+    showLoading("Retrieving account information...");
+    profile.addProfile(name, tag).then(() => {
+      hideLoading();
+      noAccountDisplayCheck();
+    });
+    closepopup();
+  });
+
+/**
+ *
+ * IPC Renderer
+ *
+ */
+
+ipcRenderer.on("load-home", () => {
+  loadHome();
+});
+
 ipcRenderer.on("error-message-forward", (err) => {
   displayError(err);
+});
+
+ipcRenderer.on("userProfile-update-forward", (userProfiles) => {
+  userProfiles.forEach((profile) => {
+    if (!renderedUserProfiles.includes(`${profile.name}#${profile.tag}`)) {
+      setCards([profile]);
+    }
+  });
+});
+
+ipcRenderer.on("userProfile-refresh-forward", (userProfiles) => {
+  cardContainer.innerHTML = "";
+  setCards(userProfiles);
 });
 
 ipcRenderer.on("action-required-accounts-forward", (err) => {

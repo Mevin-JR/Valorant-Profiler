@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer } = require("electron/renderer");
 const { shell } = require("electron");
 const {
+    getSessionData,
     registerUser,
     loginUser,
     addProfile,
@@ -16,6 +17,7 @@ const {
     denyFriendRequest,
     getFriends,
 } = require("./backend/db_operations");
+const { loadStats } = require("./renderer/mainMenuWin/stats");
 
 // Inter Process Communication (Renderer) module
 contextBridge.exposeInMainWorld("ipcRenderer", {
@@ -39,6 +41,7 @@ contextBridge.exposeInMainWorld("shell", {
 
 // Database functions
 contextBridge.exposeInMainWorld("database", {
+    getSessionData: () => getSessionData(),
     liveProfileChanges: async () => await liveProfileChanges(), // Enabling live profile changes
     liveFriendRequests: async () => await liveFriendRequests(), // Enabling live friend requests
 });
@@ -59,4 +62,9 @@ contextBridge.exposeInMainWorld("social", {
     acceptFriendRequest: async (sender) => await acceptFriendRequest(sender), // Accepting friend request (using sender username)
     denyFriendRequest: async (sender) => await denyFriendRequest(sender),
     getFriends: async () => await getFriends(),
+});
+
+// Page load functions
+contextBridge.exposeInMainWorld("page", {
+    loadStats: () => loadStats(),
 });
