@@ -33,7 +33,6 @@ function getSessionData() {
     }
 }
 
-
 // TODO: Handle offline usage of app
 
 // TODO: Optimize usage of session data
@@ -766,6 +765,7 @@ async function getFriends() {
 }
 
 module.exports = {
+    getSessionData,
     registerUser,
     loginUser,
     addProfile,
